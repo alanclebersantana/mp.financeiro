@@ -282,6 +282,7 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .mini{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;font-size:12px;color:var(--muted-2)}
 .mini span b{color:var(--text)}
 .maisinfo{font-size:12px;color:var(--muted-2);margin-top:6px}
+.escolhas{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .msg .btn.sm{margin-top:8px}
 .hints button{white-space:nowrap}
 .msg.sys{align-self:center;background:transparent;color:var(--muted-2);font-size:12px;text-align:center}
@@ -1469,9 +1470,46 @@ function rankearLancamentos(query, rows){
   }).filter(x => x.score > 0).sort((a,b) => b.score - a.score || (ABERTO(b.r) - ABERTO(a.r))).map(x => x.r);
 }
 
+/* ---------- cadastros quase idênticos ---------- */
+/** núcleo do nome: sem acento, sem pontuação e sem os dígitos do telefone */
+const nucleoNome = s => normalizarTextoBusca(s).replace(/\d+/g,' ').replace(/\s+/g,' ').trim();
+function similaridade(a, b){
+  if (a === b) return 1;
+  const m = a.length, n = b.length;
+  if (!m || !n) return 0;
+  let anterior = Array.from({length:n+1}, (_,j) => j), atual = new Array(n+1);
+  for (let i = 1; i <= m; i++){
+    atual[0] = i;
+    for (let j = 1; j <= n; j++)
+      atual[j] = Math.min(anterior[j] + 1, atual[j-1] + 1, anterior[j-1] + (a[i-1] === b[j-1] ? 0 : 1));
+    [anterior, atual] = [atual, anterior];
+  }
+  return 1 - anterior[n] / Math.max(m, n);
+}
+function nomesQuaseIguais(a, b, pixA, pixB){
+  const na = nucleoNome(a), nb = nucleoNome(b);
+  if (!na || !nb) return false;
+  if (na === nb) return true;                                   // só mudam telefone e pontuação
+  const mesmaChave = pixA && pixB && digits(pixA) && digits(pixA) === digits(pixB);
+  if (mesmaChave && similaridade(na, nb) >= 0.7) return true;    // mesma chave Pix e nome parecido
+  return similaridade(na, nb) >= 0.88;
+}
+/** agrupa os cadastros que parecem ser a mesma pessoa do primeiro da lista */
+function agruparQuaseIguais(pessoas){
+  if (!pessoas.length) return [];
+  const pixDe = p => ((p.linhas[0] || {}).pix) || '';
+  const base = pessoas[0];
+  return pessoas.filter(p => p === base || nomesQuaseIguais(base.nome, p.nome, pixDe(base), pixDe(p)));
+}
+const chaveGrupo = nomes => nomes.slice().sort().join(' || ');
+
 /* =========================================================
    MEMÓRIA CONVERSACIONAL
    ========================================================= */
+S.pendentesUnificacao = {};
+S.distintos = new Set(JSON.parse(Local.get('tesouraria:distintos') || '[]'));
+const marcarDistintos = ch => { S.distintos.add(ch); Local.set('tesouraria:distintos', JSON.stringify([...S.distintos]));
+  if (typeof invalidarCacheIA === 'function') invalidarCacheIA(); };
 S.memoriaIA = {ultimaPergunta:null, ultimaIntencao:null, ultimoBeneficiario:null, ultimoLancamentoId:null,
   ultimosLancamentosIds:[], ultimoValor:null, ultimaData:null, ultimaOperacao:null, ultimoResultado:null, timestamp:null};
 
@@ -1518,7 +1556,22 @@ function classificarIntencaoLocal(texto){
   const semRuido = t.split(' ').filter(w => w.length > 2 && !STOPWORDS.has(w) &&
     !Object.values(SINONIMOS).flat().some(s => s === w)).join(' ');
   if (semRuido){
-    const pessoas = buscarPessoasRelevantes(semRuido).filter(p => p.score >= 50);
+    const tokensPedido = semRuido.split(' ');
+    let pessoas = buscarPessoasRelevantes(semRuido).filter(p => p.score >= 50);
+    // se o nome inteiro de um cadastro couber no pedido, ele ganha — resolve "Lidy Lira - 62 8120-9077"
+    const contidos = pessoas.filter(p => { const tk = normalizarTextoBusca(p.nome).split(' ');
+      return tk.length > 1 && tk.every(x => tokensPedido.includes(x)); });
+    const tks = x => normalizarTextoBusca(x.nome).split(' ').length;
+    if (contidos.length && pessoas.length){
+      const maior = Math.max(...contidos.map(tks));
+      const finalistas = contidos.filter(x => tks(x) === maior);
+      // só resolve sozinho se nenhum outro cadastro for mais específico que o escolhido
+      if (finalistas.length === 1 && maior >= Math.max(...pessoas.map(tks))) pessoas = finalistas;
+    }
+    // entre homônimos, quem não tem nada em aberto não entra na escolha
+    const comSaldo = pessoas.filter(p => p.aberto.length);
+    if (comSaldo.length === 1) pessoas = comSaldo;
+    else if (comSaldo.length > 1) pessoas = comSaldo;
     ent.pessoas = pessoas.slice(0,5);
     if (pessoas.length) ent.pessoa = pessoas[0].nome;
   }
@@ -1578,7 +1631,18 @@ function executarConsultaLocal(c){
   const e = c.entities;
   if (c.intent === 'AMBIGUA'){
     const nomes = e.pessoas.slice(0,5);
-    return {texto: `Encontrei ${nomes.length} pessoas com esse nome. Qual delas?`,
+    const grupo = agruparQuaseIguais(nomes);
+    if (grupo.length > 1 && !S.distintos.has(chaveGrupo(grupo.map(p => p.nome)))){
+      const ch = 'g' + Object.keys(S.pendentesUnificacao).length;
+      S.pendentesUnificacao[ch] = grupo.map(p => p.nome);
+      const total = grupo.reduce((s,p) => s + toCents(p.total), 0);
+      return {texto: `Encontrei ${grupo.length} cadastros quase idênticos. São a mesma pessoa?`,
+        lista: grupo.map(p => ({rotulo:p.nome, detalhe: `${formatBRL(p.total)} em ${p.aberto.length} lançamento(s) em aberto`})),
+        confirmacao: {chave: ch, total: fromCents(total), n: grupo.length}, pergunta: true};
+    }
+    const semSaldo = nomes.filter(p => !p.aberto.length).length;
+    return {texto: `Encontrei ${nomes.length} cadastros com esse nome. Qual deles?`
+      + (semSaldo ? ` (${semSaldo} sem nada em aberto — pode ser cadastro duplicado)` : ''),
       lista: nomes.map(p => ({rotulo: p.nome, detalhe: `${formatBRL(p.total)} em ${p.aberto.length} lançamento(s) em aberto`, escolha: p.nome})),
       pergunta: true};
   }
@@ -1790,6 +1854,10 @@ function renderFinancialSummary(res){
   if (res.linhas && res.linhas.length) html += res.linhas.map(linhaClicavel).join('');
   if (res.ids && res.ids.length > (res.linhas || []).length)
     html += `<div class="maisinfo">e mais ${res.ids.length - res.linhas.length} lançamento(s)</div>`;
+  if (res.confirmacao) html += `<div class="escolhas">
+      <button class="btn sm primary" data-unificar="${res.confirmacao.chave}">Sim, é a mesma pessoa</button>
+      <button class="btn sm" data-distintos="${res.confirmacao.chave}">Não, são diferentes</button></div>
+    <div class="maisinfo">Se forem a mesma, unifico os cadastros num nome só — ${formatBRL(res.confirmacao.total)} em aberto — e a duplicidade some da busca e da planilha.</div>`;
   if (res.ids && res.ids.length) html += `<button class="btn sm" data-vertabela="1">Ver na tabela</button>`;
   return html;
 }
@@ -2091,11 +2159,63 @@ $('#msgs').addEventListener('click', e => {
   const foco = e.target.closest('[data-foco]');
   if (foco) return focusLaunch(foco.dataset.foco);
   const escolha = e.target.closest('[data-escolha]');
-  if (escolha){ atualizarMemoriaIA({ultimoBeneficiario: escolha.dataset.escolha});
-    return enviar('quanto tem a pagar para ' + escolha.dataset.escolha); }
+  if (escolha) return responderSobrePessoa(escolha.dataset.escolha);
+  const unificar = e.target.closest('[data-unificar]');
+  if (unificar) return unificarCadastros(S.pendentesUnificacao[unificar.dataset.unificar] || []);
+  const distintos = e.target.closest('[data-distintos]');
+  if (distintos){
+    const nomes = S.pendentesUnificacao[distintos.dataset.distintos] || [];
+    marcarDistintos(chaveGrupo(nomes));
+    bolha('sys', 'Entendido, são pessoas diferentes. Não pergunto de novo sobre esses cadastros.');
+    return enviar(S.memoriaIA.ultimaPergunta || 'quanto tem a pagar para ' + (nomes[0] || ''));
+  }
   const ver = e.target.closest('[data-vertabela]');
   if (ver) return verNaTabela(S.memoriaIA.ultimosLancamentosIds || []);
 });
+
+/** junta cadastros duplicados num nome só: renomeia os lançamentos, com auditoria e desfazer */
+async function unificarCadastros(nomes){
+  if (nomes.length < 2) return;
+  const grupos = nomes.map(n => ({nome:n, linhas: MotorFinanceiroMP.porPessoa(n)}));
+  const principal = grupos.slice().sort((a,b) =>
+    b.linhas.filter(ABERTO).length - a.linhas.filter(ABERTO).length ||
+    normalizarTextoBusca(b.nome).split(' ').length - normalizarTextoBusca(a.nome).split(' ').length ||
+    b.nome.length - a.nome.length)[0];
+  const mover = grupos.filter(g => g.nome !== principal.nome).flatMap(g => g.linhas);
+
+  if (!podeEditar()){
+    const todas = grupos.flatMap(g => g.linhas).filter(ABERTO);
+    bolha('sys', 'Seu acesso é somente leitura, então não posso unificar os cadastros. Vou responder somando os dois por enquanto.');
+    bolha('ai', renderFinancialSummary({tipo:'local', classificacao:{intent:'CONSULTA_PESSOA', confidence:1},
+      texto:`${formatBRL(MotorFinanceiroMP.total(todas))} em aberto somando os ${nomes.length} cadastros, em ${todas.length} lançamento(s).`,
+      linhas: todas.slice(0,8), ids: todas.map(r => r.id), ms:0}));
+    return;
+  }
+  if (!mover.length){ bolha('sys', 'Esses cadastros já estão com o mesmo nome.'); return responderSobrePessoa(principal.nome); }
+
+  bolha('ai', `<div class="selo">⚡ Unificando cadastros</div>Vou passar ${mover.length} lançamento(s) para <b>${esc(principal.nome)}</b>.`);
+  const ops = mover.map(r => ({acao:'atualizar', id:r.id, campos:{contribuinte: principal.nome}, motivo:'unificação de cadastro duplicado'}));
+  const aplicou = await aplicar(ops, 'assistente', `unificação de ${nomes.length} cadastros em "${principal.nome}"`);
+  if (!aplicou){ bolha('sys', 'Não consegui unificar agora. Nada foi alterado.'); return; }
+  toast('Cadastros unificados — use Ctrl+Z para reverter');
+  S.chat.push({papel:'aplicado', texto:`cadastros ${nomes.join(' / ')} unificados em ${principal.nome}`});
+  responderSobrePessoa(principal.nome);
+}
+
+/** resposta direta sobre um beneficiário já escolhido — nunca volta a perguntar */
+function responderSobrePessoa(nome){
+  const c = {intent:'CONSULTA_PESSOA', confidence:0.99, requiresAI:false,
+    entities:{pessoa:nome, pessoas:[], operacao:null, status:null, data:null, periodo:null, valor:null, referencia:false}};
+  const r = executarConsultaLocal(c) || {texto:`Não encontrei lançamentos de ${nome}.`};
+  bolha('me', esc(nome));
+  bolha('ai', renderFinancialSummary({tipo:'local', classificacao:c, ms:0, ...r}));
+  const ids = (r.ids || []).slice(0,12);
+  atualizarMemoriaIA({ultimoBeneficiario:nome, ultimosLancamentosIds:ids,
+    ultimoLancamentoId: ids.length === 1 ? ids[0] : S.memoriaIA.ultimoLancamentoId,
+    ultimaIntencao:'CONSULTA_PESSOA', ultimoResultado:r.texto});
+  S.chat.push({papel:'user', texto:`sobre ${nome}`}, {papel:'ai', texto:r.texto});
+  $('#chatMode').textContent = '⚡ resposta local';
+}
 
 function bolha(cls, html){ const d = document.createElement('div'); d.className = 'msg ' + cls; d.innerHTML = html;
   $('#msgs').appendChild(d); $('#msgs').scrollTop = 1e6; return d; }
