@@ -430,7 +430,7 @@ try { document.documentElement.dataset.tema =
         <div class="field"><label for="fD2">até</label><input class="inp" id="fD2" type="date"></div>
         <div class="field"><label for="fV1">Valor de</label><input class="inp" id="fV1" type="number" step="0.01" placeholder="0"></div>
         <div class="field"><label for="fV2">Valor até</label><input class="inp" id="fV2" type="number" step="0.01" placeholder="∞"></div>
-        <button class="btn sm ghost" id="fClear">Limpar filtros</button>
+        <button class="btn sm ghost" id="fClear" title="Volta ao padrão: só os pendentes">Limpar filtros</button>
       </div>
       <div class="chips-active" id="fChips"></div>
       <div class="bulkbar hide" id="bulkbar">
@@ -543,10 +543,11 @@ const COLS = [
   {k:'base',           t:'Origem',      w:'7%',    type:'text'},
 ];
 
+const FILTROS_PADRAO = {q:'', op:'', st:'Pendente', tp:'', d1:'', d2:'', v1:'', v2:''};
 const S = {
   rows: [], ops: OPS_BASE.slice(), sel: new Set(), hist: [], log: [], users: [],
   sort: {k:'dataPagamento', dir:1},
-  f: {q:'', op:'', st:'', tp:'', d1:'', d2:'', v1:'', v2:''},
+  f: {...FILTROS_PADRAO},
   cfg: {}, chat: [],
   view: 'dash'
 };
@@ -912,10 +913,13 @@ function renderTable(){
   $('#bulkCount').textContent = `${S.sel.size} selecionado(s) · ${brl(S.rows.filter(r=>S.sel.has(r.id)).reduce((s,r)=>s+r.valor,0))}`;
 }
 function fillSelects(){
-  const set = (el, arr, ph) => { const cur = el.value; el.innerHTML = `<option value="">${ph}</option>` + arr.map(o=>`<option>${esc(o)}</option>`).join(''); el.value = cur; };
-  set($('#fOp'), [...new Set([...S.ops, ...S.rows.map(r=>r.operacao)])].filter(Boolean).sort(), 'Todas');
-  set($('#fSt'), STATUS, 'Todos');
-  set($('#fTp'), TIPOS, 'Todos');
+  const set = (el, arr, ph, val) => {
+    el.innerHTML = `<option value="">${ph}</option>` + arr.map(o=>`<option>${esc(o)}</option>`).join('');
+    el.value = arr.includes(val) ? val : '';
+  };
+  set($('#fOp'), [...new Set([...S.ops, ...S.rows.map(r=>r.operacao)])].filter(Boolean).sort(), 'Todas', S.f.op);
+  set($('#fSt'), STATUS, 'Todos', S.f.st);
+  set($('#fTp'), TIPOS, 'Todos', S.f.tp);
 }
 function renderAll(){
   fillSelects(); renderDash(); renderTable();
@@ -948,9 +952,11 @@ function renderUsers(){
       <td style="color:var(--muted-2)">${u.em ? hora(u.em) : '—'}</td></tr>`).join('')
     : '<tr><td colspan="4"><div class="empty">Nenhum usuário cadastrado. No modo local não há controle de acesso.</div></td></tr>';
 }
-function clearFilters(){ S.f = {q:'',op:'',st:'',tp:'',d1:'',d2:'',v1:'',v2:''};
-  ['fQ','fOp','fSt','fTp','fD1','fD2','fV1','fV2'].forEach(id => $('#'+id).value = '');
-  renderAll(); }
+function clearFilters(){
+  S.f = {...FILTROS_PADRAO};
+  ['fQ','fD1','fD2','fV1','fV2'].forEach(id => $('#'+id).value = '');
+  renderAll();
+}
 
 /* ---------- edição inline ---------- */
 let editing = null;
@@ -1304,6 +1310,12 @@ REGRAS
 9. Datas sem ano usam o ano do lançamento de referência.
 10. Para perguntas, use os TOTAIS JÁ CALCULADOS do contexto; não some por cima de uma lista que pode estar truncada.
 
+EXEMPLO DE DIVISÃO — pedido: "Ajuste o valor de Fulano do dia 17/09 para 50.000 e o restante para 30/10 com 4% de acréscimo"
+Lançamento recebido: r7a2|Fulano de Tal|Azul e Cartões MP 03/08|63261|2026-09-17|Pendente|71992979090|
+Resposta correta, exatamente neste formato:
+{"resposta":"Proposta: R$ 50.000,00 continuam em 17/09 e R$ 13.791,44 vão para 30/10 (13.261,00 + 4%).","operacoes":[{"acao":"atualizar","id":"r7a2","campos":{"valor":50000},"motivo":"parcela mantida em 17/09"},{"acao":"criar","dados":{"contribuinte":"Fulano de Tal","operacao":"REINVESTIMENTO","valor":13791.44,"dataPagamento":"2026-10-30","status":"Pendente","pix":"71992979090","tipoChave":"TELEFONE","acordo":"Reinvestiu 13.261,00 com 4% — 13.791,44 em 30/10"},"motivo":"restante remarcado"}]}
+Repare: a proposta e o array "operacoes" vêm JUNTOS, na mesma resposta. Descrever a proposta e deixar "operacoes" vazio não adianta nada — o operador não terá o que aplicar.
+
 CONVERSA
 - A conversa é contínua. Entenda referências ao que já foi dito: "ele", "ela", "esse mesmo", "e o restante?", "muda para 25/10", "faz o mesmo com o outro fornecedor".
 - As mensagens marcadas como APLICADO já foram gravadas no sistema; os valores atuais estão na lista de lançamentos, não no que foi dito antes.
@@ -1423,9 +1435,9 @@ async function enviar(){
   let plano;
   try {
     plano = await chamarIA(txt);
-    if (semOperacoes(plano) && narrouMudanca(plano.resposta)){
+    if (semOperacoes(plano) && !ehPergunta(plano.resposta) && (falaEmMudanca(plano.resposta) || pediuMudanca(txt))){
       load.innerHTML = '<span class="typing"><i></i><i></i><i></i></span>';
-      plano = await chamarIA(txt, 'Sua resposta anterior descreveu uma alteração, mas veio com "operacoes": [] — nada foi gravado. Devolva agora exatamente o mesmo ajuste dentro de "operacoes", com os ids reais da lista, e escreva a resposta como proposta, nunca no passado.');
+      plano = await chamarIA(txt, 'Sua resposta anterior anunciou um ajuste mas veio com "operacoes": [] — o operador não recebeu nada para aplicar e nenhum valor mudou. Devolva agora exatamente esse mesmo ajuste dentro de "operacoes", usando os ids reais da lista. Se na verdade faltar informação para executar, então pergunte objetivamente e não descreva ajuste nenhum.');
     }
   } catch(err){
     load.remove(); enviando = false; $('#chatSend').disabled = false;
@@ -1441,12 +1453,14 @@ async function enviar(){
   if (plano.operacoes && plano.operacoes.length){
     if (!podeEditar()) bolha('sys', 'Seu acesso é somente leitura, então nada pode ser aplicado.');
     else mostrarPlano(plano.operacoes);
-  } else if (narrouMudanca(resposta)){
-    bolha('sys', 'Atenção: nada foi alterado. O assistente descreveu o ajuste sem gerar o comando — nenhum valor mudou na grade. Peça de novo, de preferência citando a data do lançamento.');
+  } else if (!ehPergunta(resposta) && falaEmMudanca(resposta)){
+    bolha('sys', 'Atenção: nada foi alterado. O assistente descreveu o ajuste sem gerar o comando de confirmação — nenhum valor mudou na grade. Peça de novo citando o nome e a data do lançamento.');
   }
 }
 const semOperacoes = pl => !pl || !pl.operacoes || !pl.operacoes.length;
-const narrouMudanca = t => /\b(ajustei|ajustado|ajustada|criei|criado|criada|alterei|alterad|atualizei|atualizad|movi|movid|transferi|transferid|dividi|dividid|remarquei|remarcad|apliquei|aplicad|foi feito|feita a)/i.test(String(t||''));
+const ehPergunta = t => /\?\s*$|\bpoderia (confirmar|informar|dizer)|qual deles|a quem se refere|me diga|confirma /i.test(String(t||'').trim());
+const falaEmMudanca = t => /\b(vou |proposta|ajust|alter|remarc|remanescent|restante|transfer|dividi|divid|antecip|adia[rn]|mov(er|i|ido)|cri(ar|ei|ado)|adicion|inclu|marcar como|aplicar)/i.test(String(t||''));
+const pediuMudanca = t => /\b(ajust|mud[ae]|alter|passe|passa|transfer|divid|remarc|antecip|adia|cri[ae]|adicion|inclu|marc[ae]|aplic|coloc|jog[ae]|põe|ponha)/i.test(String(t||''));
 function descreverOp(op){
   if (op.acao === 'criar'){
     const d = op.dados || {};
