@@ -1611,7 +1611,12 @@ function classificarIntencaoLocal(texto){
     if (comSaldo.length === 1) pessoas = comSaldo;
     else if (comSaldo.length > 1) pessoas = comSaldo;
     ent.pessoas = pessoas.slice(0,5);
-    if (pessoas.length) ent.pessoa = pessoas[0].nome;
+    if (pessoas.length){
+      ent.pessoa = pessoas[0].nome;
+      // o pedido é só o nome (ou parte dele)? então é consulta de pessoa, sem precisar da IA
+      const tokensNome = normalizarTextoBusca(pessoas[0].nome).split(' ');
+      ent.soNome = tokensPedido.length > 0 && tokensPedido.every(x => tokensNome.some(y => y.startsWith(x) || x.startsWith(y)));
+    }
   }
 
   const mudanca = temTermo(t,'ALTERAR') || temTermo(t,'CRIAR') || temTermo(t,'EXCLUIR') ||
@@ -1635,7 +1640,7 @@ function classificarIntencaoLocal(texto){
   else if (temTermo(t,'TOTAL') || temTermo(t,'PAGAR')) { intent = 'CONSULTA_TOTAL'; conf = 0.85; }
 
   if (ent.pessoa && ['CONSULTA_TOTAL','LISTAGEM','CONTAGEM','MAIOR_VALOR','MENOR_VALOR','OUTRA'].includes(intent)){
-    intent = intent === 'OUTRA' ? 'CONSULTA_PESSOA' : intent;
+    if (intent === 'OUTRA'){ intent = 'CONSULTA_PESSOA'; if (ent.soNome) conf = 0.82; }
     if (ent.pessoas.length === 1) conf += 0.12;
     else if (ent.pessoas.length > 1 && ent.pessoas[1].score >= ent.pessoas[0].score * 0.8) { intent = 'AMBIGUA'; conf = 0.95; }
     else conf += 0.08;
