@@ -670,7 +670,7 @@ const COLS_REC = [
 ];
 const S = {
   rows: [], rec: [], pagadores: [], ops: OPS_BASE.slice(), sel: new Set(), hist: [], log: [], users: [],
-  sort: {k:'dataPagamento', dir:1},
+  sort: {k:'dataPagamento', dir:1}, sortRec: {k:'dataPrevista', dir:1},
   f: {...FILTROS_PADRAO}, fr: {q:'', pg:'', st:'', d1:'', d2:''},
   cfg: {autoAplicar: true}, chat: [], alias: {}, avisado: false,
   view: 'dash'
@@ -2797,7 +2797,18 @@ function filteredRec(){
     if (f.d1 && dataRec(r) < f.d1) return false;
     if (f.d2 && dataRec(r) > f.d2) return false;
     return true;
-  }).sort((a,b) => String(dataRec(a)).localeCompare(String(dataRec(b))) || b.valor - a.valor);
+  }).sort(ordenadorRec);
+}
+function ordenadorRec(a, b){
+  const {k, dir} = S.sortRec;
+  const col = COLS_REC.find(c => c.k === k) || {};
+  let x = a[k], y = b[k];
+  if (col.type === 'money'){ x = Number(x) || 0; y = Number(y) || 0; }
+  else if (col.type === 'date'){ x = String(x || ''); y = String(y || ''); }
+  else { x = semAcento(String(x || '')); y = semAcento(String(y || '')); }
+  const cmp = x > y ? 1 : x < y ? -1 : 0;
+  // empate cai para a data prevista, depois o maior valor
+  return cmp * dir || String(dataRec(a)).localeCompare(String(dataRec(b))) || b.valor - a.valor;
 }
 
 function renderRec(){
@@ -2808,7 +2819,8 @@ function renderRec(){
   sel($('#rSt'), STATUS_REC, 'Todos', S.fr.st);
 
   $('#theadRec').innerHTML = '<th class="cbx"><input type="checkbox" id="chkAllRec"></th>' +
-    COLS_REC.map(c => `<th class="${c.al||''}" style="width:${c.w}">${c.t}</th>`).join('') + '<th class="rowmenu"></th>';
+    COLS_REC.map(c => `<th data-kr="${c.k}" class="${c.al||''}" style="width:${c.w}" title="Ordenar por ${c.t}">${c.t}<span class="ar"> ${S.sortRec.k===c.k ? (S.sortRec.dir>0?'▲':'▼') : ''}</span></th>`).join('') +
+    '<th class="rowmenu"></th>';
 
   $('#tbodyRec').innerHTML = rows.map(r => {
     const atraso = ABERTO_REC(r) && r.dataPrevista && r.dataPrevista < getTodaySP();
@@ -2874,7 +2886,11 @@ $('#tbodyRec').addEventListener('click', e => {
   if (cell) startEdit(cell);
 });
 $('#theadRec').addEventListener('click', e => {
-  if (e.target.id === 'chkAllRec'){ e.target.checked ? filteredRec().forEach(r => S.sel.add(r.id)) : S.sel.clear(); renderRec(); }
+  if (e.target.id === 'chkAllRec'){ e.target.checked ? filteredRec().forEach(r => S.sel.add(r.id)) : S.sel.clear(); return renderRec(); }
+  const th = e.target.closest('th[data-kr]'); if (!th) return;
+  const k = th.dataset.kr;
+  S.sortRec = {k, dir: S.sortRec.k === k ? -S.sortRec.dir : 1};
+  renderRec();
 });
 $('#rChips').addEventListener('click', e => { const b = e.target.closest('[data-frclr]'); if (!b) return;
   S.fr[b.dataset.frclr] = ''; $('#' + {q:'rQ',pg:'rPg',st:'rSt',d1:'rD1',d2:'rD2'}[b.dataset.frclr]).value = ''; renderAll(); });
