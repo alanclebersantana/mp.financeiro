@@ -284,6 +284,12 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .op .was{color:var(--muted-2);text-decoration:line-through}
 .op .now{color:var(--accent-2);font-weight:700}
 .plan .pf{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
+.plan .impacto{padding:8px 12px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.plan .impacto b{color:var(--text)}
+.plan .impacto .neutro{color:var(--ok);font-weight:700}
+.plan .impacto .dif{color:var(--warn);font-weight:700}
+.op.bloq{border-left-color:var(--bad);opacity:.85}
+.op.bloq b{color:var(--bad)}
 .composer{border-top:1px solid var(--line);padding:12px;display:flex;gap:8px;align-items:flex-end}
 .composer textarea{flex:1;resize:none;background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:10px 12px;max-height:220px;min-height:84px;line-height:1.45}
 .composer .btn{height:40px}
@@ -548,7 +554,7 @@ const S = {
   rows: [], ops: OPS_BASE.slice(), sel: new Set(), hist: [], log: [], users: [],
   sort: {k:'dataPagamento', dir:1},
   f: {...FILTROS_PADRAO},
-  cfg: {}, chat: [],
+  cfg: {}, chat: [], alias: {}, avisado: false,
   view: 'dash'
 };
 const APP = {modo:'local', uid:null, nome:'', email:'', foto:'', papel:'admin', online:false};
@@ -628,7 +634,7 @@ function normalize(o){
     contribuinte: String(o.contribuinte??'').replace(/\s+/g,' ').trim(),
     operacao: String(o.operacao??'').trim(),
     acordo: String(o.acordo??'').trim(),
-    valor: parseNum(o.valor),
+    valor: Math.round(parseNum(o.valor)*100)/100,
     dataPagamento: parseDate(o.dataPagamento) || '',
     status: STATUS.includes(o.status) ? o.status : 'Pendente',
     pix: String(o.pix??'').trim(),
@@ -738,7 +744,7 @@ async function aplicar(ops, origem, label, semHistorico){
       const antes = {}, depois = {};
       Object.entries(op.campos || {}).forEach(([k,v]) => {
         const col = COLS.find(c => c.k === k);
-        const nv = col && col.type === 'money' ? parseNum(v) : col && col.type === 'date' ? parseDate(v) : v;
+        const nv = col && col.type === 'money' ? Math.round(parseNum(v)*100)/100 : col && col.type === 'date' ? parseDate(v) : v;
         if (String(r[k]) === String(nv)) return;
         antes[k] = r[k]; depois[k] = nv; r[k] = nv;
         resumo.push(`${r.contribuinte} · ${col?col.t:k}: ${fmtVal(k,antes[k])} → ${fmtVal(k,nv)}`);
@@ -1265,136 +1271,288 @@ function dl(blob, name){ const a = document.createElement('a'); a.href = URL.cre
 /* =========================================================
    Assistente — consultas e ajustes para todos os usuários
    ========================================================= */
-const PROMPT_SISTEMA = `Você é o assistente do "Tesouraria MP", o sistema de contas a pagar de uma operação de compra e venda de milhas aéreas. Vários usuários trabalham nele ao mesmo tempo. Você conversa em português do Brasil, de forma direta e objetiva, como um analista financeiro experiente.
+const PROMPT_SISTEMA = `Você é o assistente do "MP Planejamento Financeiro", sistema de contas a pagar de uma operação de compra e venda de milhas aéreas. Vários usuários trabalham nele ao mesmo tempo. Fale português do Brasil, direto e sem rodeios, como um analista financeiro experiente.
 
 VOCÊ FAZ DUAS COISAS
-A) Responde perguntas sobre a fila de pagamentos — totais por data, por operação, por beneficiário, pendências de cadastro, maiores valores, comparações. Nesses casos devolva "operacoes": [].
-B) Transforma pedidos de ajuste em operações estruturadas sobre os lançamentos.
-
-CAMPOS DE UM LANÇAMENTO
-- id: texto imutável
-- dataLancamento, dataPagamento: AAAA-MM-DD
-- contribuinte: beneficiário
-- operacao: lote/fechamento
-- acordo: observação livre — é onde fica registrada a memória de cálculo
-- valor: número com ponto decimal, sem "R$" e sem separador de milhar
-- status: Pendente, Agendado, Pago, Reinvestido ou Cancelado
-- pix e tipoChave: CPF, CNPJ, TELEFONE, EMAIL, ALEATÓRIA, BOLETO ou INDEFINIDO
-- base: origem do dado
+A) Responde perguntas sobre a fila de pagamentos. Devolva "operacoes": [].
+B) Transforma pedidos de ajuste em operações estruturadas. A proposta em texto e o array "operacoes" saem SEMPRE juntos, na mesma resposta.
 
 VOCÊ NÃO GRAVA NADA
-Você não altera o sistema. Quem grava é o operador, clicando em Aplicar no cartão de confirmação que é montado a partir do array "operacoes". Portanto:
-- NUNCA escreva no passado ("ajustei", "criei", "alterei", "movi", "transferi"). Escreva a proposta: "Vou ajustar…", "Proposta: …".
-- Se a sua "resposta" menciona qualquer alteração, o array "operacoes" NÃO pode vir vazio. Resposta descrevendo mudança com "operacoes": [] é erro grave: o operador lê que foi feito e nada acontece.
+Quem grava é o operador, clicando em Aplicar no cartão de confirmação montado a partir de "operacoes".
+- Nunca escreva no passado ("ajustei", "criei"). Escreva a proposta.
+- Se o texto menciona qualquer alteração, "operacoes" NÃO pode vir vazio. Descrever sem operar é o pior erro possível: o operador lê que foi feito e nada acontece.
 - "operacoes": [] é só para perguntas, dúvidas e conversa.
 
-FORMATO DA RESPOSTA — sempre e somente este JSON, sem markdown e sem crases:
+CAMPOS
+- id: o código curto no começo da linha (L1, L2, L3…). Copie exatamente. O operador NÃO vê esses códigos: jamais peça um id a ele.
+- contribuinte, operacao, acordo (observação, onde fica a memória de cálculo), base (origem)
+- valor: número com ponto decimal, sem "R$" e sem separador de milhar
+- dataPagamento, dataLancamento: AAAA-MM-DD
+- status: exatamente Pendente, Agendado, Pago, Reinvestido ou Cancelado
+- pix e tipoChave: CPF, CNPJ, TELEFONE, EMAIL, ALEATÓRIA, BOLETO ou INDEFINIDO
+
+FORMATO — responda sempre e somente com este JSON, sem markdown e sem crases:
 {
-  "resposta": "texto curto para o operador, sempre com os valores calculados por extenso em reais",
+  "resposta": "texto curto para o operador, com os valores em reais",
   "operacoes": [
-    {"acao":"atualizar","id":"<id existente>","campos":{"valor":50000,"dataPagamento":"2026-09-21"},"motivo":"texto curto"},
-    {"acao":"criar","dados":{"contribuinte":"...","operacao":"...","valor":123.45,"dataPagamento":"2026-10-30","dataLancamento":"AAAA-MM-DD","status":"Pendente","pix":"...","tipoChave":"...","acordo":"...","base":"..."},"motivo":"texto curto"},
-    {"acao":"excluir","id":"<id existente>","motivo":"texto curto"}
+    {"acao":"atualizar","id":"L12","campos":{"valor":50000,"dataPagamento":"2026-09-21"},"motivo":"texto curto"},
+    {"acao":"criar","dados":{"contribuinte":"...","operacao":"...","valor":123.45,"dataPagamento":"2026-10-30","status":"Pendente","pix":"...","tipoChave":"...","acordo":"...","base":"..."},"motivo":"texto curto"},
+    {"acao":"excluir","id":"L12","motivo":"texto curto"}
   ]
 }
 
 REGRAS
-1. Nunca invente um id. Use apenas ids que aparecem na lista recebida.
-2. Dividir um pagamento em duas datas: reduza o lançamento original para a parcela que fica na data original e CRIE um novo lançamento com o restante, copiando contribuinte, operacao, pix, tipoChave e base do original.
-3. Acréscimo percentual: aplique sobre o valor remanescente e escreva a conta no campo "acordo" do novo lançamento, por exemplo "Reinvestiu 39.964,00 com 4% — 41.562,56 em 30/10". Use operacao "REINVESTIMENTO" quando houver acréscimo por reinvestimento.
-4. Transferir valor de uma pessoa para outra: diminua o valor de quem cede e aumente o de quem recebe, ou crie um lançamento novo para quem recebe se ela ainda não tiver um naquela data. A soma antes e depois tem que bater — confira e diga o total na resposta.
-5. Antecipar ou adiar: mexa só em dataPagamento. Adiantar não muda valor, a não ser que o operador peça desconto.
-6. Faça as contas com precisão de centavos e devolva números, nunca texto.
-7. Se o beneficiário não existir, houver mais de um lançamento possível ou faltar informação, devolva "operacoes": [] e pergunte objetivamente na "resposta", listando as opções encontradas.
-8. Nunca mexa em lançamento que não foi pedido. Na dúvida entre dois, pergunte.
-9. Datas sem ano usam o ano do lançamento de referência.
-10. Para perguntas, use os TOTAIS JÁ CALCULADOS do contexto; não some por cima de uma lista que pode estar truncada.
+1. Só use ids que aparecem na lista recebida. Nunca invente.
+2. Dividir um pagamento em duas datas: reduza o lançamento original para a parcela que fica na data original e CRIE um novo com o restante, copiando contribuinte, operacao, pix, tipoChave e base do original.
+3. Acréscimo percentual: aplique sobre o valor remanescente e registre a conta no campo "acordo" do novo lançamento, ex.: "Reinvestiu 13.261,00 com 4% — 13.791,44 em 30/10". Use operacao "REINVESTIMENTO" quando o acréscimo for por reinvestimento.
+4. Transferir valor entre pessoas: diminua de quem cede e aumente de quem recebe (ou crie o lançamento de quem recebe). A soma tem que fechar; confira e diga o total na resposta.
+5. Antecipar ou adiar mexe só em dataPagamento.
+6. Centavos exatos, sempre. Nunca arredonde para facilitar. Devolva números, nunca texto.
+7. Ambiguidade, beneficiário inexistente ou informação faltando: "operacoes": [] e uma pergunta objetiva, listando o que você encontrou (nome, valor e data).
+8. Nunca mexa em lançamento que não foi pedido.
+9. Data sem ano usa o ano do lançamento de referência.
+10. Para totais e contagens use os TOTAIS JÁ CALCULADOS do contexto — a lista de lançamentos é parcial e somar por cima dela dá número errado.
+11. Sempre identifique os lançamentos na resposta por nome, valor e data — nunca pelo código.
 
 EXEMPLO DE DIVISÃO — pedido: "Ajuste o valor de Fulano do dia 17/09 para 50.000 e o restante para 30/10 com 4% de acréscimo"
-Lançamento recebido: r7a2|Fulano de Tal|Azul e Cartões MP 03/08|63261|2026-09-17|Pendente|71992979090|
-Resposta correta, exatamente neste formato:
-{"resposta":"Proposta: R$ 50.000,00 continuam em 17/09 e R$ 13.791,44 vão para 30/10 (13.261,00 + 4%).","operacoes":[{"acao":"atualizar","id":"r7a2","campos":{"valor":50000},"motivo":"parcela mantida em 17/09"},{"acao":"criar","dados":{"contribuinte":"Fulano de Tal","operacao":"REINVESTIMENTO","valor":13791.44,"dataPagamento":"2026-10-30","status":"Pendente","pix":"71992979090","tipoChave":"TELEFONE","acordo":"Reinvestiu 13.261,00 com 4% — 13.791,44 em 30/10"},"motivo":"restante remarcado"}]}
-Repare: a proposta e o array "operacoes" vêm JUNTOS, na mesma resposta. Descrever a proposta e deixar "operacoes" vazio não adianta nada — o operador não terá o que aplicar.
+Linha recebida: L4|Fulano de Tal|Azul e Cartões MP 03/08|63261|2026-09-17|Pendente|71992979090|
+Resposta correta:
+{"resposta":"Proposta: R$ 50.000,00 continuam em 17/09 e R$ 13.791,44 vão para 30/10 (13.261,00 + 4%).","operacoes":[{"acao":"atualizar","id":"L4","campos":{"valor":50000},"motivo":"parcela mantida em 17/09"},{"acao":"criar","dados":{"contribuinte":"Fulano de Tal","operacao":"REINVESTIMENTO","valor":13791.44,"dataPagamento":"2026-10-30","status":"Pendente","pix":"71992979090","tipoChave":"TELEFONE","acordo":"Reinvestiu 13.261,00 com 4% — 13.791,44 em 30/10"},"motivo":"restante remarcado"}]}
+A proposta e as operações vêm juntas. Descrever sem preencher "operacoes" não adianta nada.
 
 CONVERSA
-- A conversa é contínua. Entenda referências ao que já foi dito: "ele", "ela", "esse mesmo", "e o restante?", "muda para 25/10", "faz o mesmo com o outro fornecedor".
-- As mensagens marcadas como APLICADO já foram gravadas no sistema; os valores atuais estão na lista de lançamentos, não no que foi dito antes.
+- A conversa é contínua: entenda "ele", "ela", "esse mesmo", "e o restante?", "muda para 25/10", "faz o mesmo com o outro".
+- Linhas marcadas como APLICADO já foram gravadas; os valores atuais estão na lista, não no que foi dito antes.
 - Se o operador recusou uma proposta, não repita a mesma sem ele pedir.
-- Se o pedido for só conversa ou agradecimento, responda em uma linha com "operacoes": [].`;
+- Conversa fiada ou agradecimento: uma linha e "operacoes": [].`;
 
+/* ---------- leitura do pedido ---------- */
+const STOPWORDS = new Set(['para','pelo','pela','dele','dela','esse','essa','isso','este','esta','isto','aquele','aquela',
+'valor','valores','dia','dias','data','datas','restante','acrescimo','desconto','ajuste','ajustar','ajusta','ajustes',
+'mude','mudar','muda','coloque','ponha','pagar','pagamento','pagamentos','lancamento','lancamentos','favor','quanto',
+'quantos','quais','como','mesmo','outro','outra','tudo','todos','todas','mais','menos','entre','sobre','depois','antes',
+'ainda','tambem','porque','quando','onde','fazer','feito','sera','seria','pode','poderia','preciso','quero','gostaria',
+'obrigado','cartao','cartoes','operacao','operacoes','status','pendente','pendentes','pago','pagos','agendado','conta',
+'contas','reais','total','soma','somar','divide','dividir','parte','sobre','favorecido','beneficiario','fornecedor']);
+
+function datasNoTexto(t, anoPadrao){
+  return [...new Set([...String(t).matchAll(/(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?/g)].map(m => {
+    const y = m[3] ? (m[3].length === 2 ? '20' + m[3] : m[3]) : anoPadrao;
+    return `${y}-${String(m[2]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`;
+  }).filter(d => { const [,mo,dd] = d.split('-').map(Number); return mo >= 1 && mo <= 12 && dd >= 1 && dd <= 31; }))];
+}
+function valoresNoTexto(t){
+  return [...String(t).matchAll(/(\d{1,3}(?:\.\d{3})+(?:,\d{2})?|\d+,\d{2}|\b\d{4,}\b)/g)]
+    .map(m => parseNum(m[1])).filter(v => v >= 100);
+}
+function palavrasUteis(t){
+  return [...new Set(semAcento(t).split(/[^a-z0-9]+/))].filter(w => w.length > 3 && !STOPWORDS.has(w) && !/^\d+$/.test(w));
+}
+
+/* ---------- números prontos para o modelo ---------- */
 function resumoNumerico(){
-  const p = S.rows.filter(r => r.status === 'Pendente' || r.status === 'Agendado');
+  const pend = S.rows.filter(r => r.status === 'Pendente' || r.status === 'Agendado');
   const agrupa = (arr, f) => { const o = {}; arr.forEach(r => { const k = f(r) || '(vazio)'; o[k] = o[k] || {v:0,n:0}; o[k].v += r.valor; o[k].n++; }); return o; };
-  const linha = o => Object.entries(o).sort((a,b)=>b[1].v-a[1].v).map(([k,x]) => `${k}: ${x.v.toFixed(2)} (${x.n})`).join('; ');
+  const linha = (o, max) => Object.entries(o).sort((a,b) => b[1].v - a[1].v).slice(0, max || 99)
+    .map(([k,x]) => `${k}: ${x.v.toFixed(2)} em ${x.n}`).join('; ');
+  const maiores = pend.slice().sort((a,b) => b.valor - a.valor).slice(0,8)
+    .map(r => `${r.contribuinte} ${r.valor.toFixed(2)} em ${r.dataPagamento}`).join('; ');
   return [
-    `Total de lançamentos: ${S.rows.length}. A pagar (pendente+agendado): ${p.reduce((s,r)=>s+r.valor,0).toFixed(2)} em ${p.length} lançamentos.`,
-    `Por data de pagamento: ${linha(agrupa(p, r => r.dataPagamento))}`,
-    `Por operação: ${linha(agrupa(p, r => r.operacao))}`,
-    `Por status: ${linha(agrupa(S.rows, r => r.status))}`,
-    `Com pendência de cadastro: ${S.rows.filter(r => rowIssues(r).length).length}`
+    `Base completa: ${S.rows.length} lançamentos. A pagar (Pendente+Agendado): ${pend.reduce((s,r)=>s+r.valor,0).toFixed(2)} em ${pend.length} lançamentos, ${new Set(pend.map(r=>semAcento(r.contribuinte))).size} beneficiários.`,
+    `A pagar por data: ${linha(agrupa(pend, r => r.dataPagamento))}`,
+    `A pagar por operação: ${linha(agrupa(pend, r => r.operacao), 15)}`,
+    `Tudo por status: ${linha(agrupa(S.rows, r => r.status))}`,
+    `Maiores pendentes: ${maiores}`,
+    `Com pendência de cadastro (chave ausente ou inválida): ${S.rows.filter(r => rowIssues(r).length).length}`
   ].join('\n');
 }
+
+/* ---------- seleção do que vai no contexto ---------- */
+const LIM_FOCO = 60, LIM_RESTO = 90;
 function contextoRows(msg){
-  let rows = S.rows;
-  if (rows.length > 260){
-    const texto = semAcento(msg + ' ' + S.chat.slice(-4).map(m => m.texto).join(' '));
-    const toks = texto.split(/[^a-z0-9]+/).filter(t => t.length > 3);
-    const hit = rows.filter(r => toks.some(t => semAcento(r.contribuinte).includes(t) || semAcento(r.operacao).includes(t)));
-    const resto = rows.filter(r => !hit.includes(r)).sort((a,b) => b.valor - a.valor);
-    rows = [...hit, ...resto].slice(0, 260);
+  const conversa = S.chat.slice(-6).map(m => m.texto).join(' ');
+  const texto = msg + ' ' + conversa;
+  const termos = palavrasUteis(texto);
+  const datas = datasNoTexto(texto, hoje().slice(0,4));
+  const valores = valoresNoTexto(texto);
+
+  const porNome = S.rows.filter(r => termos.some(t => semAcento(r.contribuinte).includes(t)));
+  const porOperacao = porNome.length ? [] : S.rows.filter(r => termos.some(t => t.length >= 5 && semAcento(r.operacao).includes(t)));
+  const porValor = valores.length ? S.rows.filter(r => valores.some(v => Math.abs(r.valor - v) < 0.01)) : [];
+  const porData = datas.length ? S.rows.filter(r => datas.includes(r.dataPagamento)) : [];
+
+  const vistos = new Set(); const foco = [];
+  const juntar = (lista, limite) => lista.forEach(r => {
+    if (foco.length >= LIM_FOCO || vistos.has(r.id) || limite-- <= 0) return;
+    vistos.add(r.id); foco.push(r);
+  });
+  juntar(porNome, LIM_FOCO);
+  juntar(porValor, 10);
+  if (!porNome.length) juntar(porOperacao, 30);
+  if (!porNome.length) juntar(porData.slice().sort((a,b) => b.valor - a.valor), 30);
+
+  let resto = S.rows.filter(r => !vistos.has(r.id));
+  const cortou = resto.length > LIM_RESTO;
+  if (cortou) resto = resto.slice().sort((a,b) => b.valor - a.valor).slice(0, LIM_RESTO);
+
+  S.alias = {}; let n = 0;
+  const cod = r => { const a = 'L' + (++n); S.alias[a] = r.id; return a; };
+  const completo = r => `${cod(r)}|${r.contribuinte}|${r.operacao}|${r.valor}|${r.dataPagamento}|${r.status}|${r.pix}|${String(r.acordo||'').slice(0,70)}`;
+  const curto = r => `${cod(r)}|${r.contribuinte}|${r.operacao}|${r.valor}|${r.dataPagamento}|${r.status}`;
+
+  const partes = [];
+  if (foco.length){
+    const porPessoa = {};
+    foco.forEach(r => { porPessoa[r.contribuinte] = porPessoa[r.contribuinte] || {v:0,n:0};
+      porPessoa[r.contribuinte].v += r.valor; porPessoa[r.contribuinte].n++; });
+    partes.push(`EM FOCO — ligados ao que está sendo conversado. O ajuste pedido está quase certamente aqui:\n` +
+      foco.map(completo).join('\n') +
+      `\nTotais do foco: ` + Object.entries(porPessoa).map(([k,x]) => `${k}: ${x.v.toFixed(2)} em ${x.n} lançamento(s)`).join('; '));
   }
-  return rows.map(r => `${r.id}|${r.contribuinte}|${r.operacao}|${r.valor}|${r.dataPagamento}|${r.status}|${r.pix}|${r.acordo}`).join('\n');
+  partes.push(`DEMAIS LANÇAMENTOS (amostra dos maiores, sem chave nem observação):\n${resto.map(curto).join('\n')}`);
+  partes.push(`Você recebeu ${n} dos ${S.rows.length} lançamentos da base${cortou ? ' — a lista é parcial, use os totais calculados acima para somas e contagens' : ''}.`);
+  return partes.join('\n\n');
 }
+
+/* ---------- chamada ao servidor ---------- */
 function extrairJSON(txt){
   let t = String(txt||'').replace(/```json|```/g,'').trim();
   const i = t.indexOf('{'), j = t.lastIndexOf('}');
   if (i >= 0 && j > i) t = t.slice(i, j+1);
-  return JSON.parse(t);
+  const o = JSON.parse(t);
+  return {resposta: String(o.resposta ?? o.texto ?? '').trim(), operacoes: Array.isArray(o.operacoes) ? o.operacoes : []};
 }
-function urlProxy(){ return Local.get('tesouraria:proxy') || PROXY_ASSISTENTE; }
-
 const espera = ms => new Promise(r => setTimeout(r, ms));
-const transitorio = t => /503|429|UNAVAILABLE|RESOURCE_EXHAUSTED|high demand|overload|Failed to fetch|NetworkError|timeout/i.test(String(t));
+const transitorio = t => /503|429|500|502|504|UNAVAILABLE|RESOURCE_EXHAUSTED|high demand|overload|abort|demorou|Failed to fetch|NetworkError|timeout/i.test(String(t));
 function erroLegivel(t){
   const bruto = String(t || 'erro desconhecido');
+  if (/abort/i.test(bruto)) return 'o servidor demorou demais para responder';
   try { const j = JSON.parse(bruto.slice(bruto.indexOf('{'))); if (j.error && j.error.message) return j.error.message; } catch(e){}
   const m = bruto.match(/"message":\s*"([^"]+)"/);
   return (m ? m[1] : bruto).slice(0, 220);
 }
+const urlProxyAtual = () => Local.get('tesouraria:proxy') || PROXY_ASSISTENTE;
+
+async function postProxy(corpo, ms){
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), ms || 45000);
+  try {
+    const res = await fetch(urlProxyAtual(), {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: corpo, signal: ctrl.signal});
+    if (!res.ok) throw new Error('o servidor respondeu ' + res.status);
+    return await res.json();
+  } finally { clearTimeout(t); }
+}
 
 async function chamarIA(msg, correcao){
-  const url = urlProxy();
-  if (!url) throw new Error('O servidor do assistente ainda não foi configurado em Ajustes.');
+  if (!urlProxyAtual()) throw new Error('O servidor do assistente ainda não foi configurado em Ajustes.');
   const conversa = S.chat.slice(-12).map(m =>
     (m.papel === 'user' ? 'OPERADOR: ' : m.papel === 'aplicado' ? 'APLICADO: ' : 'ASSISTENTE: ') + m.texto).join('\n');
-  const conteudo = `Hoje é ${fmtDate(hoje())}. Usuário: ${APP.nome || 'operador'} (papel: ${APP.papel}).
+  const conteudo = `Hoje é ${fmtDate(hoje())}. Operador: ${APP.nome || 'operador'} (${APP.papel}).
 
-TOTAIS JÁ CALCULADOS:
+TOTAIS JÁ CALCULADOS (use estes para somas e contagens):
 ${resumoNumerico()}
 
-LANÇAMENTOS (id|contribuinte|operacao|valor|dataPagamento|status|pix|acordo):
+LANÇAMENTOS no formato id|contribuinte|operacao|valor|dataPagamento|status|pix|acordo
 ${contextoRows(msg)}
 ${conversa ? '\nCONVERSA ATÉ AGORA:\n' + conversa : ''}
-${podeEditar() ? '' : '\nATENÇÃO: este usuário é somente leitura. Responda apenas perguntas e devolva "operacoes": [].'}
-NOVO PEDIDO DO OPERADOR: ${msg}${correcao ? '\n\nCORREÇÃO OBRIGATÓRIA: ' + correcao : ''}`;
+${podeEditar() ? '' : '\nATENÇÃO: operador somente leitura. Responda apenas perguntas e devolva "operacoes": [].'}
+PEDIDO: ${msg}${correcao ? '\n\nCORREÇÃO OBRIGATÓRIA: ' + correcao : ''}`;
 
+  const corpo = JSON.stringify({sistema: PROMPT_SISTEMA, conteudo, usuario: APP.email || 'local'});
   let ultimo;
   for (let tentativa = 0; tentativa < 3; tentativa++){
     try {
-      const res = await fetch(url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body: JSON.stringify({sistema: PROMPT_SISTEMA, conteudo, usuario: APP.email || 'local'})});
-      if (!res.ok) throw new Error('o servidor respondeu ' + res.status);
-      const d = await res.json();
+      const d = await postProxy(corpo);
       if (d.erro) throw new Error(erroLegivel(d.erro));
-      return extrairJSON(d.texto);
+      const plano = extrairJSON(d.texto);
+      plano.operacoes = normalizarOps(plano.operacoes);
+      plano.aviso = d.aviso || '';
+      plano.ms = d.ms || 0;
+      return plano;
     } catch(e){
       ultimo = e;
-      const vale = transitorio(e.message) || /JSON|Unexpected token/i.test(e.message);
-      if (tentativa < 2 && vale){ await espera(1600 * (tentativa + 1)); continue; }
+      if (tentativa < 2 && (transitorio(e.message) || /JSON|Unexpected token/i.test(e.message))){ await espera(1400 * (tentativa + 1)); continue; }
       throw new Error(erroLegivel(e.message));
     }
   }
   throw ultimo;
+}
+
+/* ---------- saneamento e conferência das operações ---------- */
+const ACOES = {atualizar:'atualizar', update:'atualizar', editar:'atualizar', alterar:'atualizar', modificar:'atualizar', ajustar:'atualizar',
+  criar:'criar', create:'criar', insert:'criar', add:'criar', adicionar:'criar', novo:'criar', inserir:'criar',
+  excluir:'excluir', delete:'excluir', remover:'excluir', apagar:'excluir', deletar:'excluir'};
+const MAPA_CAMPOS = {valor:'valor', value:'valor', amount:'valor', montante:'valor', quantia:'valor',
+  datapagamento:'dataPagamento', data:'dataPagamento', date:'dataPagamento', vencimento:'dataPagamento', paymentdate:'dataPagamento',
+  datalancamento:'dataLancamento', lancamento:'dataLancamento',
+  contribuinte:'contribuinte', nome:'contribuinte', name:'contribuinte', beneficiario:'contribuinte', favorecido:'contribuinte', fornecedor:'contribuinte',
+  operacao:'operacao', operation:'operacao', lote:'operacao', fechamento:'operacao',
+  acordo:'acordo', observacao:'acordo', obs:'acordo', nota:'acordo', memoria:'acordo',
+  status:'status', situacao:'status', pix:'pix', chave:'pix', chavepix:'pix',
+  tipochave:'tipoChave', tipo:'tipoChave', base:'base', origem:'base'};
+const campoDe = k => MAPA_CAMPOS[semAcento(k).replace(/[_\s-]/g,'')] || null;
+const dinheiro = v => Math.round(parseNum(v) * 100) / 100;
+
+function normalizarOps(ops){
+  return (ops || []).map(o => {
+    const acao = ACOES[semAcento(o.acao || '').trim()] || '';
+    const motivo = String(o.motivo || '').slice(0, 160);
+    const limpar = obj => { const out = {};
+      Object.entries(obj || {}).forEach(([k,v]) => { const c = campoDe(k); if (!c) return;
+        out[c] = c === 'valor' ? dinheiro(v)
+               : (c === 'dataPagamento' || c === 'dataLancamento') ? (String(v).trim() ? parseDate(v) || String(v).trim() : '')
+               : c === 'tipoChave' ? String(v).toUpperCase().trim()
+               : typeof v === 'string' ? v.trim() : v; });
+      return out; };
+    if (acao === 'criar') return {acao, dados: limpar(o.dados || o.campos), motivo};
+    const bruto = o.id ? String(o.id).trim() : '';
+    return {acao, id: S.alias[bruto] || bruto, campos: limpar(o.campos || o.dados), motivo};
+  }).filter(o => o.acao);
+}
+function problemaDaOp(op){
+  if (op.acao === 'criar'){
+    const d = op.dados || {};
+    if (!String(d.contribuinte || '').trim()) return 'lançamento novo sem beneficiário';
+    if (!(d.valor > 0)) return 'valor inválido';
+    if (d.valor > 5e7) return 'valor fora da faixa esperada';
+    if (!parseDate(d.dataPagamento)) return 'data de pagamento inválida';
+    if (d.status && !STATUS.includes(d.status)) return `status "${d.status}" não existe`;
+    if (d.tipoChave && !TIPOS.includes(d.tipoChave)) return `tipo de chave "${d.tipoChave}" não existe`;
+    return '';
+  }
+  const r = S.rows.find(x => x.id === op.id);
+  if (!r) return 'lançamento não encontrado na base';
+  if (op.acao === 'excluir') return '';
+  const campos = op.campos || {};
+  if (!Object.keys(campos).length) return 'nenhum campo reconhecido para alterar';
+  for (const [k,v] of Object.entries(campos)){
+    if (k === 'valor' && !(v >= 0)) return 'valor inválido';
+    if (k === 'valor' && v > 5e7) return 'valor fora da faixa esperada';
+    if ((k === 'dataPagamento' || k === 'dataLancamento') && String(v).trim() && !parseDate(v)) return `data "${v}" inválida`;
+    if (k === 'status' && !STATUS.includes(v)) return `status "${v}" não existe`;
+    if (k === 'tipoChave' && !TIPOS.includes(v)) return `tipo de chave "${v}" não existe`;
+  }
+  const igual = Object.entries(campos).every(([k,v]) => String(r[k]) === String(v));
+  if (igual) return 'não muda nada no lançamento';
+  return '';
+}
+function conferir(ops){
+  const boas = [], ruins = [];
+  (ops || []).forEach(op => { const erro = problemaDaOp(op); erro ? ruins.push({op, erro}) : boas.push(op); });
+  return {boas, ruins};
+}
+function efeitoLiquido(ops){
+  let antes = 0, depois = 0; const nomes = new Set();
+  ops.forEach(op => {
+    if (op.acao === 'criar'){ depois += op.dados.valor || 0; nomes.add(op.dados.contribuinte); return; }
+    const r = S.rows.find(x => x.id === op.id); if (!r) return;
+    nomes.add(r.contribuinte); antes += r.valor;
+    if (op.acao === 'excluir') return;
+    depois += op.campos.valor !== undefined ? op.campos.valor : r.valor;
+  });
+  return {antes: Math.round(antes*100)/100, depois: Math.round(depois*100)/100,
+          dif: Math.round((depois - antes)*100)/100, nomes: [...nomes]};
 }
 
 /* ---------- UI do chat ---------- */
@@ -1420,9 +1578,12 @@ $('#hints').addEventListener('click', e => { const b = e.target.closest('button'
 function bolha(cls, html){ const d = document.createElement('div'); d.className = 'msg ' + cls; d.innerHTML = html;
   $('#msgs').appendChild(d); $('#msgs').scrollTop = 1e6; return d; }
 function limparConversa(){
-  S.chat = []; $('#msgs').innerHTML = '';
+  S.chat = []; S.alias = {}; $('#msgs').innerHTML = '';
   bolha('sys', 'Conversa limpa. Pergunte sobre os pagamentos ou descreva um ajuste.');
 }
+const ehPergunta = t => /\?\s*$|\bpoderia (confirmar|informar|dizer)|qual deles|a quem se refere|me diga|confirma /i.test(String(t||'').trim());
+const falaEmMudanca = t => /\b(vou |proposta|ajust|alter|remarc|remanescent|restante|transfer|dividi|divid|antecip|adia[rn]|mov(er|i|ido)|cri(ar|ei|ado)|adicion|inclu|marcar como|aplicar)/i.test(String(t||''));
+const pediuMudanca = t => /\b(ajust|mud[ae]|alter|passe|passa|transfer|divid|remarc|antecip|adia|cri[ae]|adicion|inclu|marc[ae]|aplic|coloc|jog[ae]|põe|ponha)/i.test(String(t||''));
 
 let enviando = false;
 async function enviar(){
@@ -1432,74 +1593,103 @@ async function enviar(){
   bolha('me', esc(txt));
   enviando = true; $('#chatSend').disabled = true;
   const load = bolha('ai', '<span class="typing"><i></i><i></i><i></i></span>');
-  let plano;
+  let plano, exame;
   try {
     plano = await chamarIA(txt);
-    if (semOperacoes(plano) && !ehPergunta(plano.resposta) && (falaEmMudanca(plano.resposta) || pediuMudanca(txt))){
+    exame = conferir(plano.operacoes);
+    const anunciouSemOperar = !plano.operacoes.length && !ehPergunta(plano.resposta) && (falaEmMudanca(plano.resposta) || pediuMudanca(txt));
+    const tudoInvalido = plano.operacoes.length > 0 && !exame.boas.length;
+    if (anunciouSemOperar || tudoInvalido){
       load.innerHTML = '<span class="typing"><i></i><i></i><i></i></span>';
-      plano = await chamarIA(txt, 'Sua resposta anterior anunciou um ajuste mas veio com "operacoes": [] — o operador não recebeu nada para aplicar e nenhum valor mudou. Devolva agora exatamente esse mesmo ajuste dentro de "operacoes", usando os ids reais da lista. Se na verdade faltar informação para executar, então pergunte objetivamente e não descreva ajuste nenhum.');
+      const motivo = tudoInvalido
+        ? 'As operações que você devolveu foram recusadas pela conferência do sistema: '
+          + exame.ruins.map(x => x.erro).join('; ')
+          + '. Corrija e devolva de novo, usando os códigos L da lista e os valores exatos.'
+        : 'Sua resposta anunciou um ajuste mas veio com "operacoes": [] — o operador não recebeu nada para aplicar e nenhum valor mudou. Devolva agora esse mesmo ajuste dentro de "operacoes", com os códigos L da lista. Se faltar informação, pergunte objetivamente e não descreva ajuste nenhum.';
+      plano = await chamarIA(txt, motivo);
+      exame = conferir(plano.operacoes);
     }
   } catch(err){
     load.remove(); enviando = false; $('#chatSend').disabled = false;
-    bolha('ai', `Não consegui falar com o assistente — ${esc(err.message)}. Os dados estão intactos; tente de novo em instantes ou confira a URL do servidor em Ajustes.`);
+    bolha('ai', `Não consegui falar com o assistente — ${esc(err.message)}. Nada foi alterado; tente de novo em instantes ou confira a URL do servidor em Ajustes.`);
     return;
   }
   enviando = false; $('#chatSend').disabled = false;
   load.remove();
+  if (plano.ms) $('#chatMode').textContent = `assistente com IA · resposta em ${(plano.ms/1000).toFixed(1)}s`;
+  if (plano.aviso && !S.avisado){ S.avisado = true; bolha('sys', esc(plano.aviso)); }
   const resposta = plano.resposta || 'Segue a proposta de ajuste.';
   bolha('ai', esc(resposta));
   S.chat.push({papel:'user', texto:txt}, {papel:'ai', texto:resposta});
   if (S.chat.length > 24) S.chat = S.chat.slice(-24);
-  if (plano.operacoes && plano.operacoes.length){
+
+  if (exame.boas.length || exame.ruins.length){
     if (!podeEditar()) bolha('sys', 'Seu acesso é somente leitura, então nada pode ser aplicado.');
-    else mostrarPlano(plano.operacoes);
+    else mostrarPlano(exame);
   } else if (!ehPergunta(resposta) && falaEmMudanca(resposta)){
-    bolha('sys', 'Atenção: nada foi alterado. O assistente descreveu o ajuste sem gerar o comando de confirmação — nenhum valor mudou na grade. Peça de novo citando o nome e a data do lançamento.');
+    bolha('sys', 'Atenção: nada foi alterado. O assistente descreveu o ajuste sem gerar o comando de confirmação. Peça de novo citando o nome e a data do lançamento.');
   }
 }
-const semOperacoes = pl => !pl || !pl.operacoes || !pl.operacoes.length;
-const ehPergunta = t => /\?\s*$|\bpoderia (confirmar|informar|dizer)|qual deles|a quem se refere|me diga|confirma /i.test(String(t||'').trim());
-const falaEmMudanca = t => /\b(vou |proposta|ajust|alter|remarc|remanescent|restante|transfer|dividi|divid|antecip|adia[rn]|mov(er|i|ido)|cri(ar|ei|ado)|adicion|inclu|marcar como|aplicar)/i.test(String(t||''));
-const pediuMudanca = t => /\b(ajust|mud[ae]|alter|passe|passa|transfer|divid|remarc|antecip|adia|cri[ae]|adicion|inclu|marc[ae]|aplic|coloc|jog[ae]|põe|ponha)/i.test(String(t||''));
+
+/* ---------- cartão de confirmação ---------- */
 function descreverOp(op){
   if (op.acao === 'criar'){
     const d = op.dados || {};
     return `<div class="op add"><b>Criar lançamento</b>${esc(d.contribuinte||'')} · <span class="now">${brl(d.valor)}</span> em ${fmtDate(parseDate(d.dataPagamento))}${d.operacao?` · ${esc(d.operacao)}`:''}${op.motivo?`<br><span style="color:var(--muted-2)">${esc(op.motivo)}</span>`:''}</div>`;
   }
   const r = S.rows.find(x => x.id === op.id);
-  if (!r) return `<div class="op del"><b>Lançamento não encontrado</b>id ${esc(op.id)}</div>`;
+  if (!r) return `<div class="op del"><b>Lançamento não encontrado</b></div>`;
   if (op.acao === 'excluir') return `<div class="op del"><b>Excluir</b>${esc(r.contribuinte)} · ${brl(r.valor)} em ${fmtDate(r.dataPagamento)}</div>`;
-  const campos = Object.entries(op.campos || {}).map(([k,v]) => {
-    const col = COLS.find(c=>c.k===k) || {t:k};
-    const nv = col.type === 'money' ? parseNum(v) : col.type === 'date' ? parseDate(v) : v;
-    return `${col.t}: <span class="was">${esc(fmtVal(k, r[k]))}</span> → <span class="now">${esc(fmtVal(k, nv))}</span>`;
-  }).join('<br>');
-  return `<div class="op"><b>${esc(r.contribuinte)}</b>${campos}${op.motivo?`<br><span style="color:var(--muted-2)">${esc(op.motivo)}</span>`:''}</div>`;
+  const campos = Object.entries(op.campos || {}).map(([k,v]) =>
+    `${(COLS.find(c=>c.k===k)||{t:k}).t}: <span class="was">${esc(fmtVal(k, r[k]))}</span> → <span class="now">${esc(fmtVal(k, v))}</span>`).join('<br>');
+  return `<div class="op"><b>${esc(r.contribuinte)} · ${fmtDate(r.dataPagamento)}</b>${campos}${op.motivo?`<br><span style="color:var(--muted-2)">${esc(op.motivo)}</span>`:''}</div>`;
 }
 function resumirOps(ops){
   return ops.map(op => {
-    if (op.acao === 'criar') return `criado ${(op.dados||{}).contribuinte} ${brl((op.dados||{}).valor)} em ${fmtDate(parseDate((op.dados||{}).dataPagamento))}`;
+    if (op.acao === 'criar') return `criado ${op.dados.contribuinte} ${brl(op.dados.valor)} em ${fmtDate(parseDate(op.dados.dataPagamento))}`;
     const r = S.rows.find(x => x.id === op.id) || {};
-    if (op.acao === 'excluir') return `excluído ${r.contribuinte||op.id}`;
-    return `${r.contribuinte||op.id}: ` + Object.entries(op.campos||{}).map(([k,v]) => `${k}=${v}`).join(', ');
+    if (op.acao === 'excluir') return `excluído ${r.contribuinte || ''}`;
+    return `${r.contribuinte || ''}: ` + Object.entries(op.campos||{}).map(([k,v]) => `${k}=${v}`).join(', ');
   }).join(' | ');
 }
-function mostrarPlano(ops){
+const fotoDe = ops => JSON.stringify(ops.filter(o => o.acao !== 'criar').map(o => {
+  const r = S.rows.find(x => x.id === o.id) || {};
+  return [o.id, r.valor, r.dataPagamento, r.status, r.contribuinte];
+}));
+
+function mostrarPlano(exame){
+  const {boas, ruins} = exame;
+  const efeito = efeitoLiquido(boas);
+  const foto = fotoDe(boas);
   const box = document.createElement('div'); box.className = 'plan';
-  box.innerHTML = `<div class="ph">${ops.length} alteração(ões) para confirmar</div>
-    <div class="pb">${ops.map(descreverOp).join('')}</div>
-    <div class="pf"><button class="btn primary" data-ok>Aplicar</button><button class="btn" data-no>Descartar</button></div>`;
+  const impacto = boas.length ? `<div class="impacto">Soma dos envolvidos: <b>${brl(efeito.antes)}</b> → <b>${brl(efeito.depois)}</b>
+      <span class="${efeito.dif === 0 ? 'neutro' : 'dif'}">${efeito.dif === 0 ? 'sem diferença' : (efeito.dif > 0 ? '+' : '') + brl(efeito.dif)}</span></div>` : '';
+  box.innerHTML = `<div class="ph">${boas.length ? boas.length + ' alteração(ões) para confirmar' : 'Nada pode ser aplicado'}</div>
+    <div class="pb">${boas.slice(0,25).map(descreverOp).join('')}
+      ${boas.length > 25 ? `<div class="op"><b>e mais ${boas.length - 25} alteração(ões)</b>do mesmo tipo</div>` : ''}
+      ${ruins.slice(0,8).map(x => `<div class="op bloq"><b>Não será aplicada</b>${esc(x.erro)}</div>`).join('')}
+      ${ruins.length > 8 ? `<div class="op bloq"><b>e mais ${ruins.length - 8} recusada(s)</b></div>` : ''}</div>
+    ${impacto}
+    <div class="pf">${boas.length ? '<button class="btn primary" data-ok>Aplicar</button>' : ''}<button class="btn" data-no>${boas.length ? 'Descartar' : 'Fechar'}</button></div>`;
   $('#msgs').appendChild(box); $('#msgs').scrollTop = 1e6;
+
   box.querySelector('[data-no]').onclick = () => {
-    box.remove(); bolha('sys','Alterações descartadas.');
-    S.chat.push({papel:'aplicado', texto:'o operador recusou a proposta anterior'});
+    box.remove();
+    if (boas.length){ bolha('sys','Alterações descartadas.'); S.chat.push({papel:'aplicado', texto:'o operador recusou a proposta anterior'}); }
   };
-  box.querySelector('[data-ok]').onclick = async () => {
+  const ok = box.querySelector('[data-ok]');
+  if (ok) ok.onclick = async () => {
+    if (boas.length > 30 && !confirm(`Isso altera ${boas.length} lançamentos de uma vez, movimentando ${brl(Math.abs(efeito.dif))} no total. Confirma?`)) return;
+    if (fotoDe(boas) !== foto){
+      box.querySelector('.pf').innerHTML = '<span style="color:var(--bad);font-weight:700">Os lançamentos mudaram desde a proposta</span>';
+      bolha('sys', 'Alguém alterou esses lançamentos enquanto a proposta estava aberta. Nada foi aplicado — peça o ajuste de novo para eu recalcular sobre os valores atuais.');
+      return;
+    }
     box.querySelector('.pf').innerHTML = '<span style="color:var(--muted)">Aplicando…</span>';
-    const descricao = resumirOps(ops);
-    const ok = await aplicar(ops, 'assistente', 'comando do assistente');
-    box.querySelector('.pf').innerHTML = ok ? '<span style="color:var(--ok);font-weight:700">Aplicado ✓</span>' : '<span style="color:var(--bad)">Não aplicado</span>';
-    if (ok){ S.chat.push({papel:'aplicado', texto:descricao}); go('lanc'); toast('Aplicado — todos os usuários já veem a mudança'); }
+    const descricao = resumirOps(boas);
+    const aplicou = await aplicar(boas, 'assistente', 'comando do assistente');
+    box.querySelector('.pf').innerHTML = aplicou ? '<span style="color:var(--ok);font-weight:700">Aplicado ✓</span>' : '<span style="color:var(--bad)">Não aplicado</span>';
+    if (aplicou){ S.chat.push({papel:'aplicado', texto:descricao}); go('lanc'); toast('Aplicado — todos os usuários já veem a mudança'); }
   };
 }
 
@@ -1509,7 +1699,7 @@ function openCfg(){
   const m = modal('Ajustes', `
     <div class="formgrid">
       <div class="field full"><label>Servidor do assistente</label>
-        <input class="inp" id="cf_u" value="${esc(urlProxy())}" placeholder="https://script.google.com/macros/s/.../exec">
+        <input class="inp" id="cf_u" value="${esc(urlProxyAtual())}" placeholder="https://script.google.com/macros/s/.../exec">
         <span style="color:var(--muted-2);font-size:12px">A chave da IA fica guardada nesse servidor, nunca nesta página.</span></div>
       <div class="field full"><label>Aparência</label>
         <select class="inp" id="cf_t">
@@ -1552,7 +1742,7 @@ function openCfg(){
 }
 $('#btnCfg').addEventListener('click', openCfg);
 function modoChat(){
-  $('#chatMode').textContent = (urlProxy() ? 'assistente com IA' : 'servidor não configurado')
+  $('#chatMode').textContent = (urlProxyAtual() ? 'assistente com IA' : 'servidor não configurado')
     + (podeEditar() ? '' : ' · somente consulta');
 }
 
