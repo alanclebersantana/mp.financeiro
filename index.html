@@ -132,6 +132,32 @@ select.inp{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xm
 .k-ALEATÓRIA{background:rgba(154,110,196,.1);color:#B48FE0;border-color:rgba(154,110,196,.25)}
 .k-BOLETO{background:rgba(216,166,46,.1);color:#DCB65A;border-color:rgba(216,166,46,.25)}
 .k-INDEFINIDO{background:var(--bad-dim);color:#DE8079;border-color:rgba(201,82,74,.3)}
+.tag.c-op0{background:rgba(91,143,201,.22)}.tag.c-op1{background:rgba(62,158,110,.22)}
+.tag.c-op2{background:rgba(193,86,26,.24)}.tag.c-op3{background:rgba(154,110,196,.22)}
+.tag.c-op4{background:rgba(216,166,46,.22)}.tag.c-op5{background:rgba(83,175,178,.22)}
+.tag.c-op6{background:rgba(201,82,74,.22)}.tag.c-op7{background:rgba(140,152,168,.22)}
+.tag.st-Pendente{background:rgba(216,166,46,.22)}.tag.st-Pago{background:rgba(62,158,110,.22)}
+.tag.st-Agendado{background:rgba(91,143,201,.22)}.tag.st-Cancelado{background:rgba(140,152,168,.18)}
+.tag.st-Reinvestido{background:rgba(154,110,196,.22)}
+html[data-tema="claro"] .tag.c-op0{background:#D8E7F6;color:#1F4E7A}
+html[data-tema="claro"] .tag.c-op1{background:#D4EDDF;color:#1A5C3C}
+html[data-tema="claro"] .tag.c-op2{background:#FADAC6;color:#8A3B10}
+html[data-tema="claro"] .tag.c-op3{background:#E4DAF4;color:#553483}
+html[data-tema="claro"] .tag.c-op4{background:#F7E7BC;color:#6B520B}
+html[data-tema="claro"] .tag.c-op5{background:#CFE9EA;color:#14595B}
+html[data-tema="claro"] .tag.c-op6{background:#F7D6D3;color:#8A2F29}
+html[data-tema="claro"] .tag.c-op7{background:#DFE4EA;color:#3E4854}
+html[data-tema="claro"] .tag.st-Pendente{background:#FBE7A8;color:#6B520B}
+html[data-tema="claro"] .tag.st-Pago{background:#CDEBD8;color:#1A5C3C}
+html[data-tema="claro"] .tag.st-Agendado{background:#D4E4F7;color:#1F4E7A}
+html[data-tema="claro"] .tag.st-Cancelado{background:#E5E9EE;color:#4E5A69}
+html[data-tema="claro"] .tag.st-Reinvestido{background:#E4DAF4;color:#553483}
+html[data-tema="claro"] .tag.k-CPF,html[data-tema="claro"] .tag.k-CNPJ{background:#E7ECF2;color:#3E4854}
+html[data-tema="claro"] .tag.k-EMAIL{background:#D8E7F6;color:#1F4E7A}
+html[data-tema="claro"] .tag.k-TELEFONE{background:#D4EDDF;color:#1A5C3C}
+html[data-tema="claro"] .tag.k-ALEATÓRIA{background:#E4DAF4;color:#553483}
+html[data-tema="claro"] .tag.k-BOLETO{background:#F7E7BC;color:#6B520B}
+html[data-tema="claro"] .tag.k-INDEFINIDO{background:#F7D6D3;color:#8A2F29}
 html[data-tema="claro"] .c-op0{color:#2C6396;background:rgba(44,99,150,.10);border-color:rgba(44,99,150,.22)}
 html[data-tema="claro"] .c-op1{color:#22714B;background:rgba(34,113,75,.10);border-color:rgba(34,113,75,.22)}
 html[data-tema="claro"] .c-op2{color:#A24814;background:rgba(162,72,20,.10);border-color:rgba(162,72,20,.22)}
@@ -225,6 +251,13 @@ table.grid tbody tr.flash td{animation:flash 1.1s ease}
 .cell{padding:5px 8px;min-height:36px;display:flex;align-items:center;gap:5px;cursor:text;overflow:hidden;min-width:0}
 .cell.num{justify-content:flex-end;font-weight:700}
 .cell.mid{justify-content:center}
+.cell.cor{padding:0}
+.cell.cor .tag{display:block;width:100%;height:36px;line-height:36px;padding:0 9px;border:none;border-radius:0;
+  font-weight:700;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cell.cor.mid .tag{text-align:center}
+.cell.cor.vazio{padding:5px 8px}
+.cell.cor select{height:36px;border-radius:0;padding:0 8px}
+.cell.cor:hover .tag{filter:brightness(1.08)}
 .cell .chip{min-width:0}
 .cell.pick{cursor:pointer}
 .cell .txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -286,6 +319,7 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .msg .btn.sm{margin-top:8px}
 .hints button{white-space:nowrap}
 .msg.sys{align-self:center;background:transparent;color:var(--muted-2);font-size:12px;text-align:center}
+.plan.aplicado{border-color:var(--ok)}
 .plan{align-self:stretch;background:var(--surface);border:1px solid var(--accent);border-radius:12px;overflow:hidden}
 .plan .ph{padding:10px 12px;border-bottom:1px solid var(--line);font-weight:800;font-size:13px;color:var(--accent-2)}
 .plan .pb{padding:10px 12px;display:flex;flex-direction:column;gap:8px;font-size:12.5px;max-height:280px;overflow:auto}
@@ -296,6 +330,8 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .op .was{color:var(--muted-2);text-decoration:line-through}
 .op .now{color:var(--accent-2);font-weight:700}
 .plan .pf{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
+.plan.feito{border-color:var(--ok)}
+.plan.feito .ph{color:var(--ok)}
 .plan .impacto{padding:8px 12px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .plan .impacto b{color:var(--text)}
 .plan .impacto .neutro{color:var(--ok);font-weight:700}
@@ -566,7 +602,7 @@ const S = {
   rows: [], ops: OPS_BASE.slice(), sel: new Set(), hist: [], log: [], users: [],
   sort: {k:'dataPagamento', dir:1},
   f: {...FILTROS_PADRAO},
-  cfg: {}, chat: [], alias: {}, avisado: false,
+  cfg: {autoAplicar: true}, chat: [], alias: {}, avisado: false,
   view: 'dash'
 };
 const APP = {modo:'local', uid:null, nome:'', email:'', foto:'', papel:'admin', online:false};
@@ -905,7 +941,9 @@ function renderTable(){
         else if (c.type === 'date') inner = `<div class="cell${al}" data-id="${r.id}" data-k="${c.k}"><span class="txt">${fmtDate(v)}</span></div>`;
         else if (c.type === 'chip'){
           const cls = c.k === 'operacao' ? opColor(v) : c.k === 'status' ? 'st-'+v : 'k-'+(v||'INDEFINIDO');
-          inner = `<div class="cell pick${al}" data-id="${r.id}" data-k="${c.k}">${v ? `<span class="chip ${cls}" title="${esc(v)}"><i></i>${esc(v)}</span>` : '<span style="color:var(--muted-2)">—</span>'}</div>`;
+          inner = v
+            ? `<div class="cell pick cor${al}" data-id="${r.id}" data-k="${c.k}"><span class="tag ${cls}" title="${esc(v)}">${esc(v)}</span></div>`
+            : `<div class="cell pick cor vazio${al}" data-id="${r.id}" data-k="${c.k}"><span style="color:var(--muted-2)">—</span></div>`;
         } else if (c.k === 'base' && ehLink(v)){
           inner = `<div class="cell" data-id="${r.id}" data-k="${c.k}"><a class="src" href="${esc(v)}" target="_blank" rel="noopener noreferrer" title="Abrir ${esc(v)}">${esc(nomeOrigem(v))}<span class="seta">↗</span></a></div>`;
         } else {
@@ -1890,10 +1928,11 @@ VOCÊ FAZ DUAS COISAS
 A) Responde perguntas sobre a fila de pagamentos. Devolva "operacoes": [].
 B) Transforma pedidos de ajuste em operações estruturadas. A proposta em texto e o array "operacoes" saem SEMPRE juntos, na mesma resposta.
 
-VOCÊ NÃO GRAVA NADA
-Quem grava é o operador, clicando em Aplicar no cartão de confirmação montado a partir de "operacoes".
-- Nunca escreva no passado ("ajustei", "criei"). Escreva a proposta.
-- Se o texto menciona qualquer alteração, "operacoes" NÃO pode vir vazio. Descrever sem operar é o pior erro possível: o operador lê que foi feito e nada acontece.
+SUAS OPERAÇÕES SÃO GRAVADAS NA HORA
+Tudo que você devolver em "operacoes" é aplicado imediatamente no sistema, sem nenhuma confirmação do operador.
+- Por isso: só devolva operação quando tiver certeza do que ele pediu. Na menor dúvida — beneficiário ambíguo, data ou valor que não bate, mais de um lançamento possível — devolva "operacoes": [] e pergunte. Perguntar é barato; gravar errado, não.
+- Se o texto menciona qualquer alteração, "operacoes" NÃO pode vir vazio: o operador leria que foi feito e nada teria acontecido.
+- Escreva a resposta dizendo o que foi feito, com os valores e as datas. O operador tem um botão de desfazer.
 - "operacoes": [] é só para perguntas, dúvidas e conversa.
 
 CAMPOS
@@ -1921,7 +1960,7 @@ REGRAS
 4. Transferir valor entre pessoas: diminua de quem cede e aumente de quem recebe (ou crie o lançamento de quem recebe). A soma tem que fechar; confira e diga o total na resposta.
 5. Antecipar ou adiar mexe só em dataPagamento.
 6. Centavos exatos, sempre. Nunca arredonde para facilitar. Devolva números, nunca texto.
-7. Ambiguidade, beneficiário inexistente ou informação faltando: "operacoes": [] e uma pergunta objetiva, listando o que você encontrou (nome, valor e data).
+7. Ambiguidade, beneficiário inexistente ou informação faltando: "operacoes": [] e uma pergunta objetiva, listando o que você encontrou (nome, valor e data). Como a gravação é imediata, na dúvida pergunte em vez de escolher.
 8. Nunca mexa em lançamento que não foi pedido.
 9. Data sem ano usa o ano do lançamento de referência.
 10. Para totais e contagens use os TOTAIS JÁ CALCULADOS do contexto — a lista de lançamentos é parcial e somar por cima dela dá número errado.
@@ -2169,6 +2208,9 @@ $('#msgs').addEventListener('click', e => {
     bolha('sys', 'Entendido, são pessoas diferentes. Não pergunto de novo sobre esses cadastros.');
     return enviar(S.memoriaIA.ultimaPergunta || 'quanto tem a pagar para ' + (nomes[0] || ''));
   }
+  const desfazer = e.target.closest('[data-desfazer]');
+  if (desfazer){ desfazer.closest('.plan').querySelector('.pf').innerHTML = '<span style="color:var(--muted)">Desfazendo…</span>';
+    return undo().then(() => bolha('sys', 'Alterações revertidas.')); }
   const ver = e.target.closest('[data-vertabela]');
   if (ver) return verNaTabela(S.memoriaIA.ultimosLancamentosIds || []);
 });
@@ -2298,8 +2340,8 @@ async function enviar(texto){
     ultimoBeneficiario: rota.classificacao.entities.pessoa || S.memoriaIA.ultimoBeneficiario});
 
   if (exame.boas.length || exame.ruins.length){
-    if (!podeEditar()) bolha('sys', 'Seu acesso é somente leitura, então nada pode ser aplicado.');
-    else mostrarPlano(exame);
+    if (!podeEditar()) bolha('sys', 'Seu acesso é somente leitura, então nada foi alterado.');
+    else await aplicarDireto(exame);
   } else if (!ehPergunta(resposta) && falaEmMudanca(resposta)){
     bolha('sys', 'Atenção: nada foi alterado. O assistente descreveu o ajuste sem gerar o comando de confirmação. Peça de novo citando o nome e a data do lançamento.');
   }
@@ -2344,40 +2386,38 @@ const fotoDe = ops => JSON.stringify(ops.filter(o => o.acao !== 'criar').map(o =
   return [o.id, r.valor, r.dataPagamento, r.status, r.contribuinte];
 }));
 
-function mostrarPlano(exame){
+const LIMITE_AUTO = 25;   // acima disso, mudança em massa ainda pede confirmação
+
+async function aplicarDireto(exame){
   const {boas, ruins} = exame;
+  if (!boas.length){
+    bolha('sys', 'Nada foi gravado: ' + ruins.map(x => x.erro).join('; ') + '.');
+    return;
+  }
   const efeito = efeitoLiquido(boas);
-  const foto = fotoDe(boas);
-  const box = document.createElement('div'); box.className = 'plan';
-  const impacto = boas.length ? `<div class="impacto">Soma dos envolvidos: <b>${brl(efeito.antes)}</b> → <b>${brl(efeito.depois)}</b>
-      <span class="${efeito.dif === 0 ? 'neutro' : 'dif'}">${efeito.dif === 0 ? 'sem diferença' : (efeito.dif > 0 ? '+' : '') + brl(efeito.dif)}</span></div>` : '';
-  box.innerHTML = `<div class="ph">${boas.length ? boas.length + ' alteração(ões) para confirmar' : 'Nada pode ser aplicado'}</div>
-    <div class="pb">${boas.slice(0,25).map(descreverOp).join('')}
-      ${boas.length > 25 ? `<div class="op"><b>e mais ${boas.length - 25} alteração(ões)</b>do mesmo tipo</div>` : ''}
-      ${ruins.slice(0,8).map(x => `<div class="op bloq"><b>Não será aplicada</b>${esc(x.erro)}</div>`).join('')}
-      ${ruins.length > 8 ? `<div class="op bloq"><b>e mais ${ruins.length - 8} recusada(s)</b></div>` : ''}</div>
-    ${impacto}
-    <div class="pf">${boas.length ? '<button class="btn primary" data-ok>Aplicar</button>' : ''}<button class="btn" data-no>${boas.length ? 'Descartar' : 'Fechar'}</button></div>`;
+  const detalhes = boas.slice(0,25).map(descreverOp).join('')
+    + (boas.length > 25 ? `<div class="op"><b>e mais ${boas.length - 25} alteração(ões)</b></div>` : '');
+  const descricao = resumirOps(boas);
+
+  const box = document.createElement('div'); box.className = 'plan aplicado';
+  box.innerHTML = `<div class="ph">Gravando ${boas.length} alteração(ões)…</div><div class="pb">${detalhes}</div>`;
   $('#msgs').appendChild(box); $('#msgs').scrollTop = 1e6;
 
-  box.querySelector('[data-no]').onclick = () => {
-    box.remove();
-    if (boas.length){ bolha('sys','Alterações descartadas.'); S.chat.push({papel:'aplicado', texto:'o operador recusou a proposta anterior'}); }
-  };
-  const ok = box.querySelector('[data-ok]');
-  if (ok) ok.onclick = async () => {
-    if (boas.length > 30 && !confirm(`Isso altera ${boas.length} lançamentos de uma vez, movimentando ${brl(Math.abs(efeito.dif))} no total. Confirma?`)) return;
-    if (fotoDe(boas) !== foto){
-      box.querySelector('.pf').innerHTML = '<span style="color:var(--bad);font-weight:700">Os lançamentos mudaram desde a proposta</span>';
-      bolha('sys', 'Alguém alterou esses lançamentos enquanto a proposta estava aberta. Nada foi aplicado — peça o ajuste de novo para eu recalcular sobre os valores atuais.');
-      return;
-    }
-    box.querySelector('.pf').innerHTML = '<span style="color:var(--muted)">Aplicando…</span>';
-    const descricao = resumirOps(boas);
-    const aplicou = await aplicar(boas, 'assistente', 'comando do assistente');
-    box.querySelector('.pf').innerHTML = aplicou ? '<span style="color:var(--ok);font-weight:700">Aplicado ✓</span>' : '<span style="color:var(--bad)">Não aplicado</span>';
-    if (aplicou){ S.chat.push({papel:'aplicado', texto:descricao}); go('lanc'); toast('Aplicado — todos os usuários já veem a mudança'); }
-  };
+  const ok = await aplicar(boas, 'assistente', 'comando do assistente');
+  if (!ok){
+    box.querySelector('.ph').innerHTML = '<span style="color:var(--bad)">Não consegui gravar — nada foi alterado</span>';
+    return;
+  }
+  box.querySelector('.ph').innerHTML = `<span style="color:var(--ok)">✓ ${boas.length} alteração(ões) gravada(s)</span>`;
+  box.insertAdjacentHTML('beforeend',
+    `<div class="impacto">Soma dos envolvidos: <b>${brl(efeito.antes)}</b> → <b>${brl(efeito.depois)}</b>
+       <span class="${efeito.dif === 0 ? 'neutro' : 'dif'}">${efeito.dif === 0 ? 'sem diferença' : (efeito.dif > 0 ? '+' : '') + brl(efeito.dif)}</span></div>
+     <div class="pf"><button class="btn sm" data-desfazer>Desfazer</button>
+       <button class="btn sm ghost" data-vertabela="1">Ver na tabela</button></div>`);
+  if (ruins.length) bolha('sys', `${ruins.length} operação(ões) não foram gravadas: ${ruins.map(x => x.erro).join('; ')}.`);
+  S.chat.push({papel:'aplicado', texto: descricao});
+  atualizarMemoriaIA({ultimosLancamentosIds: boas.map(o => o.id).filter(Boolean).slice(0,12)});
+  toast(`${boas.length} alteração(ões) gravada(s)`);
 }
 
 /* ---------- ajustes ---------- */
