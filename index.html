@@ -431,6 +431,7 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .sync{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--nav-muted-2)}
 .sync i{width:6px;height:6px;border-radius:50%;background:var(--ok)}
 .sync.off i{background:var(--bad)}
+.versao{font-size:10.5px;color:var(--nav-muted-2);opacity:.75;letter-spacing:.2px}
 .ro .cell{cursor:not-allowed}
 
 @media (max-width:900px){
@@ -475,6 +476,7 @@ try { document.documentElement.dataset.tema =
     <div class="rail-foot">
       <div class="saveline"><i class="dot" id="saveDot"></i><span id="saveTxt">Pronto</span></div>
       <div class="sync" id="syncBox"><i></i><span id="syncTxt">modo local</span></div>
+      <div class="versao" id="versaoBox" title="Versão publicada deste arquivo"></div>
       <button class="btn sm ghost" id="btnUndo" title="Desfazer (Ctrl+Z)">Desfazer última mudança</button>
     </div>
   </aside>
@@ -701,6 +703,7 @@ const FIREBASE = {
   messagingSenderId: "144052273702",
   appId: "1:144052273702:web:ade89792078cdd7c6e1ce7"
 };
+const VERSAO = "14/09/2026 20:04";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -3511,6 +3514,7 @@ window.runAITests = runAITests;
 
 /* ---------- boot ---------- */
 (function init(){
+  $('#versaoBox').textContent = 'versão ' + VERSAO;
   aplicarTema(Local.get('tesouraria:tema') || document.documentElement.dataset.tema || 'escuro');
   modoChat();
   bolha('sys', 'Pergunte sobre os pagamentos ou descreva um ajuste. A conversa continua de uma mensagem para a outra, e nada é gravado sem a sua confirmação.');
