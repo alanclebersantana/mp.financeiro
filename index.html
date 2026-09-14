@@ -217,8 +217,7 @@ html[data-tema="claro"] .fab{box-shadow:0 10px 26px rgba(193,86,26,.28)}
 .kpi .note{color:var(--muted-2);font-size:11px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
 .panel h3{margin:0 0 12px;font-size:13.5px;font-weight:800;color:var(--muted)}
-.grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;align-items:stretch}
-.grid2 > .panel{display:flex;flex-direction:column;margin-bottom:0}
+.grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;align-items:start}
 .bars{display:flex;flex-direction:column;gap:10px}
 .bar-row{display:grid;grid-template-columns:200px 1fr 150px;gap:12px;align-items:center;font-size:13px}
 .bar-row .nm{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -231,7 +230,7 @@ html[data-tema="claro"] .fab{box-shadow:0 10px 26px rgba(193,86,26,.28)}
 .tl-card .v{color:var(--accent-2);font-weight:800;margin-top:3px}
 .tl-card .n{color:var(--muted-2);font-size:11.5px}
 .tl-card.near{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent-dim) inset}
-.alert-list{display:flex;flex-direction:column;gap:8px;flex:1;min-height:0;max-height:none;overflow:auto;padding-right:2px}
+.alert-list{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow:auto;padding-right:2px}
 .caixa{display:flex;flex-direction:column;gap:7px}
 .cx{display:grid;grid-template-columns:96px minmax(120px,1fr) 148px 148px 158px;gap:12px;align-items:center;
   font-size:13px;padding:6px 8px;border-radius:var(--rs);font-variant-numeric:tabular-nums}
@@ -501,7 +500,7 @@ try { document.documentElement.dataset.tema =
         <h3>Calendário de desembolso</h3>
         <div class="timeline" id="timeline"></div>
       </div>
-      <div class="grid2" style="margin-bottom:14px">
+      <div class="grid2">
         <div class="panel">
           <h3>Por operação</h3>
           <div class="bars" id="byOp"></div>
