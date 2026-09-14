@@ -139,6 +139,12 @@ select.inp{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xm
 .tag.st-Pendente{background:rgba(216,166,46,.22)}.tag.st-Pago{background:rgba(62,158,110,.22)}
 .tag.st-Agendado{background:rgba(91,143,201,.22)}.tag.st-Cancelado{background:rgba(140,152,168,.18)}
 .tag.st-Reinvestido{background:rgba(154,110,196,.22)}
+.tag.ad-Aguardando{background:rgba(216,166,46,.22);color:#DCB65A}
+.tag.ad-Pago{background:rgba(62,158,110,.22);color:#63BE93}
+.tag.ad-Cancelado{background:rgba(140,152,168,.18);color:#98A2B1}
+html[data-tema="claro"] .tag.ad-Aguardando{background:#FBE7A8;color:#6B520B}
+html[data-tema="claro"] .tag.ad-Pago{background:#CDEBD8;color:#1A5C3C}
+html[data-tema="claro"] .tag.ad-Cancelado{background:#E5E9EE;color:#4E5A69}
 .tag.rc-Previsto{background:rgba(91,143,201,.22);color:#8FB6E0}
 .tag.rc-Recebido{background:rgba(62,158,110,.22);color:#63BE93}
 .tag.rc-Atrasado{background:rgba(201,82,74,.22);color:#DE8079}
@@ -444,6 +450,7 @@ try { document.documentElement.dataset.tema =
       <button data-view="dash" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 13h5v8H3zM10 3h5v18h-5zM17 9h4v12h-4z"/></svg>Painel</button>
       <button data-view="lanc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M3 12h18M3 19h18"/></svg>Lançamentos</button>
       <button data-view="rec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Recebimentos</button>
+      <button data-view="adi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg>Adiantamentos</button>
       <button data-view="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>Atividade</button>
       <button data-view="users" id="navUsers" class="hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 11.2a3 3 0 1 0-1.6-5.5M18 20a5.6 5.6 0 0 0-2.2-4.4"/></svg>Usuários</button>
       <button id="btnImport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Importar</button>
@@ -519,6 +526,7 @@ try { document.documentElement.dataset.tema =
         <button class="btn sm" data-bulk="status">Alterar status</button>
         <button class="btn sm" data-bulk="data">Alterar data de pagamento</button>
         <button class="btn sm" data-bulk="op">Alterar operação</button>
+        <button class="btn sm primary" data-bulk="adiantar">Adiantamento de pagamento</button>
         <button class="btn sm" data-bulk="dup">Duplicar</button>
         <button class="btn sm" data-bulk="del">Excluir</button>
         <div class="spacer"></div>
@@ -567,6 +575,37 @@ try { document.documentElement.dataset.tema =
         <span>Recebido: <b id="rtReceb">R$ 0,00</b></span>
         <div class="spacer"></div>
         <span style="color:var(--muted-2)">Clique na célula para editar · selecione e use "Marcar como recebido"</span>
+      </div>
+    </section>
+
+    <!-- ADIANTAMENTOS -->
+    <section class="view flush hide" id="view-adi">
+      <div class="filters" style="grid-template-columns:minmax(190px,1.8fr) minmax(130px,1fr) repeat(2,minmax(110px,.8fr)) auto auto">
+        <div class="field"><label for="aQ">Buscar</label><span class="ibox">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg>
+          <input class="inp" id="aQ" placeholder="nome, operação, chave…"></span></div>
+        <div class="field"><label for="aSt">Status</label><select class="inp" id="aSt"></select></div>
+        <div class="field"><label for="aD1">Adiantar de</label><input class="inp" id="aD1" type="date"></div>
+        <div class="field"><label for="aD2">até</label><input class="inp" id="aD2" type="date"></div>
+        <button class="btn sm ghost" id="aClear">Limpar filtros</button>
+        <button class="btn sm primary" id="btnLoteAdi">Exportar lote de pagamento</button>
+      </div>
+      <div class="chips-active" id="aChips"></div>
+      <div class="bulkbar hide" id="bulkAdi">
+        <span id="bulkAdiCount">0 selecionados</span>
+        <button class="btn sm" data-bulkadi="pago">Marcar como pago</button>
+        <button class="btn sm" data-bulkadi="data">Alterar data</button>
+        <button class="btn sm" data-bulkadi="del">Tirar da fila</button>
+        <div class="spacer"></div>
+        <button class="btn sm ghost" data-bulkadi="none">Limpar seleção</button>
+      </div>
+      <div class="tablewrap"><table class="grid" id="gridAdi"><thead><tr id="theadAdi"></tr></thead><tbody id="tbodyAdi"></tbody></table></div>
+      <div class="tfoot">
+        <span id="atCount">0 na fila</span>
+        <span>Aguardando: <b id="atAguard">R$ 0,00</b></span>
+        <span>Pago: <b id="atPago">R$ 0,00</b></span>
+        <div class="spacer"></div>
+        <span style="color:var(--muted-2)">Marcar como pago também baixa o lançamento de origem, com a data do pagamento</span>
       </div>
     </section>
 
@@ -668,10 +707,21 @@ const COLS_REC = [
   {k:'dataRecebida', t:'Recebido em', w:'9%',  type:'date', al:'mid'},
   {k:'base',         t:'Origem',     w:'6%',  type:'text'}
 ];
+const STATUS_ADI = ['Aguardando','Pago','Cancelado'];
+const COLS_ADI = [
+  {k:'contribuinte', t:'Contribuinte',  w:'24%',  type:'text'},
+  {k:'operacao',     t:'Operação',      w:'17%',  type:'chip'},
+  {k:'valor',        t:'Valor',         w:'13%',  type:'money', al:'num'},
+  {k:'dataOriginal', t:'Previsto para', w:'10%',  type:'date',  al:'mid'},
+  {k:'dataAdiantada',t:'Adiantar para', w:'10%',  type:'date',  al:'mid'},
+  {k:'status',       t:'Status',        w:'10%',  type:'chip',  al:'mid'},
+  {k:'pix',          t:'Chave Pix',     w:'16%',  type:'text'}
+];
 const S = {
-  rows: [], rec: [], pagadores: [], ops: OPS_BASE.slice(), sel: new Set(), hist: [], log: [], users: [],
-  sort: {k:'dataPagamento', dir:1}, sortRec: {k:'dataPrevista', dir:1},
+  rows: [], rec: [], adi: [], pagadores: [], ops: OPS_BASE.slice(), sel: new Set(), hist: [], log: [], users: [],
+  sort: {k:'dataPagamento', dir:1}, sortRec: {k:'dataPrevista', dir:1}, sortAdi: {k:'dataAdiantada', dir:1},
   f: {...FILTROS_PADRAO}, fr: {q:'', pg:'', st:'', d1:'', d2:''},
+  fa: {q:'', st:'', d1:'', d2:''},
   cfg: {autoAplicar: true}, chat: [], alias: {}, avisado: false,
   view: 'dash'
 };
@@ -817,7 +867,7 @@ const Local = {
   get(k){ try { const v = localStorage.getItem(k); if (v != null) return v; } catch(e){} return MEM[k] ?? null; },
   set(k,v){ MEM[k] = v; try { localStorage.setItem(k,v); } catch(e){} }
 };
-let fdb = null, fauth = null, unsubRows = null, unsubRec = null, unsubLog = null, unsubUsers = null;
+let fdb = null, fauth = null, unsubRows = null, unsubRec = null, unsubAdi = null, unsubLog = null, unsubUsers = null;
 
 const Repo = {
   async escutar(){
@@ -834,6 +884,12 @@ const Repo = {
         if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
         renderAll();
       }, () => {});
+      unsubAdi && unsubAdi();
+      unsubAdi = fdb.collection('adiantamentos').onSnapshot(snap => {
+        S.adi = snap.docs.map(d => normalizeAdi({id:d.id, ...d.data()}));
+        if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
+        renderAll();
+      }, () => {});
       unsubLog && unsubLog();
       unsubLog = fdb.collection('auditoria').orderBy('ts','desc').limit(150).onSnapshot(s => {
         S.log = s.docs.map(d => d.data()); if (S.view === 'log') renderLog();
@@ -843,6 +899,8 @@ const Repo = {
       S.rows = raw ? JSON.parse(raw).map(normalize) : seedRows();
       const rawRec = Local.get('tesouraria:rec');
       S.rec = rawRec ? JSON.parse(rawRec).map(normalizeRec) : seedRec();
+      const rawAdi = Local.get('tesouraria:adi');
+      S.adi = rawAdi ? JSON.parse(rawAdi).map(normalizeAdi) : [];
       S.log = JSON.parse(Local.get('tesouraria:log') || '[]');
       renderAll();
     }
@@ -852,6 +910,7 @@ const Repo = {
     if (APP.modo !== 'nuvem'){
       Local.set('tesouraria:rows', JSON.stringify(S.rows));
       Local.set('tesouraria:rec', JSON.stringify(S.rec));
+      Local.set('tesouraria:adi', JSON.stringify(S.adi));
       return;
     }
     for (let i = 0; i < mudancas.length; i += 400){
@@ -879,6 +938,8 @@ function marcarSync(ok){
 const ENT = {
   lanc: {cols: COLS, colecao: 'lancamentos', norm: o => normalize(o), rotulo: 'lançamento',
          get: () => S.rows, set: v => { S.rows = v; }, filtrados: () => filtered()},
+  adi:  {cols: COLS_ADI, colecao: 'adiantamentos', norm: o => normalizeAdi(o), rotulo: 'adiantamento',
+         get: () => S.adi,  set: v => { S.adi = v; },  filtrados: () => filteredAdi()},
   rec:  {cols: COLS_REC, colecao: 'recebimentos', norm: o => normalizeRec(o), rotulo: 'recebimento',
          get: () => S.rec,  set: v => { S.rec = v; },  filtrados: () => filteredRec()}
 };
@@ -1129,7 +1190,7 @@ function fillSelects(){
   set($('#fTp'), TIPOS, 'Todos', S.f.tp);
 }
 function renderAll(){
-  fillSelects(); renderDash(); renderTable(); renderRec();
+  fillSelects(); renderDash(); renderTable(); renderRec(); renderAdi();
   if (S.view === 'log') renderLog();
   if (S.view === 'users') renderUsers();
   $('#grid').classList.toggle('ro', !podeEditar());
@@ -1277,6 +1338,7 @@ $('#bulkbar').addEventListener('click', async e => {
   const act = b.dataset.bulk;
   if (act === 'none'){ S.sel.clear(); renderTable(); return; }
   if (!rows.length) return;
+  if (act === 'adiantar') return enviarParaAdiantamento();
   if (!podeEditar()) return toast('Seu acesso é somente leitura.');
   let ops = [];
   if (act === 'status'){ const v = prompt('Novo status ('+STATUS.join(', ')+'):','Pago'); if (!v || !STATUS.includes(v)) return;
@@ -1295,9 +1357,10 @@ $('#bulkbar').addEventListener('click', async e => {
 function go(v){
   S.view = v;
   $$('#nav button[data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === v));
-  ['dash','lanc','rec','log','users'].forEach(x => $('#view-'+x).classList.toggle('hide', x !== v));
+  ['dash','lanc','rec','adi','log','users'].forEach(x => $('#view-'+x).classList.toggle('hide', x !== v));
   const t = {dash:['Painel','Visão consolidada da fila de pagamentos'],
              lanc:['Lançamentos','Edite direto na grade, filtre e trabalhe em lote'],
+             adi:['Adiantamentos','Fila de pagamentos antecipados — exporte o lote e dê baixa'],
              rec:['Recebimentos','Previsões e entradas confirmadas, por pagador'],
              log:['Atividade','Quem alterou o quê, e quando'],
              users:['Usuários','Controle de acesso da equipe']}[v];
@@ -1474,10 +1537,10 @@ $('#btnExport').addEventListener('click', () => {
     if (t === 'json'){ dl(new Blob([JSON.stringify(S.rows,null,2)],{type:'application/json'}), `tesouraria-${stamp}.json`); return; }
     let data, name;
     if (t === 'pix'){
-      const ok = rows.filter(r => r.status !== 'Pago' && r.status !== 'Cancelado' && detectKey(r.pix).ok && detectKey(r.pix).tipo !== 'BOLETO' && r.valor > 0);
-      if (!ok.length) return alert('Nenhum lançamento válido para o lote.');
-      data = ok.map(r => ({'Favorecido':r.contribuinte,'Tipo de chave':detectKey(r.pix).tipo,'Chave Pix':r.pix,'Valor':r.valor,'Data':fmtDate(r.dataPagamento),'Descrição':r.operacao}));
-      name = `lote-pix-${stamp}.xlsx`; toast(`${data.length} de ${rows.length} prontos para o lote`);
+      const ok = rows.filter(r => r.status !== 'Pago' && r.status !== 'Cancelado' && prontoParaLote(r));
+      const n = baixarLotePix(ok.map(r => ({pix:r.pix, valor:r.valor, nome:r.contribuinte})), `lote-pix-${stamp}.xlsx`);
+      if (n) toast(`${n} de ${rows.length} prontos para o lote`);
+      return;
     } else {
       data = rows.map(r => ({'Data Lançamento':fmtDate(r.dataLancamento),'Contribuinte':r.contribuinte,'Operação':r.operacao,
         'Acordo':r.acordo,'Valor a Pagar':r.valor,'Data de Pagamento':fmtDate(r.dataPagamento),'Status':r.status,
@@ -3083,6 +3146,221 @@ function exportarRecebimentos(){
   XLSX.utils.book_append_sheet(wb, ws, 'Recebimentos');
   XLSX.writeFile(wb, `recebimentos-${getTodaySP()}.xlsx`);
 }
+
+
+/* =========================================================
+   LOTE PIX — sempre no modelo do banco
+   Coluna A chave · B CPF/CNPJ · C valor · D nome
+   ========================================================= */
+const CAB_LOTE = ['Chave Pix ou Código Pix copia e cola (Opcional se CPF/CNPJ do Fornecedor informado)',
+                  'CPF/CNPJ do Fornecedor cadastrado', 'Valor', 'Descrição (Opcional)'];
+const LARG_LOTE = [{wch:71.3},{wch:31.2},{wch:9.7},{wch:108.3}];
+
+const formataCPF  = d => d.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+const formataCNPJ = d => d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+/** CPF sai com pontos e traço; CNPJ com a máscara dele; o resto vai como está */
+function chaveFormatada(pix){
+  const bruto = String(pix || '').trim();
+  const k = detectKey(bruto), d = digits(bruto);
+  if (k.tipo === 'CPF'  && d.length === 11) return formataCPF(d);
+  if (k.tipo === 'CNPJ' && d.length === 14) return formataCNPJ(d);
+  return bruto;
+}
+const prontoParaLote = r => r.valor > 0 && detectKey(r.pix).ok && detectKey(r.pix).tipo !== 'BOLETO';
+
+/** Gera a planilha no layout do banco. linhas: [{pix, valor, nome}] */
+function baixarLotePix(linhas, nomeArquivo){
+  if (!linhas.length){ alert('Nenhum pagamento válido para o lote.'); return 0; }
+  const aoa = [CAB_LOTE, ...linhas.map(l => [chaveFormatada(l.pix), '', Math.round(parseNum(l.valor)*100)/100, l.nome])];
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols'] = LARG_LOTE;
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+  XLSX.writeFile(wb, nomeArquivo || `lote-pix-${getTodaySP()}.xlsx`);
+  return linhas.length;
+}
+
+/* =========================================================
+   ADIANTAMENTOS
+   ========================================================= */
+function normalizeAdi(o){
+  return {
+    id: o.id || uid(),
+    origemId: String(o.origemId ?? ''),
+    contribuinte: String(o.contribuinte ?? '').replace(/\s+/g,' ').trim(),
+    operacao: String(o.operacao ?? '').trim(),
+    valor: Math.round(parseNum(o.valor)*100)/100,
+    dataOriginal: parseDate(o.dataOriginal) || '',
+    dataAdiantada: parseDate(o.dataAdiantada) || getTodaySP(),
+    status: STATUS_ADI.includes(o.status) ? o.status : 'Aguardando',
+    pix: String(o.pix ?? '').trim(),
+    tipoChave: String(o.tipoChave ?? '').trim().toUpperCase() || detectKey(o.pix).tipo,
+    base: String(o.base ?? '').trim(),
+    porQuem: o.porQuem || APP.nome || '', em: o.em || Date.now()
+  };
+}
+const aplicarAdi = (ops, origem, label) => aplicar(ops, origem, label, false, 'adi');
+
+function filteredAdi(){
+  const f = S.fa, q = f.q.trim().toLowerCase();
+  return S.adi.filter(r => {
+    if (q && !`${r.contribuinte} ${r.operacao} ${r.pix} ${r.status}`.toLowerCase().includes(q)) return false;
+    if (f.st && r.status !== f.st) return false;
+    if (f.d1 && r.dataAdiantada < f.d1) return false;
+    if (f.d2 && r.dataAdiantada > f.d2) return false;
+    return true;
+  }).sort((a,b) => {
+    const {k, dir} = S.sortAdi, col = COLS_ADI.find(c => c.k === k) || {};
+    let x = a[k], y = b[k];
+    if (col.type === 'money'){ x = Number(x)||0; y = Number(y)||0; }
+    else { x = semAcento(String(x||'')); y = semAcento(String(y||'')); }
+    return ((x > y ? 1 : x < y ? -1 : 0) * dir) || b.valor - a.valor;
+  });
+}
+
+/** copia os lançamentos selecionados para a fila de adiantamento, sem tirá-los de lá */
+async function enviarParaAdiantamento(){
+  const escolhidos = S.rows.filter(r => S.sel.has(r.id));
+  if (!escolhidos.length) return;
+  if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+  const jaNaFila = new Set(S.adi.filter(a => a.status !== 'Cancelado').map(a => a.origemId));
+  const novos = escolhidos.filter(r => !jaNaFila.has(r.id));
+  const repetidos = escolhidos.length - novos.length;
+  if (!novos.length) return toast('Esses lançamentos já estão na fila de adiantamento.');
+  const dt = parseDate(prompt(`Adiantar ${novos.length} pagamento(s) para qual data?`, fmtDate(getTodaySP())));
+  if (!dt) return;
+  const ops = novos.map(r => ({acao:'criar', dados:{origemId:r.id, contribuinte:r.contribuinte, operacao:r.operacao,
+    valor:r.valor, dataOriginal:r.dataPagamento, dataAdiantada:dt, status:'Aguardando',
+    pix:r.pix, tipoChave:r.tipoChave, base:r.base}}));
+  await aplicarAdi(ops, 'manual', `adiantamento de ${novos.length} pagamento(s)`);
+  S.sel.clear();
+  go('adi');
+  toast(`${novos.length} enviado(s) para adiantamento` + (repetidos ? ` · ${repetidos} já estavam na fila` : ''));
+}
+
+/** marca como pago no adiantamento e reflete no lançamento de origem */
+async function marcarAdiantamentoPago(alvos){
+  const dt = parseDate(prompt('Data do pagamento (dd/mm/aaaa):', fmtDate(getTodaySP())));
+  if (!dt) return;
+  await aplicarAdi(alvos.map(a => ({acao:'atualizar', id:a.id, campos:{status:'Pago', dataAdiantada:dt}})),
+    'manual', `${alvos.length} adiantamento(s) pago(s)`);
+  const ops = alvos.map(a => S.rows.find(r => r.id === a.origemId)).filter(Boolean)
+    .map(r => ({acao:'atualizar', id:r.id, campos:{status:'Pago', dataPagamento:dt,
+      acordo: (r.acordo ? r.acordo + ' · ' : '') + `pago adiantado em ${fmtDate(dt)}`}}));
+  if (ops.length) await aplicar(ops, 'manual', `baixa de ${ops.length} lançamento(s) por adiantamento`);
+  toast(`${alvos.length} pago(s) · ${ops.length} lançamento(s) atualizados`);
+}
+
+function renderAdi(){
+  const rows = filteredAdi();
+  const sel = (el, arr, ph, val) => { el.innerHTML = `<option value="">${ph}</option>` + arr.map(o => `<option>${esc(o)}</option>`).join(''); el.value = arr.includes(val) ? val : ''; };
+  sel($('#aSt'), STATUS_ADI, 'Todos', S.fa.st);
+
+  $('#theadAdi').innerHTML = '<th class="cbx"><input type="checkbox" id="chkAllAdi"></th>' +
+    COLS_ADI.map(c => `<th data-ka="${c.k}" class="${c.al||''}" style="width:${c.w}" title="Ordenar por ${c.t}">${c.t}<span class="ar"> ${S.sortAdi.k===c.k?(S.sortAdi.dir>0?'▲':'▼'):''}</span></th>`).join('') +
+    '<th class="rowmenu"></th>';
+
+  $('#tbodyAdi').innerHTML = rows.map(r => {
+    const problema = !prontoParaLote(r);
+    return `<tr data-id="${r.id}" class="${S.sel.has(r.id)?'sel':''}">
+      <td class="cbx"><input type="checkbox" data-seladi="${r.id}" ${S.sel.has(r.id)?'checked':''}></td>` +
+      COLS_ADI.map(c => {
+        const v = r[c.k], al = c.al ? ' ' + c.al : '';
+        if (c.type === 'money') return `<td><div class="cell num" data-ent="adi" data-id="${r.id}" data-k="${c.k}">${brl(v)}</div></td>`;
+        if (c.type === 'date')  return `<td><div class="cell${al}" data-ent="adi" data-id="${r.id}" data-k="${c.k}"><span class="txt">${fmtDate(v)}</span></div></td>`;
+        if (c.type === 'chip'){
+          const cls = c.k === 'operacao' ? opColor(v) : 'ad-' + v;
+          return `<td>${v ? `<div class="cell pick cor${al}" data-ent="adi" data-id="${r.id}" data-k="${c.k}"><span class="tag ${cls}" title="${esc(v)}">${esc(v)}</span></div>`
+                          : `<div class="cell pick cor vazio${al}" data-ent="adi" data-id="${r.id}" data-k="${c.k}"><span style="color:var(--muted-2)">—</span></div>`}</td>`;
+        }
+        const aviso = c.k === 'pix' && problema ? `<span class="warnmark" title="${esc(detectKey(r.pix).msg || 'sem chave válida')}">⚠</span>` : '';
+        return `<td><div class="cell" data-ent="adi" data-id="${r.id}" data-k="${c.k}">${aviso}<span class="txt" title="${esc(v)}">${esc(v)||'<span style="color:var(--muted-2)">—</span>'}</span></div></td>`;
+      }).join('') +
+      `<td class="rowmenu"><button data-deladi="${r.id}" title="Tirar da fila">✕</button></td></tr>`;
+  }).join('') || `<tr><td colspan="9"><div class="empty">Nenhum adiantamento na fila. Selecione lançamentos e use "Adiantamento de pagamento".</div></td></tr>`;
+
+  const aguardando = rows.filter(r => r.status === 'Aguardando');
+  $('#atCount').textContent = `${rows.length} de ${S.adi.length} na fila`;
+  $('#atAguard').textContent = brl(fromCents(aguardando.reduce((s,r) => s + toCents(r.valor), 0)));
+  $('#atPago').textContent = brl(fromCents(rows.filter(r => r.status === 'Pago').reduce((s,r) => s + toCents(r.valor), 0)));
+  const selecionados = S.adi.filter(r => S.sel.has(r.id));
+  $('#bulkAdi').classList.toggle('hide', !selecionados.length);
+  $('#bulkAdiCount').textContent = `${selecionados.length} selecionado(s) · ${brl(fromCents(selecionados.reduce((s,r) => s + toCents(r.valor), 0)))}`;
+}
+
+/* ---------- eventos dos adiantamentos ---------- */
+$('#tbodyAdi').addEventListener('click', e => {
+  const del = e.target.closest('[data-deladi]');
+  if (del){ const r = S.adi.find(x => x.id === del.dataset.deladi); if (!r) return;
+    if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+    if (confirm(`Tirar ${r.contribuinte} (${brl(r.valor)}) da fila de adiantamento? O lançamento original não é afetado.`))
+      aplicarAdi([{acao:'excluir', id:r.id}], 'manual', 'saída da fila de adiantamento');
+    return; }
+  const cb = e.target.closest('[data-seladi]');
+  if (cb){ cb.checked ? S.sel.add(cb.dataset.seladi) : S.sel.delete(cb.dataset.seladi); renderAdi(); return; }
+  const cell = e.target.closest('.cell'); if (cell) startEdit(cell);
+});
+$('#theadAdi').addEventListener('click', e => {
+  if (e.target.id === 'chkAllAdi'){ e.target.checked ? filteredAdi().forEach(r => S.sel.add(r.id)) : S.sel.clear(); return renderAdi(); }
+  const th = e.target.closest('th[data-ka]'); if (!th) return;
+  S.sortAdi = {k: th.dataset.ka, dir: S.sortAdi.k === th.dataset.ka ? -S.sortAdi.dir : 1};
+  renderAdi();
+});
+[['aQ','q'],['aSt','st'],['aD1','d1'],['aD2','d2']].forEach(([id,k]) =>
+  $('#'+id).addEventListener('input', e => { S.fa[k] = e.target.value; renderAll(); }));
+$('#aClear').addEventListener('click', () => { S.fa = {q:'',st:'',d1:'',d2:''};
+  ['aQ','aD1','aD2'].forEach(i => $('#'+i).value = ''); renderAll(); });
+
+$('#bulkAdi').addEventListener('click', async e => {
+  const b = e.target.closest('[data-bulkadi]'); if (!b) return;
+  const alvos = S.adi.filter(r => S.sel.has(r.id));
+  if (b.dataset.bulkadi === 'none'){ S.sel.clear(); return renderAdi(); }
+  if (!alvos.length) return;
+  if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+  const act = b.dataset.bulkadi;
+  if (act === 'pago') return marcarAdiantamentoPago(alvos);
+  if (act === 'data'){ const dt = parseDate(prompt('Nova data de adiantamento (dd/mm/aaaa):')); if (!dt) return;
+    return aplicarAdi(alvos.map(r => ({acao:'atualizar', id:r.id, campos:{dataAdiantada:dt}})), 'lote', `nova data em ${alvos.length} adiantamentos`); }
+  if (act === 'del'){ if (!confirm(`Tirar ${alvos.length} itens da fila? Os lançamentos originais continuam intactos.`)) return;
+    S.sel.clear();
+    return aplicarAdi(alvos.map(r => ({acao:'excluir', id:r.id})), 'lote', `${alvos.length} itens fora da fila`); }
+});
+$('#btnLoteAdi').addEventListener('click', () => {
+  const rows = filteredAdi().filter(r => r.status === 'Aguardando' && prontoParaLote(r));
+  const fora = filteredAdi().filter(r => r.status === 'Aguardando').length - rows.length;
+  const n = baixarLotePix(rows.map(r => ({pix:r.pix, valor:r.valor, nome:r.contribuinte})), `lote-adiantamento-${getTodaySP()}.xlsx`);
+  if (n) toast(`${n} pagamento(s) no lote` + (fora ? ` · ${fora} fora por chave inválida` : ''));
+});
+
+/* ---------- seleção arrastando na grade de lançamentos ---------- */
+let arrasto = null;
+function idsVisiveis(){ return [...$('#tbody').querySelectorAll('tr[data-id]')].map(tr => tr.dataset.id); }
+$('#tbody').addEventListener('mousedown', e => {
+  if (e.button !== 0 || e.target.closest('a, button, input, select')) return;
+  const tr = e.target.closest('tr[data-id]'); if (!tr) return;
+  arrasto = {id: tr.dataset.id, y: e.clientY, moveu: false, base: new Set(S.sel)};
+});
+document.addEventListener('mousemove', e => {
+  if (!arrasto) return;
+  if (!arrasto.moveu && Math.abs(e.clientY - arrasto.y) < 5) return;
+  arrasto.moveu = true;
+  document.body.style.userSelect = 'none';
+  const tr = document.elementFromPoint(e.clientX, e.clientY);
+  const linha = tr && tr.closest && tr.closest('#tbody tr[data-id]');
+  if (!linha) return;
+  const ids = idsVisiveis();
+  const a = ids.indexOf(arrasto.id), b = ids.indexOf(linha.dataset.id);
+  if (a < 0 || b < 0) return;
+  S.sel = new Set(arrasto.base);
+  ids.slice(Math.min(a,b), Math.max(a,b) + 1).forEach(id => S.sel.add(id));
+  renderTable();
+});
+document.addEventListener('mouseup', () => {
+  if (arrasto && arrasto.moveu){ document.body.style.userSelect = ''; setTimeout(() => { arrasto = null; }, 0); }
+  else arrasto = null;
+});
+/** um arraste não deve abrir o editor da célula onde o dedo soltou */
+$('#tbody').addEventListener('click', e => { if (arrasto && arrasto.moveu){ e.stopPropagation(); e.preventDefault(); } }, true);
 
 /* =========================================================
    TESTES LOCAIS — rode runAITests() no console
