@@ -92,6 +92,7 @@ button{cursor:pointer;border:none;background:none}
 .topbar .sub{color:var(--nav-muted-2);font-size:12.5px}
 .spacer{flex:1}
 .view{flex:1;min-height:0;overflow:auto;padding:20px}
+#view-dash{padding-bottom:96px}
 .view.flush{padding:0;display:flex;flex-direction:column}
 .hide{display:none !important}
 
@@ -207,41 +208,49 @@ html[data-tema="claro"] .steps b{color:#A24814}
 html[data-tema="claro"] .fab{box-shadow:0 10px 26px rgba(193,86,26,.28)}
 
 /* ---------- dashboard ---------- */
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:18px}
-.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 15px;position:relative;overflow:hidden}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(152px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;position:relative;overflow:hidden}
 .kpi.lead{grid-column:span 2;background:linear-gradient(160deg,var(--lead-a),var(--lead-b));border-color:var(--lead-line)}
-.kpi .lab{color:var(--muted-2);font-size:12px;font-weight:700}
-.kpi .val{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-top:4px}
+.kpi .lab{color:var(--muted-2);font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .val{font-size:18px;font-weight:800;letter-spacing:-.4px;margin-top:2px;white-space:nowrap}
 .kpi.lead .val{font-size:34px;color:var(--accent-2)}
-.kpi .note{color:var(--muted-2);font-size:11.5px;margin-top:3px}
+.kpi .note{color:var(--muted-2);font-size:11px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
 .panel h3{margin:0 0 12px;font-size:13.5px;font-weight:800;color:var(--muted)}
-.grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;align-items:start}
+.grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;align-items:stretch}
+.grid2 > .panel{display:flex;flex-direction:column;margin-bottom:0}
 .bars{display:flex;flex-direction:column;gap:10px}
-.bar-row{display:grid;grid-template-columns:150px 1fr auto;gap:10px;align-items:center;font-size:13px}
+.bar-row{display:grid;grid-template-columns:200px 1fr 150px;gap:12px;align-items:center;font-size:13px}
 .bar-row .nm{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .track{height:8px;background:var(--surface-2);border-radius:5px;overflow:hidden}
 .fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:5px;transition:width .35s ease}
-.bar-row .vl{font-weight:700;font-size:12.5px}
+.bar-row .vl{font-weight:700;font-size:12.5px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .timeline{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
 .tl-card{flex:0 0 168px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--rs);padding:11px 12px}
 .tl-card .d{font-weight:800;font-size:15px}
 .tl-card .v{color:var(--accent-2);font-weight:800;margin-top:3px}
 .tl-card .n{color:var(--muted-2);font-size:11.5px}
 .tl-card.near{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent-dim) inset}
-.alert-list{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow:auto}
+.alert-list{display:flex;flex-direction:column;gap:8px;flex:1;min-height:0;max-height:none;overflow:auto;padding-right:2px}
 .caixa{display:flex;flex-direction:column;gap:7px}
-.cx{display:grid;grid-template-columns:86px 1fr 210px;gap:10px;align-items:center;font-size:12.5px;padding:3px 6px;border-radius:var(--rs)}
+.cx{display:grid;grid-template-columns:96px minmax(120px,1fr) 148px 148px 158px;gap:12px;align-items:center;
+  font-size:13px;padding:6px 8px;border-radius:var(--rs);font-variant-numeric:tabular-nums}
+.cx > div{white-space:nowrap}
+.cxh{color:var(--muted-2);font-size:11.5px;font-weight:800;letter-spacing:.2px;text-transform:uppercase;padding:0 8px 6px}
+.cxh span:nth-child(n+3){text-align:right}
 .cx.neg{background:var(--bad-dim)}
 .cxd{color:var(--muted);font-weight:700}
 .cxb{display:flex;flex-direction:column;gap:3px}
 .cxb span{height:7px;border-radius:4px;display:block;min-width:2px}
 .cxb .in{background:var(--ok)}
 .cxb .out{background:var(--accent)}
-.cxv{display:flex;gap:10px;justify-content:flex-end;align-items:center}
-.cxv .e{color:var(--ok)}.cxv .s{color:var(--accent-2)}
-.cxv b{min-width:92px;text-align:right}
-.cxv .ruim{color:var(--bad)}.cxv .bom{color:var(--muted)}
+.cxe,.cxs,.cxsaldo{text-align:right}
+.cxe{color:var(--ok)}
+.cxs{color:var(--accent-2)}
+.cxsaldo{font-weight:800}
+.cxsaldo.ruim{color:var(--bad)}
+.cxsaldo.bom{color:var(--ok)}
+.cxzero{color:var(--muted-2)}
 .panel.alerta{border-color:var(--bad)}
 .panel.alerta h3::after{content:' — atenção';color:var(--bad)}
 .alert{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;background:var(--surface-2);border-left:3px solid var(--bad);border-radius:var(--rs);font-size:12.5px;cursor:pointer}
@@ -492,7 +501,7 @@ try { document.documentElement.dataset.tema =
         <h3>Calendário de desembolso</h3>
         <div class="timeline" id="timeline"></div>
       </div>
-      <div class="grid2">
+      <div class="grid2" style="margin-bottom:14px">
         <div class="panel">
           <h3>Por operação</h3>
           <div class="bars" id="byOp"></div>
@@ -1120,7 +1129,7 @@ function renderDash(){
   $('#byOp').innerHTML = Object.entries(byOp).sort((a,b)=>b[1]-a[1]).map(([o,v]) => `
     <div class="bar-row"><div class="nm" title="${esc(o)}">${esc(o)}</div>
       <div class="track"><div class="fill" style="width:${(v/maxOp*100).toFixed(1)}%"></div></div>
-      <div class="vl">${brlShort(v)}</div></div>`).join('') || '<div class="empty">Sem dados.</div>';
+      <div class="vl">${brl(v)}</div></div>`).join('') || '<div class="empty">Sem dados.</div>';
 
   const byBen = {};
   pend.forEach(r => { byBen[r.contribuinte] = (byBen[r.contribuinte]||0) + r.valor; });
@@ -1133,14 +1142,17 @@ function renderDash(){
 
   const dias = MotorFinanceiroMP.caixaPorDia().filter(x => x.data >= hojeSP).slice(0,12);
   const maxDia = Math.max(1, ...dias.map(x => Math.max(x.receber, x.pagar)));
-  $('#caixaDias').innerHTML = dias.length ? `<div class="caixa">` + dias.map(x => `
-    <div class="cx ${x.saldo < 0 && x.pagar > 0 ? 'neg' : ''}" data-dia="${x.data}">
-      <div class="cxd">${fmtDate(x.data)}</div>
-      <div class="cxb"><span class="in" style="width:${(x.receber/maxDia*100).toFixed(1)}%"></span>
-                       <span class="out" style="width:${(x.pagar/maxDia*100).toFixed(1)}%"></span></div>
-      <div class="cxv"><span class="e">${brlShort(x.receber)}</span><span class="s">${brlShort(x.pagar)}</span>
-        <b class="${x.saldo < 0 ? 'ruim' : 'bom'}">${x.saldo < 0 ? '' : '+'}${brlShort(x.saldo)}</b></div>
-    </div>`).join('') + '</div>'
+  $('#caixaDias').innerHTML = dias.length
+    ? `<div class="cx cxh"><span>Dia</span><span></span><span>Entra</span><span>Sai</span><span>Saldo</span></div>`
+      + `<div class="caixa">` + dias.map(x => `
+      <div class="cx ${x.saldo < 0 && x.pagar > 0 ? 'neg' : ''}" data-dia="${x.data}" title="Ver os lançamentos de ${fmtDate(x.data)}">
+        <div class="cxd">${fmtDate(x.data)}</div>
+        <div class="cxb"><span class="in" style="width:${(x.receber/maxDia*100).toFixed(1)}%"></span>
+                         <span class="out" style="width:${(x.pagar/maxDia*100).toFixed(1)}%"></span></div>
+        <div class="cxe ${x.receber ? '' : 'cxzero'}">${brl(x.receber)}</div>
+        <div class="cxs ${x.pagar ? '' : 'cxzero'}">${brl(x.pagar)}</div>
+        <div class="cxsaldo ${x.saldo < 0 ? 'ruim' : 'bom'}">${x.saldo > 0 ? '+' : ''}${brl(x.saldo)}</div>
+      </div>`).join('') + '</div>'
     : '<div class="empty">Sem movimento previsto.</div>';
 
   $('#painelCaixa').classList.toggle('alerta', negativos.length > 0);
