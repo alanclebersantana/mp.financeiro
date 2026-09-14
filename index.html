@@ -391,6 +391,9 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .gate h2{margin:0 0 4px;font-size:21px;text-align:center;font-weight:800;letter-spacing:-.4px}
 .gate p{color:var(--muted);margin:0 0 22px;font-size:13.5px;text-align:center}
 .gate .btn{width:100%;justify-content:center;padding:12px}
+.gate .ou{display:flex;align-items:center;gap:10px;margin:18px 0 14px;color:var(--muted-2);font-size:12px}
+.gate .ou::before,.gate .ou::after{content:'';flex:1;height:1px;background:var(--line)}
+.gate .field label{font-size:11.5px}
 .gate .stat{margin-top:16px;font-size:12.5px;color:var(--muted-2);text-align:center;min-height:18px}
 .gate .modo{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);text-align:center}
 .who{display:flex;align-items:center;gap:9px;padding:4px 10px 4px 4px;border-radius:999px;background:var(--nav-hover);border:1px solid var(--nav-line)}
@@ -449,7 +452,7 @@ try { document.documentElement.dataset.tema =
 <body>
 <div class="app">
   <aside class="rail">
-    <div class="brand"><img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAABYCAMAAABGS8AGAAAAYFBMVEX03VgDJSqVnVNWaTopSTQAAABnrqxic0r3lB0qXVr57l/13lh3hEbHvE/8/Ab03ld1wL55xMKhcCP/vz//fwD/f3//qlV/f38AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABuDXH5AAAAGHRSTlP+/////wD/////EaX//wFf////BAICAwJQRH6XAAADxUlEQVR42u2Za3ekIAyGJQnFu9tO2/3//3S5qRCCtR09+6U5p6fjDDy+hhCINLofmmdtGJZea+3+Nmsu4Ab4Mus5QTcXcZ0tqejmSht63c93gJ3o+e8t4GaY9cctYOuO+f0WcDM8PudbwM2gHwyMqmKY90zbEcJUjmCfgUnVLe1X/EjAyL2dKfsVWGUgGmaaMW03IgnoQX/qtAPVvJb9RMwzk3HokTvjFNgU4BHz3/k4nASXipXKHn4iRu5/6ApgYD/ymHn5EAzRdwUY8ziJ5PRegisAEq5SkwTmAxij8BDswicEvefK4KAOgT1ecreFg2GbUWafdAxswN+PmD8wqIhO5uBJmswc7K9XheMqdFKCg/beICSJUvG4CbYPRsdxtX09AbLkI828GHEmGbMyCIveeAhWftQIGdf54gvwqpgqYGumCf7NBpBEJ68+TvNtHezFAUuoB2DXNPTEOhjbNwyOIsqmFNbBo9r0RFUiuG3fNk8BJe3qrqDtOekQ3LYYyJiNRR08TRATFW1DJINbv7CASkLhAEwqrD1RCh6BHRkazFYtGezSoRsKtWWN8RDc7k5owN2gqthxbdvoAsCxOQa/BTfYJTUse7VwU4HrY/lwBWkzybRN05rilfvl0tQmkkPoh9RcBUNl2SM289pEMuzzA+S86fMlSaay5AJps6yLkpNQnokPNm9YbzfKq/xkUDamAyrNDDS/9mu/9gObTn45ne58nARo4nXBqXrw6TovUVBJbt+v83i78atl4ht13tm927k6ryYA71H8n8CA94BBCJorwMDC0a/tF4DjxjstGuAKsN8Iwl5hYdgrPwvGwIWNbIHGfobxSbCK3JXsuY5MT4HHnRvIkevIT4Eh4Xqy3SablczBgJS8YbLVhd9vymCbDrskVXmdEUzCi5AkLLcNMtaqdAUymYMdtzPdXkV2Xef3nTLYtjAymYrKtHuxZtb8btxVx6bWkL/WEckF2HNf/gRYZz+sZBLfsUDu5Z3MwJ5kn/7l1QPtP3fh70PiWyHnZSOROfg1SI3Ct4vXKtitkxK5UOzHayV365XJwHpgsSyQy8FTGdHz+TKtez5LSj8refCiD9Kr1BWZ5JCPi6jjrtis88O2GuXgRUhGZPbZ3R2Ac8v2Hzr3cnyzkW1v6nVebCDWebqf+2IOIv2szkvrMXc+tAhbR1vS1+o3qNSDY7Z31Fo/9IUnWSl47ufhFrCe328g+xOneb7eG3olL7eAtZ0o/XAH2J9KLtehlx2se4u+7Gj20aRHvu7As+8v0L18zP8AmtYi63DWszMAAAAASUVORK5CYII=" alt="Milhas Plus"><div class="brand-txt"><b>MP Planejamento Financeiro</b><span>Contas a pagar · milhas</span></div></div>
+    <div class="brand"><img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAABYCAMAAABGS8AGAAAAYFBMVEX03VgDJSqVnVNWaTopSTQAAABnrqxic0r3lB0qXVr57l/13lh3hEbHvE/8/Ab03ld1wL55xMKhcCP/vz//fwD/f3//qlV/f38AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABuDXH5AAAAGHRSTlP+/////wD/////EaX//wFf////BAICAwJQRH6XAAADxUlEQVR42u2Za3ekIAyGJQnFu9tO2/3//3S5qRCCtR09+6U5p6fjDDy+hhCINLofmmdtGJZea+3+Nmsu4Ab4Mus5QTcXcZ0tqejmSht63c93gJ3o+e8t4GaY9cctYOuO+f0WcDM8PudbwM2gHwyMqmKY90zbEcJUjmCfgUnVLe1X/EjAyL2dKfsVWGUgGmaaMW03IgnoQX/qtAPVvJb9RMwzk3HokTvjFNgU4BHz3/k4nASXipXKHn4iRu5/6ApgYD/ymHn5EAzRdwUY8ziJ5PRegisAEq5SkwTmAxij8BDswicEvefK4KAOgT1ecreFg2GbUWafdAxswN+PmD8wqIhO5uBJmswc7K9XheMqdFKCg/beICSJUvG4CbYPRsdxtX09AbLkI828GHEmGbMyCIveeAhWftQIGdf54gvwqpgqYGumCf7NBpBEJ68+TvNtHezFAUuoB2DXNPTEOhjbNwyOIsqmFNbBo9r0RFUiuG3fNk8BJe3qrqDtOekQ3LYYyJiNRR08TRATFW1DJINbv7CASkLhAEwqrD1RCh6BHRkazFYtGezSoRsKtWWN8RDc7k5owN2gqthxbdvoAsCxOQa/BTfYJTUse7VwU4HrY/lwBWkzybRN05rilfvl0tQmkkPoh9RcBUNl2SM289pEMuzzA+S86fMlSaay5AJps6yLkpNQnokPNm9YbzfKq/xkUDamAyrNDDS/9mu/9gObTn45ne58nARo4nXBqXrw6TovUVBJbt+v83i78atl4ht13tm927k6ryYA71H8n8CA94BBCJorwMDC0a/tF4DjxjstGuAKsN8Iwl5hYdgrPwvGwIWNbIHGfobxSbCK3JXsuY5MT4HHnRvIkevIT4Eh4Xqy3SablczBgJS8YbLVhd9vymCbDrskVXmdEUzCi5AkLLcNMtaqdAUymYMdtzPdXkV2Xef3nTLYtjAymYrKtHuxZtb8btxVx6bWkL/WEckF2HNf/gRYZz+sZBLfsUDu5Z3MwJ5kn/7l1QPtP3fh70PiWyHnZSOROfg1SI3Ct4vXKtitkxK5UOzHayV365XJwHpgsSyQy8FTGdHz+TKtez5LSj8refCiD9Kr1BWZ5JCPi6jjrtis88O2GuXgRUhGZPbZ3R2Ac8v2Hzr3cnyzkW1v6nVebCDWebqf+2IOIv2szkvrMXc+tAhbR1vS1+o3qNSDY7Z31Fo/9IUnWSl47ufhFrCe328g+xOneb7eG3olL7eAtZ0o/XAH2J9KLtehlx2se4u+7Gj20aRHvu7As+8v0L18zP8AmtYi63DWszMAAAAASUVORK5CYII=" alt="Milhas Plus"><div class="brand-txt"><b>MP Planejamento Financeiro</b></div></div>
     <nav class="nav" id="nav">
       <button data-view="dash" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 13h5v8H3zM10 3h5v18h-5zM17 9h4v12h-4z"/></svg>Painel</button>
       <button data-view="lanc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M3 12h18M3 19h18"/></svg>Lançamentos</button>
@@ -642,6 +645,16 @@ try { document.documentElement.dataset.tema =
     <h2>MP Planejamento Financeiro</h2>
     <p id="gateSub">Entre com a conta da empresa para ver a fila de pagamentos.</p>
     <button class="btn primary" id="btnIn">Entrar com Google</button>
+    <div class="ou" id="blocoSenha"><span>ou com e-mail e senha</span></div>
+    <div id="formSenha">
+      <div class="field"><label for="gEmail">E-mail</label><input class="inp" id="gEmail" type="email" autocomplete="username" placeholder="voce@empresa.com.br"></div>
+      <div class="field" style="margin-top:9px"><label for="gSenha">Senha</label><input class="inp" id="gSenha" type="password" autocomplete="current-password" placeholder="mínimo de 6 caracteres"></div>
+      <div style="display:flex;gap:8px;margin-top:11px">
+        <button class="btn primary" id="btnEntrarEmail" style="flex:1;justify-content:center">Entrar</button>
+        <button class="btn" id="btnCriarConta">Criar conta</button>
+      </div>
+      <button class="btn ghost sm" id="btnEsqueci" style="width:100%;justify-content:center;margin-top:8px">Esqueci minha senha</button>
+    </div>
     <div class="stat" id="gateStat"></div>
     <div class="modo hide" id="blocoLocal"><button class="btn sm ghost" id="btnLocal">Usar sem conta, só neste navegador</button></div>
   </div>
@@ -2820,9 +2833,12 @@ function verificarLiberacao(){
     $('#gateSub').textContent = 'Seu acesso foi solicitado. Um administrador precisa liberar para você ver os dados.';
     $('#gateStat').textContent = APP.email;
     $('#btnIn').classList.add('hide');
+    $('#blocoSenha').classList.add('hide'); $('#formSenha').classList.add('hide');
     return false;
   }
-  $('#btnIn').classList.remove('hide'); $('#gate').classList.add('hide');
+  $('#btnIn').classList.remove('hide');
+  $('#blocoSenha').classList.remove('hide'); $('#formSenha').classList.remove('hide');
+  $('#gate').classList.add('hide');
   return true;
 }
 function entrarLocal(){
@@ -2832,6 +2848,51 @@ function entrarLocal(){
   bolha('sys','Modo local: os dados ficam só neste navegador. Configure o Firebase no topo do arquivo para trabalhar em equipe.');
 }
 $('#btnLocal').addEventListener('click', entrarLocal);
+const ERROS_AUTH = {
+  'auth/invalid-email': 'E-mail inválido.',
+  'auth/user-not-found': 'Não encontrei uma conta com esse e-mail. Use "Criar conta".',
+  'auth/wrong-password': 'Senha incorreta.',
+  'auth/invalid-credential': 'E-mail ou senha incorretos.',
+  'auth/too-many-requests': 'Muitas tentativas. Espere alguns minutos.',
+  'auth/email-already-in-use': 'Esse e-mail já tem conta. Use "Entrar".',
+  'auth/weak-password': 'A senha precisa de pelo menos 6 caracteres.',
+  'auth/missing-password': 'Informe a senha.',
+  'auth/operation-not-allowed': 'A entrada por e-mail e senha ainda não foi ativada no Firebase.',
+  'auth/network-request-failed': 'Sem conexão com o servidor de login.'
+};
+const avisoGate = (txt, erro) => { const el = $('#gateStat'); el.textContent = txt; el.style.color = erro ? 'var(--bad)' : 'var(--muted-2)'; };
+const credenciais = () => ({email: $('#gEmail').value.trim(), senha: $('#gSenha').value});
+
+async function entrarComSenha(){
+  const {email, senha} = credenciais();
+  if (!email) return avisoGate('Informe o e-mail.', true);
+  if (!senha) return avisoGate('Informe a senha.', true);
+  avisoGate('Entrando…');
+  try { await fauth.signInWithEmailAndPassword(email, senha); }
+  catch(e){ avisoGate(ERROS_AUTH[e.code] || ('Não consegui entrar: ' + e.code), true); }
+}
+async function criarConta(){
+  const {email, senha} = credenciais();
+  if (!email) return avisoGate('Informe o e-mail para criar a conta.', true);
+  if (senha.length < 6) return avisoGate('A senha precisa de pelo menos 6 caracteres.', true);
+  avisoGate('Criando a conta…');
+  try {
+    await fauth.createUserWithEmailAndPassword(email, senha);
+    avisoGate('Conta criada. Um administrador precisa liberar seu acesso.');
+  } catch(e){ avisoGate(ERROS_AUTH[e.code] || ('Não consegui criar: ' + e.code), true); }
+}
+async function recuperarSenha(){
+  const {email} = credenciais();
+  if (!email) return avisoGate('Escreva o e-mail e clique de novo em "Esqueci minha senha".', true);
+  try { await fauth.sendPasswordResetEmail(email);
+    avisoGate('Enviei um link de redefinição para ' + email + '.');
+  } catch(e){ avisoGate(ERROS_AUTH[e.code] || ('Não consegui enviar: ' + e.code), true); }
+}
+$('#btnEntrarEmail').addEventListener('click', entrarComSenha);
+$('#btnCriarConta').addEventListener('click', criarConta);
+$('#btnEsqueci').addEventListener('click', recuperarSenha);
+['gEmail','gSenha'].forEach(id => $('#'+id).addEventListener('keydown', e => { if (e.key === 'Enter') entrarComSenha(); }));
+
 $('#btnIn').addEventListener('click', async () => {
   $('#gateStat').textContent = 'Abrindo o Google…';
   try { await fauth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
@@ -3417,6 +3478,7 @@ window.runAITests = runAITests;
     $('#blocoLocal').classList.remove('hide');
     $('#gateSub').textContent = 'O Firebase ainda não foi configurado neste arquivo. Você pode testar tudo no modo local.';
     $('#btnIn').classList.add('hide');
+    $('#blocoSenha').classList.add('hide'); $('#formSenha').classList.add('hide');
     $('#gateStat').textContent = 'Preencha FIREBASE e PROXY_ASSISTENTE no topo do arquivo.';
     return;
   }
