@@ -451,6 +451,30 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
   .formgrid{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+
+/* ---------- backups ---------- */
+.bk-topo{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.bk-estado{display:flex;align-items:center;gap:11px}
+.bk-estado .dot{width:9px;height:9px;flex:none}
+.bk-sub{color:var(--muted-2);font-size:12px;margin-top:2px}
+.bk-tab th.n,.bk-tab td.n{text-align:right;font-variant-numeric:tabular-nums}
+.bk-tab td:last-child{text-align:right;white-space:nowrap}
+.bk-motivo{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted)}
+.bk-motivo.forte{background:var(--warn-dim);color:var(--warn);border-color:transparent}
+.bk-nota{color:var(--muted-2);font-size:12.5px;max-width:78ch;line-height:1.55}
+.bk-aviso{padding:10px 12px;border-left:3px solid var(--bad);background:var(--bad-dim);border-radius:var(--rs);font-size:13px;margin:12px}
+.bk-grupo{border:1px solid var(--line);border-radius:var(--rs);margin-bottom:12px;overflow:hidden}
+.bk-grupo>header{display:flex;align-items:center;gap:9px;padding:9px 12px;background:var(--surface-2);font-weight:800;font-size:13px;cursor:pointer}
+.bk-grupo>header span{color:var(--muted-2);font-weight:600}
+.bk-item{display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:start;padding:8px 12px;border-top:1px solid var(--line-soft);font-size:13px;cursor:pointer}
+.bk-item:hover{background:var(--surface-2)}
+.bk-item.info{grid-template-columns:1fr auto;cursor:default}
+.bk-item small{display:block;color:var(--muted-2);font-size:12px;margin-top:2px}
+.bk-item .v{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+.bk-resumo{margin:0 0 14px;font-size:13px;color:var(--muted)}
+.btn.perigo{color:var(--bad);border-color:var(--bad)}
+.btn.perigo:hover{background:var(--bad-dim)}
+.rail-foot .bkline{font-size:11px;color:var(--nav-muted)}
 </style>
 </head>
 <script>
@@ -469,6 +493,7 @@ try { document.documentElement.dataset.tema =
       <button data-view="adi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg>Adiantamentos</button>
       <button data-view="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>Atividade</button>
       <button data-view="users" id="navUsers" class="hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 11.2a3 3 0 1 0-1.6-5.5M18 20a5.6 5.6 0 0 0-2.2-4.4"/></svg>Usuários</button>
+      <button data-view="bkp" id="navBkp" class="hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.7-6.4L3 8"/><path d="M3 3v5h5"/><path d="M12 7.5V12l3 2"/></svg>Backups</button>
       <button id="btnImport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Importar</button>
       <button id="btnExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21V9M7 14l5-5 5 5M4 3h16"/></svg>Exportar</button>
       <button id="btnCfg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg>Ajustes</button>
@@ -476,6 +501,7 @@ try { document.documentElement.dataset.tema =
     <div class="rail-foot">
       <div class="saveline"><i class="dot" id="saveDot"></i><span id="saveTxt">Pronto</span></div>
       <div class="sync" id="syncBox"><i></i><span id="syncTxt">modo local</span></div>
+      <div class="bkline hide" id="bkLine" title="Backup automático a cada 20 minutos"></div>
       <div class="versao" id="versaoBox" title="Versão publicada deste arquivo"></div>
       <button class="btn sm ghost" id="btnUndo" title="Desfazer (Ctrl+Z)">Desfazer última mudança</button>
     </div>
@@ -646,6 +672,23 @@ try { document.documentElement.dataset.tema =
         <p style="color:var(--muted-2);font-size:12.5px;margin-bottom:0">Leitor consulta e pergunta ao assistente. Operador edita e importa. Administrador também libera acessos.</p>
       </div>
     </section>
+
+    <!-- BACKUPS -->
+    <section class="view hide" id="view-bkp">
+      <div class="panel bk-topo">
+        <div class="bk-estado"><i class="dot" id="bkDot"></i><div><b id="bkUlt">Nenhum backup feito ainda</b><div class="bk-sub" id="bkProx"></div></div></div>
+        <div class="spacer"></div>
+        <button class="btn sm" id="bkArquivo">Abrir arquivo de backup</button>
+        <button class="btn sm primary" id="bkAgora">Fazer backup agora</button>
+        <input type="file" id="bkFile" accept=".json,application/json" class="hide">
+      </div>
+      <div class="panel" style="padding:0">
+        <div id="bkErro"></div>
+        <table class="users bk-tab"><thead><tr><th>Quando</th><th>Motivo</th><th>Por</th><th class="n">Lançamentos</th><th class="n">Recebimentos</th><th class="n">Adiantamentos</th><th></th></tr></thead>
+        <tbody id="bkList"></tbody></table>
+      </div>
+      <p class="bk-nota">O sistema guarda uma cópia completa de lançamentos, recebimentos e adiantamentos a cada 20 minutos, sempre que algo mudou e alguém com permissão de edição está com ele aberto. Ficam os backups das últimas 24 horas e um por dia dos últimos 30 dias. Excluir 5 ou mais itens de uma vez, ou restaurar um backup, gera uma cópia de segurança antes. Em <b>Comparar</b> você vê o que foi excluído ou alterado depois daquele ponto e recupera só o que precisa.</p>
+    </section>
   </main>
 </div>
 
@@ -703,7 +746,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "14/09/2026 20:04";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "15/09/2026 12:00";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -902,7 +945,7 @@ const Repo = {
     if (APP.modo === 'nuvem'){
       unsubRows && unsubRows();
       unsubRows = fdb.collection('lancamentos').onSnapshot(snap => {
-        S.rows = snap.docs.map(d => normalize({id:d.id, ...d.data()}));
+        S.rows = snap.docs.map(d => normalize({id:d.id, ...d.data()})); BK.carregado.lanc = true;
         if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
         marcarSync(true); renderAll();
       }, err => {
@@ -916,13 +959,13 @@ const Repo = {
       });
       unsubRec && unsubRec();
       unsubRec = fdb.collection('recebimentos').onSnapshot(snap => {
-        S.rec = snap.docs.map(d => normalizeRec({id:d.id, ...d.data()}));
+        S.rec = snap.docs.map(d => normalizeRec({id:d.id, ...d.data()})); BK.carregado.rec = true;
         if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
         renderAll();
       }, () => {});
       unsubAdi && unsubAdi();
       unsubAdi = fdb.collection('adiantamentos').onSnapshot(snap => {
-        S.adi = snap.docs.map(d => normalizeAdi({id:d.id, ...d.data()}));
+        S.adi = snap.docs.map(d => normalizeAdi({id:d.id, ...d.data()})); BK.carregado.adi = true;
         if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
         renderAll();
       }, () => {});
@@ -981,8 +1024,14 @@ const ENT = {
 };
 
 /* ---------- mutações: tudo passa por aqui ---------- */
-async function aplicar(ops, origem, label, semHistorico, alvo){
+async function aplicar(ops, origem, label, semHistorico, alvo, semBackup){
   if (!podeEditar()){ toast('Seu acesso é somente leitura.'); return false; }
+  const nExcluir = ops.filter(o => o.acao === 'excluir').length;
+  if (!semBackup && nExcluir >= BACKUP.limiteExclusao){
+    const st = await fazerBackup(`antes de excluir ${nExcluir} itens`, true);
+    if (st !== 'feito' && st !== 'igual' &&
+        !confirm('Não foi possível guardar um backup de segurança antes desta exclusão. Excluir mesmo assim?')) return false;
+  }
   alvo = alvo || 'lanc';
   const E = ENT[alvo], COLUNAS = E.cols;
   const nomeDe = r => alvo === 'rec' ? (r.pagador || '') : (r.contribuinte || '');
@@ -1232,6 +1281,7 @@ function renderAll(){
   fillSelects(); renderDash(); renderTable(); renderRec(); renderAdi();
   if (S.view === 'log') renderLog();
   if (S.view === 'users') renderUsers();
+  if (S.view === 'bkp') renderBackups();
   $('#grid').classList.toggle('ro', !podeEditar());
 }
 
@@ -1396,13 +1446,14 @@ $('#bulkbar').addEventListener('click', async e => {
 function go(v){
   S.view = v;
   $$('#nav button[data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === v));
-  ['dash','lanc','rec','adi','log','users'].forEach(x => $('#view-'+x).classList.toggle('hide', x !== v));
+  ['dash','lanc','rec','adi','log','users','bkp'].forEach(x => $('#view-'+x).classList.toggle('hide', x !== v));
   const t = {dash:['Painel','Visão consolidada da fila de pagamentos'],
              lanc:['Lançamentos','Edite direto na grade, filtre e trabalhe em lote'],
              adi:['Adiantamentos','Fila de pagamentos antecipados — exporte o lote e dê baixa'],
              rec:['Recebimentos','Previsões e entradas confirmadas, por pagador'],
              log:['Atividade','Quem alterou o quê, e quando'],
-             users:['Usuários','Controle de acesso da equipe']}[v];
+             users:['Usuários','Controle de acesso da equipe'],
+             bkp:['Backups','Cópias automáticas a cada 20 minutos — compare e recupere']}[v];
   $('#vTitle').textContent = t[0]; $('#vSub').textContent = t[1];
   $('#btnNew').innerHTML = v === 'rec'
     ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Novo recebimento'
@@ -2828,6 +2879,8 @@ function mostrarQuem(){
   $('#whoName').textContent = APP.nome;
   $('#whoRole').innerHTML = `<span class="badge b-${APP.papel}">${APP.papel}</span>`;
   $('#navUsers').classList.toggle('hide', APP.papel !== 'admin');
+  $('#navBkp').classList.toggle('hide', APP.papel !== 'admin');
+  if (typeof atualizarStatusBackup === 'function') atualizarStatusBackup();
   $('#btnNew').classList.toggle('hide', !podeEditar());
 }
 async function entrarNuvem(user){
@@ -2861,12 +2914,14 @@ async function ligarDados(){
     dadosLigados = true;
     await Repo.escutar();
   }
+  iniciarBackupAuto();
   $('#gate').classList.add('hide');
 }
 function desligarDados(){
   [unsubRows, unsubRec, unsubAdi, unsubLog].forEach(f => { try { f && f(); } catch(e){} });
   unsubRows = unsubRec = unsubAdi = unsubLog = null;
   dadosLigados = false;
+  pararBackupAuto();
   S.rows = []; S.rec = []; S.adi = []; S.log = [];
   renderAll();
 }
@@ -2888,6 +2943,7 @@ function entrarLocal(){
   APP.modo = 'local'; APP.papel = 'admin'; APP.nome = 'Local'; APP.uid = null;
   $('#gate').classList.add('hide'); mostrarQuem(); marcarSync(true); modoChat();
   Repo.escutar();
+  iniciarBackupAuto();
   bolha('sys','Modo local: os dados ficam só neste navegador. Configure o Firebase no topo do arquivo para trabalhar em equipe.');
 }
 $('#btnLocal').addEventListener('click', entrarLocal);
@@ -3511,6 +3567,444 @@ async function runAITests(){
   return {classificacao: linhas, validacoes, falhas};
 }
 window.runAITests = runAITests;
+
+/* =========================================================
+   BACKUP AUTOMÁTICO — cópia completa a cada 20 minutos
+   Nuvem: coleção "backups" (dados compactados, em partes)
+          + "backupControle/estado" (evita cópias repetidas
+          quando várias pessoas estão com o sistema aberto)
+   Local: últimos 15 backups neste navegador
+   ========================================================= */
+const BACKUP = {
+  intervaloMin: 20,     // de quanto em quanto tempo verifica e grava
+  manterRecentes: 72,   // ~24 h de cópias de 20 em 20 min
+  manterDias: 30,       // depois disso, 1 cópia por dia
+  limiteExclusao: 5,    // excluir 5+ itens de uma vez grava uma cópia antes
+  tamanhoParte: 800000, // caracteres por documento (limite do Firestore é 1 MiB)
+  maxLocal: 15
+};
+const BK = {carregado:{lanc:false, rec:false, adi:false}, timer:null, espera:null, rodando:false,
+  desde:0, lista:[], estado:{}, erroLista:'', erroEstado:'', unsubLista:null, unsubEstado:null, limpou:false};
+const BK_COL = 'backups';
+const BK_CTRL = () => fdb.collection('backupControle').doc('estado');
+const BK_ENT = [
+  {alvo:'lanc', chave:'lancamentos',   nome:'Lançamentos',   cols:() => COLS},
+  {alvo:'rec',  chave:'recebimentos',  nome:'Recebimentos',  cols:() => COLS_REC},
+  {alvo:'adi',  chave:'adiantamentos', nome:'Adiantamentos', cols:() => COLS_ADI}
+];
+const BK_IGNORAR = new Set(['id','porQuem','em']);
+const esperar = ms => new Promise(r => setTimeout(r, ms));
+
+/* ---------- utilidades ---------- */
+function dadosProntos(){
+  return APP.modo !== 'nuvem' || (BK.carregado.lanc && BK.carregado.rec && BK.carregado.adi);
+}
+function fotografia(){
+  const ordena = arr => arr.map(r => ({...r})).sort((a,b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+  return {lancamentos: ordena(S.rows), recebimentos: ordena(S.rec), adiantamentos: ordena(S.adi)};
+}
+function resumoFoto(f){
+  const soma = a => Math.round((a||[]).reduce((s,r) => s + (Number(r.valor)||0), 0)*100)/100;
+  return {
+    totais: {lanc:(f.lancamentos||[]).length, rec:(f.recebimentos||[]).length, adi:(f.adiantamentos||[]).length},
+    somas:  {lanc:soma(f.lancamentos), rec:soma(f.recebimentos), adi:soma(f.adiantamentos)}
+  };
+}
+async function hashTexto(t){
+  try {
+    const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
+    return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,'0')).join('');
+  } catch(e){
+    let h = 0; for (let i = 0; i < t.length; i++) h = (h*31 + t.charCodeAt(i))|0;
+    return 'h' + h + '_' + t.length;
+  }
+}
+function bytesParaB64(u8){
+  let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i+0x8000));
+  return btoa(s);
+}
+function b64ParaBytes(b){
+  const s = atob(b), u = new Uint8Array(s.length);
+  for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i);
+  return u;
+}
+async function compactar(txt){
+  if (typeof CompressionStream === 'undefined') return {formato:'json', texto:txt};
+  const fluxo = new Blob([txt]).stream().pipeThrough(new CompressionStream('gzip'));
+  return {formato:'gzip-b64', texto: bytesParaB64(new Uint8Array(await new Response(fluxo).arrayBuffer()))};
+}
+async function descompactar(formato, texto){
+  if (formato !== 'gzip-b64') return texto;
+  const fluxo = new Blob([b64ParaBytes(texto)]).stream().pipeThrough(new DecompressionStream('gzip'));
+  return await new Response(fluxo).text();
+}
+function ctrlLocal(){ try { return JSON.parse(Local.get('tesouraria:bkctrl') || '{}'); } catch(e){ return {}; } }
+function listaLocal(){ try { return JSON.parse(Local.get('tesouraria:backups') || '[]'); } catch(e){ return []; } }
+const estadoBackup = () => APP.modo === 'nuvem' ? (BK.estado || {}) : ctrlLocal();
+const listaBackups = () => APP.modo === 'nuvem' ? BK.lista : listaLocal();
+function quandoCurto(ts){
+  const d = new Date(ts), h = new Date();
+  const hm = d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+  return d.toDateString() === h.toDateString() ? 'às ' + hm : hora(ts);
+}
+
+/* ---------- gravar ----------
+   devolve: 'feito' | 'igual' (nada mudou desde o último) | 'cedo' | 'ocupado'
+            | 'indisponivel' (dados ainda carregando / sem permissão) | 'erro' */
+async function fazerBackup(motivo, forcar){
+  if (!podeEditar() || !dadosProntos()) return 'indisponivel';
+  if (forcar){ const t0 = Date.now(); while (BK.rodando && Date.now() - t0 < 20000) await esperar(200); }
+  if (BK.rodando) return 'ocupado';
+  BK.rodando = true;
+  let travou = false;
+  try {
+    const foto = fotografia();                 // estado exato deste instante
+    const json = JSON.stringify(foto);
+    const hash = await hashTexto(json);
+    const agora = Date.now();
+    const janela = BACKUP.intervaloMin*60000 - 30000;
+
+    if (APP.modo !== 'nuvem'){
+      const c = ctrlLocal();
+      if (!forcar && c.verificadoEm && agora - c.verificadoEm < janela) return 'cedo';
+      if (c.ultimoHash === hash){ c.verificadoEm = agora; Local.set('tesouraria:bkctrl', JSON.stringify(c)); return 'igual'; }
+      const {formato, texto} = await compactar(json);
+      const lista = listaLocal();
+      lista.unshift({id:'b'+agora, ts:agora, motivo, porQuem:APP.nome || 'Local', hash, formato, dados:texto, ...resumoFoto(foto)});
+      Local.set('tesouraria:backups', JSON.stringify(lista.slice(0, BACKUP.maxLocal)));
+      Local.set('tesouraria:bkctrl', JSON.stringify({ultimoTs:agora, ultimoHash:hash, verificadoEm:agora, ultimoPor:APP.nome || 'Local'}));
+      return 'feito';
+    }
+
+    // Nuvem: só uma pessoa grava por vez, e só se algo mudou
+    const ctrl = BK_CTRL();
+    const decisao = await fdb.runTransaction(async tx => {
+      const d = (await tx.get(ctrl)).data() || {};
+      if (!forcar && d.verificadoEm && agora - d.verificadoEm < janela) return 'cedo';
+      if (d.ultimoHash === hash){ tx.set(ctrl, {verificadoEm: agora}, {merge:true}); return 'igual'; }
+      if (!forcar && d.travaAte > agora && d.travaUid !== APP.uid) return 'ocupado';
+      tx.set(ctrl, {travaAte: agora + 120000, travaUid: APP.uid}, {merge:true});
+      return 'ok';
+    });
+    if (decisao !== 'ok') return decisao;
+    travou = true;
+
+    const {formato, texto} = await compactar(json);
+    const partes = [];
+    for (let i = 0; i < texto.length; i += BACKUP.tamanhoParte) partes.push(texto.slice(i, i + BACKUP.tamanhoParte));
+    if (!partes.length) partes.push('');
+    const ref = fdb.collection(BK_COL).doc('b' + agora + '_' + Math.random().toString(36).slice(2,6));
+    // as partes primeiro; o documento principal por último, para só aparecer na lista quando estiver completo
+    for (let i = 0; i < partes.length; i++) await ref.collection('partes').doc(String(i)).set({i, dados: partes[i]});
+    await ref.set({ts:agora, motivo, porQuem:APP.nome, uid:APP.uid, hash, formato,
+                   partes:partes.length, tamanho:texto.length, ...resumoFoto(foto)});
+    await ctrl.set({ultimoTs:agora, ultimoHash:hash, verificadoEm:agora, ultimoPor:APP.nome, travaAte:0}, {merge:true});
+    travou = false;
+    if (APP.papel === 'admin') limparBackupsAntigos().catch(e => console.warn('limpeza de backups', e));
+    return 'feito';
+  } catch(e){
+    console.warn('backup não concluído', e);
+    BK.ultimoErro = e.code || e.message;
+    if (travou){ try { await BK_CTRL().set({travaAte:0}, {merge:true}); } catch(_){} }
+    return 'erro';
+  } finally {
+    BK.rodando = false;
+    atualizarStatusBackup();
+  }
+}
+
+/* ---------- limpeza: 24 h completas + 1 por dia por 30 dias ---------- */
+async function limparBackupsAntigos(){
+  if (APP.modo !== 'nuvem' || APP.papel !== 'admin') return;
+  const snap = await fdb.collection(BK_COL).orderBy('ts','desc').limit(400).get();
+  const docs = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  const manter = new Set(docs.slice(0, BACKUP.manterRecentes).map(d => d.id));
+  const agora = Date.now(), dias = new Set();
+  const diaDe = ts => new Date(ts).toLocaleDateString('pt-BR', {timeZone:'America/Sao_Paulo'});
+  docs.forEach(d => {
+    const dia = diaDe(d.ts);
+    if (manter.has(d.id)){ dias.add(dia); return; }
+    if (d.ts >= agora - BACKUP.manterDias*86400000 && !dias.has(dia)){ dias.add(dia); manter.add(d.id); return; }
+    if (d.motivo !== 'automático' && d.ts >= agora - 7*86400000) manter.add(d.id);   // cópias de segurança: 7 dias
+  });
+  const cheio = docs.find(d => d.totais && (d.totais.lanc + d.totais.rec + d.totais.adi) > 0);
+  if (cheio) manter.add(cheio.id);   // nunca apaga a última cópia com dados
+  const apagar = docs.filter(d => !manter.has(d.id)).slice(0, 15);
+  for (const d of apagar){
+    const ref = fdb.collection(BK_COL).doc(d.id);
+    const partes = await ref.collection('partes').get();
+    const lote = fdb.batch();
+    partes.docs.forEach(p => lote.delete(p.ref));
+    lote.delete(ref);
+    await lote.commit();
+  }
+}
+
+/* ---------- ler ---------- */
+async function carregarBackup(meta){
+  if (APP.modo !== 'nuvem'){
+    const b = listaLocal().find(x => x.id === meta.id);
+    if (!b) throw new Error('backup não encontrado');
+    return JSON.parse(await descompactar(b.formato, b.dados));
+  }
+  const ps = await fdb.collection(BK_COL).doc(meta.id).collection('partes').get();
+  const partes = ps.docs.map(d => d.data()).sort((a,b) => a.i - b.i);
+  if (partes.length !== meta.partes) throw new Error('backup incompleto');
+  return JSON.parse(await descompactar(meta.formato, partes.map(p => p.dados).join('')));
+}
+
+/* ---------- ciclo automático ---------- */
+function iniciarBackupAuto(){
+  pararBackupAuto(true);
+  BK.desde = Date.now();
+  BK.timer = setInterval(tickBackup, 60000);
+  BK.espera = setTimeout(tickBackup, 95000);   // dá tempo de sincronizar com o servidor antes do 1º backup
+  if (APP.modo === 'nuvem') escutarBackups();
+  atualizarStatusBackup();
+}
+function pararBackupAuto(manterCarregado){
+  clearInterval(BK.timer); clearTimeout(BK.espera); BK.timer = BK.espera = null;
+  [BK.unsubLista, BK.unsubEstado].forEach(f => { try { f && f(); } catch(e){} });
+  BK.unsubLista = BK.unsubEstado = null;
+  if (!manterCarregado) BK.carregado = {lanc:false, rec:false, adi:false};
+}
+function escutarBackups(){
+  if (podeEditar()){
+    BK.unsubEstado = BK_CTRL().onSnapshot(d => { BK.estado = d.data() || {}; BK.erroEstado = ''; atualizarStatusBackup(); },
+      err => { BK.erroEstado = err.code || err.message; atualizarStatusBackup(); });
+  }
+  if (APP.papel === 'admin'){
+    BK.unsubLista = fdb.collection(BK_COL).orderBy('ts','desc').limit(150).onSnapshot(s => {
+      BK.lista = s.docs.map(d => ({id:d.id, ...d.data()})); BK.erroLista = '';
+      if (S.view === 'bkp') renderBackups();
+    }, err => { BK.erroLista = err.code || err.message; if (S.view === 'bkp') renderBackups(); });
+  }
+}
+async function tickBackup(){
+  if (!podeEditar() || Date.now() - BK.desde < 90000) return;
+  if (navigator.onLine === false) return;
+  const e = estadoBackup();
+  const vencido = !e.verificadoEm || Date.now() - e.verificadoEm >= BACKUP.intervaloMin*60000 - 30000;
+  if (vencido) await fazerBackup('automático', false);
+  if (APP.papel === 'admin' && !BK.limpou && APP.modo === 'nuvem'){
+    BK.limpou = true; limparBackupsAntigos().catch(() => {});
+  }
+  atualizarStatusBackup();
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden && BK.timer) tickBackup(); });
+
+/* ---------- tela ---------- */
+function atualizarStatusBackup(){
+  const e = estadoBackup();
+  const linha = $('#bkLine');
+  if (linha){
+    linha.classList.toggle('hide', !podeEditar() || !(BK.timer));
+    linha.textContent = e.ultimoTs ? 'Backup ' + quandoCurto(e.ultimoTs) : 'Backup: aguardando o primeiro';
+  }
+  if (S.view === 'bkp') renderBackupsTopo();
+}
+function renderBackupsTopo(){
+  const e = estadoBackup(), agora = Date.now();
+  $('#bkUlt').textContent = e.ultimoTs
+    ? `Último backup ${quandoCurto(e.ultimoTs)}${e.ultimoPor ? ' — ' + e.ultimoPor : ''}`
+    : 'Nenhum backup feito ainda';
+  let sub;
+  if (BK.erroEstado) sub = 'Sem acesso ao controle de backups (' + BK.erroEstado + '). Publique as regras do Firestore.';
+  else if (!dadosProntos()) sub = 'Aguardando os dados terminarem de carregar.';
+  else if (BK.rodando) sub = 'Gravando backup…';
+  else {
+    const min = e.verificadoEm ? Math.ceil((e.verificadoEm + BACKUP.intervaloMin*60000 - agora)/60000) : 0;
+    const quando = min > 1 ? `em ${min} min` : 'em instantes';
+    sub = (e.verificadoEm && e.ultimoTs && e.verificadoEm > e.ultimoTs + 1000 ? 'Nada mudou desde o último backup. ' : '')
+        + `Próxima verificação ${quando}.`;
+  }
+  $('#bkProx').textContent = sub;
+  const recente = e.ultimoTs && agora - e.ultimoTs < 3*3600000;
+  $('#bkDot').style.background = BK.erroEstado ? 'var(--bad)' : recente ? 'var(--ok)' : 'var(--warn)';
+}
+function renderBackups(){
+  renderBackupsTopo();
+  $('#bkErro').innerHTML = BK.erroLista
+    ? `<div class="bk-aviso">Não foi possível ler a lista de backups (${esc(BK.erroLista)}). Confira se as regras do Firestore para <b>backups</b> foram publicadas.</div>` : '';
+  const lista = listaBackups();
+  const num = (b, k) => {
+    const t = b.totais ? b.totais[k] : 0, s = b.somas ? b.somas[k] : 0;
+    return `<span title="${esc(brl(s))}">${(t||0).toLocaleString('pt-BR')}</span>`;
+  };
+  $('#bkList').innerHTML = lista.length ? lista.map(b => `
+    <tr>
+      <td>${hora(b.ts)}</td>
+      <td><span class="bk-motivo ${b.motivo === 'automático' ? '' : 'forte'}">${esc(b.motivo)}</span></td>
+      <td style="color:var(--muted)">${esc(b.porQuem || '—')}</td>
+      <td class="n">${num(b,'lanc')}</td><td class="n">${num(b,'rec')}</td><td class="n">${num(b,'adi')}</td>
+      <td><button class="btn sm ghost" data-bkdl="${b.id}">Baixar</button>
+          <button class="btn sm" data-bkver="${b.id}">Comparar e recuperar</button></td>
+    </tr>`).join('')
+    : `<tr><td colspan="7"><div class="empty">O primeiro backup é gravado cerca de 2 minutos depois de entrar, e depois a cada ${BACKUP.intervaloMin} minutos. Você também pode usar “Fazer backup agora”.</div></td></tr>`;
+}
+
+function baixarBackup(foto, meta){
+  const d = new Date(meta.ts || Date.now());
+  const p = n => String(n).padStart(2,'0');
+  const nome = `mp-financeiro-backup-${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.json`;
+  const corpo = {sistema:'MP Planejamento Financeiro', ts:meta.ts || Date.now(), motivo:meta.motivo || '', porQuem:meta.porQuem || '', ...foto};
+  dl(new Blob([JSON.stringify(corpo, null, 1)], {type:'application/json'}), nome);
+}
+
+/* ---------- comparar com o estado atual ---------- */
+function compararComAtual(foto){
+  const out = {};
+  BK_ENT.forEach(({alvo, chave}) => {
+    const doBackup = foto[chave] || [], atual = ENT[alvo].get();
+    const mAtual = new Map(atual.map(r => [r.id, r])), mBackup = new Map(doBackup.map(r => [r.id, r]));
+    const excluidos = doBackup.filter(r => r.id && !mAtual.has(r.id));
+    const alterados = [];
+    doBackup.forEach(r => {
+      const c = mAtual.get(r.id); if (!c) return;
+      const campos = {};
+      Object.keys(r).forEach(k => { if (!BK_IGNORAR.has(k) && String(r[k] ?? '') !== String(c[k] ?? '')) campos[k] = r[k]; });
+      if (Object.keys(campos).length) alterados.push({id:r.id, atual:c, campos});
+    });
+    const novos = atual.filter(r => !mBackup.has(r.id));
+    out[alvo] = {excluidos, alterados, novos};
+  });
+  return out;
+}
+function descreverItem(alvo, r){
+  const nome = (alvo === 'rec' ? r.pagador : r.contribuinte) || '(sem nome)';
+  const data = alvo === 'lanc' ? r.dataPagamento : alvo === 'rec' ? r.dataPrevista : r.dataAdiantada;
+  const extra = alvo === 'rec' ? r.descricao : r.operacao;
+  return {nome, sub: [extra, fmtDate(data), r.status].filter(Boolean).join(' · '), valor: brl(r.valor)};
+}
+function abrirComparacao(foto, rotulo, meta){
+  const diff = compararComAtual(foto);
+  const total = BK_ENT.reduce((s, {alvo}) => s + diff[alvo].excluidos.length + diff[alvo].alterados.length + diff[alvo].novos.length, 0);
+  let html = `<p class="bk-resumo">Comparando o backup de <b>${esc(rotulo)}</b> com o que está no sistema agora.</p>`;
+  if (!total) html += '<div class="empty">Nada mudou desde este backup.</div>';
+  BK_ENT.forEach(({alvo, nome, cols}) => {
+    const d = diff[alvo];
+    if (d.excluidos.length){
+      html += `<div class="bk-grupo"><header><input type="checkbox" data-todos="${alvo}:x"> ${nome} excluídos depois do backup <span>(${d.excluidos.length})</span></header>
+        ${d.excluidos.map((r, i) => { const x = descreverItem(alvo, r); return `
+          <label class="bk-item"><input type="checkbox" data-bk="${alvo}:x:${i}">
+            <div>${esc(x.nome)}<small>${esc(x.sub)}</small></div><div class="v">${x.valor}</div></label>`; }).join('')}</div>`;
+    }
+    if (d.alterados.length){
+      html += `<div class="bk-grupo"><header><input type="checkbox" data-todos="${alvo}:a"> ${nome} alterados depois do backup <span>(${d.alterados.length})</span></header>
+        ${d.alterados.map((a, i) => { const x = descreverItem(alvo, a.atual);
+          const mud = Object.keys(a.campos).map(k => {
+            const col = cols().find(c => c.k === k);
+            return `${col ? col.t : k}: ${fmtVal(k, a.atual[k], cols())} → volta a ${fmtVal(k, a.campos[k], cols())}`;
+          }).join('<br>');
+          return `<label class="bk-item"><input type="checkbox" data-bk="${alvo}:a:${i}">
+            <div>${esc(x.nome)}<small>${esc(mud).replace(/&lt;br&gt;/g,'<br>')}</small></div><div class="v">${x.valor}</div></label>`; }).join('')}</div>`;
+    }
+    if (d.novos.length){
+      const mostra = d.novos.slice(0, 40);
+      html += `<div class="bk-grupo"><header>${nome} criados depois do backup <span>(${d.novos.length}) — só saem se você restaurar tudo</span></header>
+        ${mostra.map(r => { const x = descreverItem(alvo, r); return `
+          <div class="bk-item info"><div>${esc(x.nome)}<small>${esc(x.sub)}</small></div><div class="v">${x.valor}</div></div>`; }).join('')}
+        ${d.novos.length > mostra.length ? `<div class="bk-item info"><div><small>e mais ${d.novos.length - mostra.length}</small></div></div>` : ''}</div>`;
+    }
+  });
+  const m = modal('Comparar backup', html, `
+    <button class="btn" data-close>Fechar</button>
+    <button class="btn" id="bkDlM">Baixar arquivo</button>
+    <button class="btn perigo" id="bkTudo" ${total ? '' : 'disabled'}>Restaurar tudo para este ponto</button>
+    <button class="btn primary" id="bkSel" ${total ? '' : 'disabled'}>Recuperar selecionados</button>`);
+  m.querySelector('.body').addEventListener('change', e => {
+    const t = e.target.closest('[data-todos]'); if (!t) return;
+    const [alvo, tipo] = t.dataset.todos.split(':');
+    m.querySelectorAll(`input[data-bk^="${alvo}:${tipo}:"]`).forEach(cb => { cb.checked = t.checked; });
+  });
+  m.querySelector('#bkDlM').addEventListener('click', () => baixarBackup(foto, meta || {}));
+  m.querySelector('#bkSel').addEventListener('click', () => recuperarSelecionados(diff, m, rotulo));
+  m.querySelector('#bkTudo').addEventListener('click', async () => { if (await restaurarTudo(foto, rotulo)) m.remove(); });
+}
+
+async function recuperarSelecionados(diff, m, rotulo){
+  if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+  const marcados = [...m.querySelectorAll('input[data-bk]:checked')];
+  if (!marcados.length) return toast('Marque ao menos um item para recuperar.');
+  const porAlvo = {};
+  marcados.forEach(cb => {
+    const [alvo, tipo, i] = cb.dataset.bk.split(':');
+    const lista = porAlvo[alvo] || (porAlvo[alvo] = []);
+    if (tipo === 'x'){
+      const r = diff[alvo].excluidos[+i];
+      if (!ENT[alvo].get().some(x => x.id === r.id)) lista.push({acao:'criar', dados:{...r}});
+    } else {
+      const a = diff[alvo].alterados[+i];
+      lista.push({acao:'atualizar', id:a.id, campos:{...a.campos}});
+    }
+  });
+  let n = 0;
+  for (const [alvo, ops] of Object.entries(porAlvo)){
+    if (!ops.length) continue;
+    if (await aplicar(ops, 'backup', `recuperação de ${ops.length} item(ns) do backup de ${rotulo}`, false, alvo)) n += ops.length;
+  }
+  m.remove();
+  toast(n ? `${n} item(ns) recuperado(s). Dá para desfazer com Ctrl+Z.` : 'Nada foi recuperado.');
+}
+
+async function restaurarTudo(foto, rotulo){
+  if (APP.papel !== 'admin') { toast('Só administradores restauram um backup inteiro.'); return false; }
+  const diff = compararComAtual(foto);
+  const linhas = BK_ENT.map(({alvo, nome}) =>
+    `${nome}: ${diff[alvo].excluidos.length} voltam, ${diff[alvo].alterados.length} revertidos, ${diff[alvo].novos.length} removidos`).join('\n');
+  const resp = prompt(`Restaurar tudo para o backup de ${rotulo}?\n\n${linhas}\n\nAntes disso, o estado atual é guardado em um novo backup.\nDigite RESTAURAR para confirmar.`);
+  if (String(resp || '').trim().toUpperCase() !== 'RESTAURAR') return false;
+  const st = await fazerBackup('antes de restaurar', true);
+  if (st !== 'feito' && st !== 'igual' &&
+      !confirm('Não foi possível guardar o estado atual antes de restaurar. Continuar mesmo assim?')) return false;
+  let ok = true;
+  for (const {alvo} of BK_ENT){
+    const d = diff[alvo];
+    const ops = [
+      ...d.novos.map(r => ({acao:'excluir', id:r.id})),
+      ...d.excluidos.map(r => ({acao:'criar', dados:{...r}})),
+      ...d.alterados.map(a => ({acao:'atualizar', id:a.id, campos:{...a.campos}}))
+    ];
+    if (ops.length && !(await aplicar(ops, 'backup', `restauração completa (${rotulo})`, false, alvo, true))) ok = false;
+  }
+  toast(ok ? 'Backup restaurado. Um backup do estado anterior foi guardado.' : 'Restauração parcial — confira a tela de Atividade.');
+  return true;
+}
+
+/* ---------- eventos da tela ---------- */
+$('#bkList').addEventListener('click', async e => {
+  const b = e.target.closest('[data-bkver],[data-bkdl]'); if (!b) return;
+  const id = b.dataset.bkver || b.dataset.bkdl;
+  const meta = listaBackups().find(x => x.id === id); if (!meta) return;
+  const txt = b.textContent; b.disabled = true; b.textContent = 'Abrindo…';
+  try {
+    const foto = await carregarBackup(meta);
+    if (b.dataset.bkdl) baixarBackup(foto, meta);
+    else abrirComparacao(foto, hora(meta.ts), meta);
+  } catch(err){ toast('Não consegui abrir o backup: ' + (err.code || err.message)); }
+  finally { b.disabled = false; b.textContent = txt; }
+});
+$('#bkAgora').addEventListener('click', async () => {
+  const b = $('#bkAgora'); b.disabled = true; b.textContent = 'Gravando…';
+  const st = await fazerBackup('manual', true);
+  b.disabled = false; b.textContent = 'Fazer backup agora';
+  toast({feito:'Backup gravado.', igual:'Nada mudou desde o último backup — ele já cobre o estado atual.',
+         indisponivel:'Os dados ainda estão carregando, ou seu acesso não permite gravar backups.',
+         ocupado:'Outro backup está em andamento. Tente em alguns segundos.'}[st]
+        || 'Backup não concluído: ' + (BK.ultimoErro || st));
+  renderBackups();
+});
+$('#bkArquivo').addEventListener('click', () => $('#bkFile').click());
+$('#bkFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try {
+    const obj = JSON.parse(await f.text());
+    if (!Array.isArray(obj.lancamentos) || !Array.isArray(obj.recebimentos) || !Array.isArray(obj.adiantamentos))
+      throw new Error('o arquivo não é um backup deste sistema');
+    abrirComparacao({lancamentos:obj.lancamentos, recebimentos:obj.recebimentos, adiantamentos:obj.adiantamentos},
+      obj.ts ? `${hora(obj.ts)} (arquivo)` : f.name, {ts:obj.ts, motivo:obj.motivo, porQuem:obj.porQuem});
+  } catch(err){ toast('Não consegui ler o arquivo: ' + err.message); }
+});
 
 /* ---------- boot ---------- */
 (function init(){
