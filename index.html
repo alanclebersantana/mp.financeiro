@@ -501,8 +501,8 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 #view-mensal .mn-ph{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;flex-wrap:wrap}
 #view-mensal .mn-ph h3{margin:0}
 #view-mensal .mn-ph small{color:var(--muted-2);font-size:12px}
-#view-mensal .grid2{grid-template-columns:1fr 1fr}
-#view-mensal .grid2 > *{min-width:0}
+#view-mensal .grid2{grid-template-columns:1fr 1fr;align-items:stretch;margin-bottom:14px}
+#view-mensal .grid2 > *{min-width:0;margin-bottom:0}
 #view-mensal .mn-nota{color:var(--muted-2);font-size:12px;margin-top:10px}
 #view-mensal .mn-e{color:var(--ok)} #view-mensal .mn-s{color:var(--accent-2)}
 #view-mensal .mn-pos{color:var(--ok)} #view-mensal .mn-neg{color:var(--bad)} #view-mensal .mn-mut{color:var(--muted-2)}
@@ -559,14 +559,15 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 #view-mensal .mn-fxs{max-height:520px;overflow:auto}
 
 #view-mensal .mn-rk{display:flex;flex-direction:column;gap:9px}
-#view-mensal .mn-rk-row{display:grid;grid-template-columns:minmax(120px,1.1fr) 1fr 128px;gap:12px;align-items:center;font-size:13px}
+#view-mensal .mn-rk-row{display:grid;grid-template-columns:minmax(140px,260px) 1fr 128px;gap:12px;align-items:center;font-size:13px}
 #view-mensal .mn-rk-row .nm{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #view-mensal .mn-rk-row .nm small{color:var(--muted-2)}
 #view-mensal .mn-trk{height:8px;background:var(--surface-2);border-radius:5px;overflow:hidden;display:flex}
 #view-mensal .mn-trk span{height:100%}
 #view-mensal .mn-rk-row .vl{text-align:right;font-weight:700;white-space:nowrap}
 
-#view-mensal .mn-at{display:flex;flex-direction:column;gap:8px}
+#view-mensal .mn-at{display:flex;flex-wrap:wrap;gap:8px}
+#view-mensal .mn-at > *{flex:1 1 300px}
 #view-mensal .mn-at-i{border:1px solid var(--line);border-left:3px solid var(--warn);border-radius:var(--rs);padding:9px 12px;background:var(--surface-2)}
 #view-mensal .mn-at-i.bad{border-left-color:var(--bad)}
 #view-mensal .mn-at-i.info{border-left-color:var(--info)}
@@ -595,7 +596,8 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 #view-mensal .mn-leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 #view-mensal .mn-printhead{display:none}
 
-@media (max-width:1150px){
+@media (max-width:1250px){
+  #view-mensal .grid2{grid-template-columns:1fr}
   #view-mensal .mn-anowrap{grid-template-columns:1fr}
   #view-mensal .mn-bal{grid-template-columns:1fr 1fr}
   #view-mensal .mn-bl.res{grid-column:span 2;border-left:none;border-top:1px solid var(--line)}
@@ -729,6 +731,8 @@ try { document.documentElement.dataset.tema =
 
       <div class="mn-bal" id="mn-bal"></div>
 
+      <div class="panel"><h3>Pontos de atenção do mês</h3><div class="mn-at" id="mn-atencao"></div></div>
+
       <div class="panel" id="mn-pnlFluxo">
         <div class="mn-ph"><h3>Fluxo diário do mês</h3><small id="mn-fluxoNota"></small></div>
         <div id="mn-fluxo"></div>
@@ -736,14 +740,12 @@ try { document.documentElement.dataset.tema =
 
       <div class="grid2">
         <div class="panel"><div class="mn-ph"><h3>Saídas por operação</h3><small>cheio = pago · listrado = a pagar</small></div><div class="mn-rk" id="mn-porOp"></div></div>
-        <div class="panel"><div class="mn-ph"><h3>Entradas por pagador</h3><small>cheio = recebido · listrado = a receber</small></div><div class="mn-rk" id="mn-porPag"></div></div>
+        <div class="panel"><div class="mn-ph"><h3>Maiores beneficiários do mês</h3><small id="mn-benNota"></small></div><div class="mn-rk" id="mn-ben"></div></div>
       </div>
       <div class="grid2">
         <div class="panel"><h3>Saídas por status</h3><div class="mn-scroll"><table class="mn-t" id="mn-porSt"></table></div></div>
-        <div class="panel"><h3>Pontos de atenção do mês</h3><div class="mn-at" id="mn-atencao"></div></div>
+        <div class="panel"><h3>Entradas por pagador</h3><div class="mn-scroll"><table class="mn-t" id="mn-porPag"></table></div></div>
       </div>
-
-      <div class="panel"><div class="mn-ph"><h3>Maiores beneficiários do mês</h3><small id="mn-benNota"></small></div><div class="mn-rk" id="mn-ben"></div></div>
 
       <div class="panel">
         <div class="mn-ph">
@@ -4395,7 +4397,13 @@ const Mensal = (() => {
       : '<div class="empty">Nenhuma entrada ou saída com data neste mês.</div>';
 
     el('porOp').innerHTML = rank(agrupar(R.sai.filter(NO_CAIXA), r => r.operacao || '(sem operação)', r => toC(r.valor), r => r.status === 'Pago'), 's', 10);
-    el('porPag').innerHTML = rank(agrupar(R.ent.filter(r => r.status !== 'Cancelado'), r => r.pagador || '(sem pagador)', r => toC(valorRec(r)), r => r.status === 'Recebido'), 'e', 10);
+    const pags = agrupar(R.ent.filter(r => r.status !== 'Cancelado'), r => r.pagador || '(sem pagador)', r => toC(valorRec(r)), r => r.status === 'Recebido');
+    el('porPag').innerHTML = pags.length ? `
+      <thead><tr><th>Pagador</th><th class="n">Qtde</th><th class="n">Recebido</th><th class="n">A receber</th><th class="n">Total</th><th class="n">% do mês</th></tr></thead>
+      <tbody>${pags.map(x => `<tr><td><b>${esc(x.k)}</b></td><td class="n">${x.n}</td><td class="n mn-e">${brlC(x.real)}</td>
+        <td class="n">${x.v - x.real ? brlC(x.v - x.real) : '<span class="mn-mut">—</span>'}</td><td class="n">${brlC(x.v)}</td><td class="n mn-mut">${pct(x.v, R.entradas)}%</td></tr>`).join('')}</tbody>
+      <tfoot><tr><td>Total</td><td class="n">${pags.reduce((s,x) => s + x.n, 0)}</td><td class="n mn-e">${brlC(R.recebido)}</td><td class="n">${brlC(R.aReceber)}</td><td class="n">${brlC(R.entradas)}</td><td></td></tr></tfoot>`
+      : '<tbody><tr><td><div class="empty">Sem recebimentos neste mês.</div></td></tr></tbody>';
 
     const sts = STATUS.map(st => { const l = R.sai.filter(r => r.status === st); return {st, n:l.length, v:l.reduce((s,r) => s + toC(r.valor), 0)}; }).filter(x => x.n);
     const totSt = sts.reduce((s,x) => s + x.v, 0);
@@ -4423,7 +4431,7 @@ const Mensal = (() => {
 
     const ben = agrupar(R.sai.filter(NO_CAIXA), r => r.contribuinte || '(sem nome)', r => toC(r.valor), r => r.status === 'Pago');
     el('benNota').textContent = ben.length ? `${ben.length} beneficiários no mês` : '';
-    el('ben').innerHTML = rank(ben, 's', 12);
+    el('ben').innerHTML = rank(ben, 's', 10);
 
     renderLista(R);
     renderAno();
