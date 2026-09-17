@@ -328,6 +328,17 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .modal footer{display:flex;gap:9px;justify-content:flex-end;padding:14px 18px;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--surface)}
 .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .formgrid .full{grid-column:1/-1}
+.sugbox{position:relative}
+.sug{position:absolute;left:0;right:0;top:100%;margin-top:4px;z-index:30;background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--rs);box-shadow:var(--sombra);max-height:264px;overflow:auto}
+.sug:empty{display:none}
+.sug button{display:block;width:100%;text-align:left;padding:8px 11px;border-bottom:1px solid var(--line-soft)}
+.sug button:last-child{border-bottom:none}
+.sug button:hover,.sug button.on{background:var(--accent-dim)}
+.sug b{display:block;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sug .linha2{display:flex;gap:8px;align-items:center;margin-top:2px;font-size:12px;color:var(--muted-2)}
+.sug .chave{color:var(--accent-2);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sug .vazia{padding:9px 11px;font-size:12.5px;color:var(--muted-2)}
 .mini-table{width:100%;border-collapse:collapse;font-size:12.5px}
 .mini-table th{text-align:left;color:var(--muted-2);font-weight:700;padding:6px 8px;border-bottom:1px solid var(--line)}
 .mini-table td{padding:6px 8px;border-bottom:1px solid var(--line-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
@@ -979,7 +990,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "16/09/2026 12:00";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "17/09/2026 08:31";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -1720,7 +1731,9 @@ $('#btnNew').addEventListener('click', () => {
   const opts = [...new Set([...S.ops, ...S.rows.map(r=>r.operacao)])].filter(Boolean);
   const m = modal('Novo lançamento', `
     <div class="formgrid">
-      <div class="field full"><label>Contribuinte / beneficiário</label><input class="inp" id="n_nome" placeholder="Nome + telefone"></div>
+      <div class="field full sugbox"><label>Contribuinte / beneficiário</label>
+        <input class="inp" id="n_nome" placeholder="Digite 2 letras para buscar quem já está na base" autocomplete="off">
+        <div class="sug" id="n_sug"></div></div>
       <div class="field"><label>Operação</label><input class="inp" id="n_op" list="opsList" placeholder="ex.: Azul e Cartões MP 03/08">
         <datalist id="opsList">${opts.map(o=>`<option>${esc(o)}</option>`).join('')}</datalist></div>
       <div class="field"><label>Acordo / observação</label><input class="inp" id="n_ac"></div>
@@ -1732,6 +1745,7 @@ $('#btnNew').addEventListener('click', () => {
       <div class="field full"><label>Origem</label><input class="inp" id="n_base" placeholder="planilha / lote de origem"></div>
     </div>`,
     `<button class="btn" data-close>Cancelar</button><button class="btn primary" id="n_ok">Adicionar lançamento</button>`);
+  ligarAutocomplete(m);
   m.querySelector('#n_ok').addEventListener('click', async () => {
     const dados = {
       contribuinte:m.querySelector('#n_nome').value, operacao:m.querySelector('#n_op').value,
@@ -1742,6 +1756,98 @@ $('#btnNew').addEventListener('click', () => {
     m.remove(); await aplicar([{acao:'criar', dados}], 'manual', 'novo lançamento'); go('lanc');
   });
 });
+
+/* =========================================================
+   AUTOCOMPLETAR DE BENEFICIÁRIO — uma linha por chave Pix
+   ========================================================= */
+function indiceBeneficiarios(){
+  const mapa = new Map();
+  S.rows.forEach(r => {
+    const nome = String(r.contribuinte || '').trim();
+    if (!nome) return;
+    const chave = String(r.pix || '').trim();
+    const k = normalizarTextoBusca(nome) + '|' + (digits(chave) || chave.toLowerCase());
+    const item = mapa.get(k) || {nome, pix:chave, tipoChave:r.tipoChave, n:0, aberto:0, em:0, ultimoValor:0};
+    item.n++;
+    if (ABERTO(r)) item.aberto++;
+    if ((r.em || 0) >= item.em){ item.em = r.em || 0; item.nome = nome; item.pix = chave;
+      item.tipoChave = r.tipoChave || detectKey(chave).tipo; item.ultimoValor = r.valor; }
+    mapa.set(k, item);
+  });
+  return [...mapa.values()];
+}
+function buscarBeneficiarios(termo, indice){
+  const t = normalizarTextoBusca(termo);
+  if (t.length < 2) return [];
+  const numero = digits(termo);
+  const palavras = t.split(' ').filter(Boolean);
+  return indice.map(x => {
+    const nome = normalizarTextoBusca(x.nome);
+    let s = 0;
+    if (nome.startsWith(t)) s = 100;
+    else if (nome.split(' ').some(w => w.startsWith(t))) s = 80;
+    else if (nome.includes(t)) s = 60;
+    else if (palavras.length > 1 && palavras.every(w => nome.includes(w))) s = 45;
+    else if (numero.length >= 3 && digits(x.pix).includes(numero)) s = 30;
+    return {x, s};
+  }).filter(o => o.s)
+    .sort((a,b) => b.s - a.s || b.x.aberto - a.x.aberto || b.x.n - a.x.n || a.x.nome.localeCompare(b.x.nome))
+    .slice(0, 8).map(o => o.x);
+}
+function ligarAutocomplete(m){
+  const campo = m.querySelector('#n_nome'), caixa = m.querySelector('#n_sug');
+  if (!campo || !caixa) return;
+  const indice = indiceBeneficiarios();
+  let lista = [], ativo = -1;
+
+  const fechar = () => { caixa.innerHTML = ''; lista = []; ativo = -1; };
+  const escolher = i => {
+    const x = lista[i]; if (!x) return;
+    campo.value = x.nome;
+    const pix = m.querySelector('#n_pix');
+    if (pix && x.pix) pix.value = x.pix;
+    fechar();
+    (m.querySelector('#n_op') || pix).focus();
+  };
+  const pintar = () => {
+    [...caixa.querySelectorAll('button')].forEach((b,i) => b.classList.toggle('on', i === ativo));
+    const alvo = caixa.querySelector('button.on');
+    if (alvo && alvo.scrollIntoView) alvo.scrollIntoView({block:'nearest'});
+  };
+  const abrir = () => {
+    lista = buscarBeneficiarios(campo.value, indice);
+    ativo = -1;
+    if (!lista.length){
+      caixa.innerHTML = normalizarTextoBusca(campo.value).length >= 2
+        ? '<div class="vazia">Nenhum beneficiário parecido — será cadastrado como novo.</div>' : '';
+      return;
+    }
+    caixa.innerHTML = lista.map((x,i) => `
+      <button type="button" data-i="${i}">
+        <b>${esc(x.nome)}</b>
+        <div class="linha2">
+          <span class="chave">${esc(x.pix || 'sem chave Pix')}</span>
+          <span>${esc(x.tipoChave || detectKey(x.pix).tipo)}</span>
+          <span>· ${x.n} lançamento${x.n > 1 ? 's' : ''}${x.aberto ? `, ${x.aberto} em aberto` : ''}</span>
+        </div>
+      </button>`).join('');
+  };
+
+  campo.addEventListener('input', abrir);
+  campo.addEventListener('focus', () => { if (campo.value.trim().length >= 2) abrir(); });
+  campo.addEventListener('keydown', e => {
+    if (!lista.length) return;
+    if (e.key === 'ArrowDown'){ e.preventDefault(); ativo = (ativo + 1) % lista.length; pintar(); }
+    else if (e.key === 'ArrowUp'){ e.preventDefault(); ativo = (ativo - 1 + lista.length) % lista.length; pintar(); }
+    else if (e.key === 'Enter' && ativo >= 0){ e.preventDefault(); escolher(ativo); }
+    else if (e.key === 'Escape'){ e.preventDefault(); fechar(); }
+  });
+  caixa.addEventListener('mousedown', e => {
+    const b = e.target.closest('button[data-i]'); if (!b) return;
+    e.preventDefault(); escolher(+b.dataset.i);
+  });
+  campo.addEventListener('blur', () => setTimeout(fechar, 120));
+}
 
 /* ---------- importação ---------- */
 const FIELDS = [['contribuinte','Contribuinte'],['operacao','Operação'],['acordo','Acordo'],['valor','Valor a pagar'],
