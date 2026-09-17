@@ -269,6 +269,9 @@ html[data-tema="claro"] .fab{box-shadow:0 10px 26px rgba(193,86,26,.28)}
 .ibox{position:relative;display:block}
 .ibox svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--muted-2);pointer-events:none}
 .ibox .inp{padding-left:30px}
+.visao{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:2px;height:34px}
+.visao button{padding:0 14px;border-radius:999px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.visao button.on{background:var(--accent);color:#fff}
 .chips-active{display:flex;gap:6px;flex-wrap:wrap;padding:0 20px 10px;background:var(--bg-2);border-bottom:1px solid var(--line)}
 .chips-active:empty{display:none}
 .fchip{display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:3px 6px 3px 10px;font-size:12px;color:var(--muted)}
@@ -277,6 +280,7 @@ html[data-tema="claro"] .fab{box-shadow:0 10px 26px rgba(193,86,26,.28)}
 
 /* ---------- tabela ---------- */
 .tablewrap{flex:1;min-height:0;overflow:auto;position:relative}
+#gridRec.detalhado{min-width:1180px}
 table.grid{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed;min-width:960px;font-size:13px}
 table.grid thead th{position:sticky;top:0;z-index:3;background:var(--bg-2);border-bottom:1px solid var(--line);padding:9px 8px;text-align:left;font-size:11.5px;font-weight:800;color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;user-select:none;letter-spacing:.1px}
 table.grid thead th.num{text-align:right}
@@ -328,6 +332,14 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .modal footer{display:flex;gap:9px;justify-content:flex-end;padding:14px 18px;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--surface)}
 .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .formgrid .full{grid-column:1/-1}
+.pctbox{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--rs);padding:9px 11px}
+.pctlab{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text);font-weight:700;cursor:pointer}
+.pctlab input{accent-color:var(--accent);width:15px;height:15px}
+.pctlinha{display:flex;align-items:center;gap:8px;margin-top:8px}
+.pctlinha .inp{width:96px}
+.pctlinha > span{color:var(--muted-2);font-size:12.5px}
+.pctprev{flex:1;text-align:right;font-weight:700;color:var(--accent-2)}
+.pctbox.off{opacity:.65}
 .sugbox{position:relative}
 .sug{position:absolute;left:0;right:0;top:100%;margin-top:4px;z-index:30;background:var(--surface);
   border:1px solid var(--line);border-radius:var(--rs);box-shadow:var(--sombra);max-height:264px;overflow:auto}
@@ -346,6 +358,9 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .drop.over{border-color:var(--accent);background:var(--accent-dim)}
 .steps{display:flex;gap:8px;margin-bottom:16px;font-size:12.5px;color:var(--muted-2)}
 .steps b{color:var(--accent-2)}
+.modelo-linha{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;
+  background:var(--surface-2);border:1px solid var(--line);border-radius:var(--rs);padding:10px 12px;margin-bottom:14px}
+.modelo-linha span{font-size:12.5px;color:var(--muted)}
 
 /* ---------- chat ---------- */
 .chat{position:fixed;right:0;top:0;bottom:0;width:min(430px,100%);background:var(--bg-2);border-left:1px solid var(--line);display:flex;flex-direction:column;z-index:50;box-shadow:var(--sombra);transform:translateX(100%);transition:transform .22s ease}
@@ -486,6 +501,26 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .btn.perigo{color:var(--bad);border-color:var(--bad)}
 .btn.perigo:hover{background:var(--bad-dim)}
 .rail-foot .bkline{font-size:11px;color:var(--nav-muted)}
+.bl-saldo .bl-form{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+.bl-saldo .field{width:190px}
+.bl-info{color:var(--muted-2);font-size:12px;padding-bottom:9px}
+.bl-nota{color:var(--muted-2);font-size:12.5px;margin:12px 0 0}
+.bl-linha{display:grid;grid-template-columns:132px minmax(90px,1fr) 150px 150px 150px 160px;gap:12px;align-items:center;
+  padding:7px 8px;border-radius:var(--rs);font-size:13px;font-variant-numeric:tabular-nums;cursor:pointer}
+.bl-linha:hover{background:var(--surface-2)}
+.bl-linha.neg{background:var(--bad-dim)}
+.bl-linha span:nth-child(n+3){text-align:right;white-space:nowrap}
+.bl-cab{color:var(--muted-2);font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.2px;cursor:default}
+.bl-cab:hover{background:transparent}
+.bl-mes{font-weight:700;color:var(--muted)}
+.bl-barras{display:flex;flex-direction:column;gap:3px}
+.bl-barras i{height:7px;border-radius:4px;display:block;min-width:2px}
+.bl-barras .e{background:var(--ok)} .bl-barras .s{background:var(--accent)}
+.bl-e{color:var(--ok)} .bl-s{color:var(--accent-2)}
+.bl-acum{font-weight:800}
+.bl-pos{color:var(--ok)} .bl-neg{color:var(--bad);font-weight:800}
+@media (max-width:1100px){.bl-linha{grid-template-columns:110px 130px 130px 130px 140px}.bl-barras{display:none}}
+
 /* ---------- controle mensal ---------- */
 #view-mensal{padding-top:0;padding-bottom:96px}
 #view-mensal .mn-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 -20px 16px;padding:10px 20px;background:var(--bg);border-bottom:1px solid var(--line)}
@@ -666,6 +701,7 @@ try { document.documentElement.dataset.tema =
     <div class="brand"><img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAABYCAMAAABGS8AGAAAAYFBMVEX03VgDJSqVnVNWaTopSTQAAABnrqxic0r3lB0qXVr57l/13lh3hEbHvE/8/Ab03ld1wL55xMKhcCP/vz//fwD/f3//qlV/f38AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABuDXH5AAAAGHRSTlP+/////wD/////EaX//wFf////BAICAwJQRH6XAAADxUlEQVR42u2Za3ekIAyGJQnFu9tO2/3//3S5qRCCtR09+6U5p6fjDDy+hhCINLofmmdtGJZea+3+Nmsu4Ab4Mus5QTcXcZ0tqejmSht63c93gJ3o+e8t4GaY9cctYOuO+f0WcDM8PudbwM2gHwyMqmKY90zbEcJUjmCfgUnVLe1X/EjAyL2dKfsVWGUgGmaaMW03IgnoQX/qtAPVvJb9RMwzk3HokTvjFNgU4BHz3/k4nASXipXKHn4iRu5/6ApgYD/ymHn5EAzRdwUY8ziJ5PRegisAEq5SkwTmAxij8BDswicEvefK4KAOgT1ecreFg2GbUWafdAxswN+PmD8wqIhO5uBJmswc7K9XheMqdFKCg/beICSJUvG4CbYPRsdxtX09AbLkI828GHEmGbMyCIveeAhWftQIGdf54gvwqpgqYGumCf7NBpBEJ68+TvNtHezFAUuoB2DXNPTEOhjbNwyOIsqmFNbBo9r0RFUiuG3fNk8BJe3qrqDtOekQ3LYYyJiNRR08TRATFW1DJINbv7CASkLhAEwqrD1RCh6BHRkazFYtGezSoRsKtWWN8RDc7k5owN2gqthxbdvoAsCxOQa/BTfYJTUse7VwU4HrY/lwBWkzybRN05rilfvl0tQmkkPoh9RcBUNl2SM289pEMuzzA+S86fMlSaay5AJps6yLkpNQnokPNm9YbzfKq/xkUDamAyrNDDS/9mu/9gObTn45ne58nARo4nXBqXrw6TovUVBJbt+v83i78atl4ht13tm927k6ryYA71H8n8CA94BBCJorwMDC0a/tF4DjxjstGuAKsN8Iwl5hYdgrPwvGwIWNbIHGfobxSbCK3JXsuY5MT4HHnRvIkevIT4Eh4Xqy3SablczBgJS8YbLVhd9vymCbDrskVXmdEUzCi5AkLLcNMtaqdAUymYMdtzPdXkV2Xef3nTLYtjAymYrKtHuxZtb8btxVx6bWkL/WEckF2HNf/gRYZz+sZBLfsUDu5Z3MwJ5kn/7l1QPtP3fh70PiWyHnZSOROfg1SI3Ct4vXKtitkxK5UOzHayV365XJwHpgsSyQy8FTGdHz+TKtez5LSj8refCiD9Kr1BWZ5JCPi6jjrtis88O2GuXgRUhGZPbZ3R2Ac8v2Hzr3cnyzkW1v6nVebCDWebqf+2IOIv2szkvrMXc+tAhbR1vS1+o3qNSDY7Z31Fo/9IUnWSl47ufhFrCe328g+xOneb7eG3olL7eAtZ0o/XAH2J9KLtehlx2se4u+7Gj20aRHvu7As+8v0L18zP8AmtYi63DWszMAAAAASUVORK5CYII=" alt="Milhas Plus"><div class="brand-txt"><b>MP Planejamento Financeiro</b></div></div>
     <nav class="nav" id="nav">
       <button data-view="dash" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 13h5v8H3zM10 3h5v18h-5zM17 9h4v12h-4z"/></svg>Painel</button>
+      <button data-view="bal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M6 8h8.5a2.5 2.5 0 0 1 0 5H6M6 18h9"/></svg>Balanço geral</button>
       <button data-view="mensal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M7.5 14h3M13.5 14h3M7.5 17h3"/></svg>Controle mensal</button>
       <button data-view="lanc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M3 12h18M3 19h18"/></svg>Lançamentos</button>
       <button data-view="rec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Recebimentos</button>
@@ -833,6 +869,26 @@ try { document.documentElement.dataset.tema =
         <span style="color:var(--muted-2)">Clique na célula para editar · Enter salva · Esc cancela · para editar uma origem com link, clique ao lado do texto</span>
       </div>
     </section>
+    <!-- BALANÇO GERAL -->
+    <section class="view hide" id="view-bal">
+      <div class="panel bl-saldo">
+        <h3>Ponto de partida</h3>
+        <div class="bl-form">
+          <div class="field"><label for="balSaldoMes">Saldo apurado no fim de</label><input class="inp" id="balSaldoMes" type="month"></div>
+          <div class="field"><label for="balSaldoVal">O que sobrou em caixa</label><input class="inp" id="balSaldoVal" placeholder="0,00"></div>
+          <button class="btn primary" id="balSalvar">Salvar saldo</button>
+          <span class="bl-info" id="balSaldoInfo"></span>
+        </div>
+        <p class="bl-nota">Tudo que foi pago ou recebido depois desse mês entra na conta do caixa de hoje, e a projeção dos próximos meses parte desse valor.</p>
+      </div>
+      <div class="kpis" id="balKpis"></div>
+      <div id="balAlerta" class="alert-list" style="margin-bottom:14px"></div>
+      <div class="panel">
+        <h3>Projeção mês a mês</h3>
+        <div id="balProj"></div>
+      </div>
+    </section>
+
     <!-- RECEBIMENTOS -->
     <section class="view flush hide" id="view-rec">
       <div class="filters" style="grid-template-columns:minmax(190px,1.8fr) repeat(2,minmax(130px,1fr)) repeat(2,minmax(110px,.8fr)) auto">
@@ -844,6 +900,9 @@ try { document.documentElement.dataset.tema =
         <div class="field"><label for="rD1">De</label><input class="inp" id="rD1" type="date"></div>
         <div class="field"><label for="rD2">Até</label><input class="inp" id="rD2" type="date"></div>
         <button class="btn sm ghost" id="rClear">Limpar filtros</button>
+        <div class="visao" id="recVisao">
+          <button class="on" data-visao="simples">Simples</button><button data-visao="detalhado">Detalhado</button>
+        </div>
       </div>
       <div class="chips-active" id="rChips"></div>
       <div class="bulkbar hide" id="bulkRec">
@@ -859,7 +918,7 @@ try { document.documentElement.dataset.tema =
       <div class="tfoot">
         <span id="rtCount">0 recebimentos</span>
         <span>Previsto: <b id="rtPrev">R$ 0,00</b></span>
-        <span>Recebido: <b id="rtReceb">R$ 0,00</b></span>
+        <span>Recebido: <b id="rtReceb">R$ 0,00</b><b id="rtLiq" style="font-weight:600;color:var(--muted-2)"></b></span>
         <div class="spacer"></div>
         <span style="color:var(--muted-2)">Clique na célula para editar · selecione e use "Marcar como recebido"</span>
       </div>
@@ -990,7 +1049,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "17/09/2026 08:31";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "17/09/2026 14:04";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -1012,6 +1071,16 @@ const COLS = [
 
 const FILTROS_PADRAO = {q:'', op:'', st:'Pendente', tp:'', d1:'', d2:'', v1:'', v2:''};
 const STATUS_REC = ['Previsto','Recebido','Atrasado','Cancelado'];
+const COLS_REC_DET = [
+  {k:'dataPrevista',  t:'Data pagamento', w:'8.5%', type:'date',  al:'mid'},
+  {k:'dataVenda',     t:'Data venda',     w:'8.5%', type:'date',  al:'mid'},
+  {k:'valor',         t:'Valor',          w:'11%',  type:'money', al:'num'},
+  {k:'valorParceiros',t:'Valor p/ parceiros', w:'11%', type:'money', al:'num'},
+  {k:'descricao',     t:'Referência',     w:'28%',  type:'text'},
+  {k:'status',        t:'Confirmação',    w:'10%',  type:'chip',  al:'mid'},
+  {k:'pagador',       t:'Pagador',        w:'11%',  type:'chip'},
+  {k:'statusNF',      t:'Status NF',      w:'7%',   type:'text',  al:'mid'}
+];
 const COLS_REC = [
   {k:'dataPrevista', t:'Previsão',   w:'9%',  type:'date', al:'mid'},
   {k:'pagador',      t:'Pagador',    w:'16%', type:'chip'},
@@ -1036,7 +1105,7 @@ const S = {
   rows: [], rec: [], adi: [], pagadores: [], ops: OPS_BASE.slice(), sel: new Set(), hist: [], log: [], users: [],
   sort: {k:'dataPagamento', dir:1}, sortRec: {k:'dataPrevista', dir:1}, sortAdi: {k:'dataAdiantada', dir:1},
   f: {...FILTROS_PADRAO}, fr: {q:'', pg:'', st:'', d1:'', d2:''},
-  fa: {q:'', st:'', d1:'', d2:''},
+  fa: {q:'', st:'', d1:'', d2:''}, recModo: 'simples', saldoInicial: null,
   cfg: {autoAplicar: true}, chat: [], alias: {}, avisado: false,
   view: 'dash'
 };
@@ -1147,6 +1216,17 @@ function nomeOrigem(v){
     return h;
   } catch(e){ return u; }
 }
+/** "OK" da coluna Confirmação vira Recebido; "PREVISTO" vira Previsto */
+function statusRecDe(v){
+  const t = semAcento(String(v ?? '')).trim();
+  if (!t) return 'Previsto';
+  if (STATUS_REC.some(s => semAcento(s) === t)) return STATUS_REC.find(s => semAcento(s) === t);
+  if (/^ok|confirmad|recebid|pago/.test(t)) return 'Recebido';
+  if (/^previsto|aguard|pendente/.test(t)) return 'Previsto';
+  if (/cancel/.test(t)) return 'Cancelado';
+  if (/atras|vencid/.test(t)) return 'Atrasado';
+  return 'Previsto';
+}
 function normalizeRec(o){
   const r = {
     id: o.id || uid(),
@@ -1154,15 +1234,22 @@ function normalizeRec(o){
     pagador: String(o.pagador??'').replace(/\s+/g,' ').trim(),
     descricao: String(o.descricao??'').trim(),
     valor: Math.round(parseNum(o.valor)*100)/100,
-    status: STATUS_REC.includes(o.status) ? o.status : 'Previsto',
+    status: statusRecDe(o.status),
     valorRecebido: Math.round(parseNum(o.valorRecebido)*100)/100,
     dataRecebida: parseDate(o.dataRecebida) || '',
+    dataVenda: parseDate(o.dataVenda) || '',
+    valorParceiros: Math.round(parseNum(o.valorParceiros)*100)/100,
+    statusNF: String(o.statusNF??'').trim(),
     base: String(o.base??'').trim(),
     porQuem: o.porQuem || APP.nome || '', em: o.em || Date.now()
   };
+  if (r.status === 'Recebido' && !r.valorRecebido) r.valorRecebido = r.valor;
+  if (r.status === 'Recebido' && !r.dataRecebida) r.dataRecebida = r.dataPrevista;
   if (r.pagador && !S.pagadores.includes(r.pagador)) S.pagadores.push(r.pagador);
   return r;
 }
+/** valor que fica para a empresa: o recebido menos o repasse a parceiros */
+const liquidoRec = r => fromCents(toCents(valorRec(r)) + toCents(r.valorParceiros || 0));
 /** valor que conta no caixa: o recebido, quando houver; senão a previsão */
 const valorRec = r => r.status === 'Recebido' ? (r.valorRecebido || r.valor) : r.valor;
 const dataRec = r => r.status === 'Recebido' ? (r.dataRecebida || r.dataPrevista) : r.dataPrevista;
@@ -1182,7 +1269,7 @@ const Local = {
   get(k){ try { const v = localStorage.getItem(k); if (v != null) return v; } catch(e){} return MEM[k] ?? null; },
   set(k,v){ MEM[k] = v; try { localStorage.setItem(k,v); } catch(e){} }
 };
-let fdb = null, fauth = null, unsubRows = null, unsubRec = null, unsubAdi = null, unsubLog = null, unsubUsers = null;
+let fdb = null, fauth = null, unsubRows = null, unsubRec = null, unsubSaldo = null, unsubAdi = null, unsubLog = null, unsubUsers = null;
 
 const Repo = {
   async escutar(){
@@ -1213,6 +1300,12 @@ const Repo = {
         if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
         renderAll();
       }, () => {});
+      unsubSaldo && unsubSaldo();
+      unsubSaldo = fdb.collection('config').doc('saldo').onSnapshot(d => {
+        S.saldoInicial = d.exists ? {...SALDO_PADRAO, ...d.data()} : {...SALDO_PADRAO};
+        if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
+        renderAll();
+      }, () => {});
       unsubLog && unsubLog();
       unsubLog = fdb.collection('auditoria').orderBy('ts','desc').limit(150).onSnapshot(s => {
         S.log = s.docs.map(d => d.data()); if (S.view === 'log') renderLog();
@@ -1222,6 +1315,8 @@ const Repo = {
       S.rows = raw ? JSON.parse(raw).map(normalize) : seedRows();
       const rawRec = Local.get('tesouraria:rec');
       S.rec = rawRec ? JSON.parse(rawRec).map(normalizeRec) : seedRec();
+      try { S.saldoInicial = JSON.parse(Local.get('tesouraria:saldo') || 'null') || {...SALDO_PADRAO}; }
+      catch(e){ S.saldoInicial = {...SALDO_PADRAO}; }
       const rawAdi = Local.get('tesouraria:adi');
       S.adi = rawAdi ? JSON.parse(rawAdi).map(normalizeAdi) : [];
       S.log = JSON.parse(Local.get('tesouraria:log') || '[]');
@@ -1263,7 +1358,7 @@ const ENT = {
          get: () => S.rows, set: v => { S.rows = v; }, filtrados: () => filtered()},
   adi:  {cols: COLS_ADI, colecao: 'adiantamentos', norm: o => normalizeAdi(o), rotulo: 'adiantamento',
          get: () => S.adi,  set: v => { S.adi = v; },  filtrados: () => filteredAdi()},
-  rec:  {cols: COLS_REC, colecao: 'recebimentos', norm: o => normalizeRec(o), rotulo: 'recebimento',
+  rec:  {cols: [...COLS_REC, ...COLS_REC_DET.filter(c => !COLS_REC.some(x => x.k === c.k))], colecao: 'recebimentos', norm: o => normalizeRec(o), rotulo: 'recebimento',
          get: () => S.rec,  set: v => { S.rec = v; },  filtrados: () => filteredRec()}
 };
 
@@ -1522,7 +1617,7 @@ function fillSelects(){
   set($('#fTp'), TIPOS, 'Todos', S.f.tp);
 }
 function renderAll(){
-  fillSelects(); renderDash(); renderTable(); renderRec(); renderAdi();
+  fillSelects(); renderDash(); renderTable(); renderRec(); renderAdi(); renderBalanco();
   if (S.view === 'mensal') Mensal.render();
   if (S.view === 'log') renderLog();
   if (S.view === 'users') renderUsers();
@@ -1641,6 +1736,26 @@ $('#fChips').addEventListener('click', e => {
   const map = {q:'fQ',op:'fOp',st:'fSt',tp:'fTp',d1:'fD1',d2:'fD2',v1:'fV1',v2:'fV2'};
   $('#'+map[b.dataset.fclr]).value = ''; renderAll();
 });
+$('#balSalvar').addEventListener('click', async () => {
+  if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+  const mes = $('#balSaldoMes').value, valor = parseNum($('#balSaldoVal').value);
+  if (!mes) return alert('Informe o mês de referência do saldo.');
+  if (await gravarSaldoInicial(valor, mes)) toast('Saldo inicial salvo — projeção recalculada');
+});
+$('#balProj').addEventListener('click', e => {
+  const l = e.target.closest('[data-mes]'); if (!l) return;
+  abrirMes(l.dataset.mes);
+});
+$('#balAlerta').addEventListener('click', e => {
+  const a = e.target.closest('[data-mesneg]'); if (!a) return;
+  abrirMes(a.dataset.mesneg);
+});
+/** leva ao controle mensal no mês pedido */
+function abrirMes(ym){
+  const [ano, mes] = String(ym).split('-').map(Number);
+  go('mensal');
+  if (window.__mensalIr) window.__mensalIr(ano, mes);
+}
 $('#caixaDias').addEventListener('click', e => {
   const dia = e.target.closest('[data-dia]'); if (!dia) return;
   S.f = {...FILTROS_PADRAO, d1:dia.dataset.dia, d2:dia.dataset.dia};
@@ -1696,6 +1811,7 @@ function go(v){
              mensal:['Controle mensal','Entradas e saídas do mês, com relatório completo'],
              lanc:['Lançamentos','Edite direto na grade, filtre e trabalhe em lote'],
              adi:['Adiantamentos','Fila de pagamentos antecipados — exporte o lote e dê baixa'],
+             bal:['Balanço geral','Caixa disponível hoje e projeção dos próximos meses'],
              rec:['Recebimentos','Previsões e entradas confirmadas, por pagador'],
              log:['Atividade','Quem alterou o quê, e quando'],
              users:['Usuários','Controle de acesso da equipe'],
@@ -1737,6 +1853,13 @@ $('#btnNew').addEventListener('click', () => {
       <div class="field"><label>Operação</label><input class="inp" id="n_op" list="opsList" placeholder="ex.: Azul e Cartões MP 03/08">
         <datalist id="opsList">${opts.map(o=>`<option>${esc(o)}</option>`).join('')}</datalist></div>
       <div class="field"><label>Acordo / observação</label><input class="inp" id="n_ac"></div>
+      <div class="field full pctbox">
+        <label class="pctlab"><input type="checkbox" id="n_pct_on">Acrescentar porcentagem ao valor</label>
+        <div class="pctlinha">
+          <input class="inp" id="n_pct" type="number" step="0.01" value="4" disabled> <span>%</span>
+          <span class="pctprev" id="n_pct_prev">informe o valor abaixo</span>
+        </div>
+      </div>
       <div class="field"><label>Valor a pagar</label><input class="inp" id="n_val" placeholder="10.766,25"></div>
       <div class="field"><label>Data de pagamento</label><input class="inp" id="n_dp" type="date"></div>
       <div class="field"><label>Data de lançamento</label><input class="inp" id="n_dl" type="date" value="${hoje()}"></div>
@@ -1746,10 +1869,15 @@ $('#btnNew').addEventListener('click', () => {
     </div>`,
     `<button class="btn" data-close>Cancelar</button><button class="btn primary" id="n_ok">Adicionar lançamento</button>`);
   ligarAutocomplete(m);
+  ligarAcrescimo(m);
   m.querySelector('#n_ok').addEventListener('click', async () => {
+    const conta = m.__valorFinal ? m.__valorFinal() : null;
+    const comAcrescimo = conta && conta.taxa > 0 && conta.base > 0;
+    const obs = m.querySelector('#n_ac').value;
     const dados = {
       contribuinte:m.querySelector('#n_nome').value, operacao:m.querySelector('#n_op').value,
-      acordo:m.querySelector('#n_ac').value, valor:m.querySelector('#n_val').value,
+      acordo: comAcrescimo ? (obs ? obs + ' · ' : '') + `${brl(conta.base)} + ${conta.taxa}% = ${brl(conta.total)}` : obs,
+      valor: comAcrescimo ? conta.total : m.querySelector('#n_val').value,
       dataPagamento:m.querySelector('#n_dp').value, dataLancamento:m.querySelector('#n_dl').value,
       status:m.querySelector('#n_st').value, pix:m.querySelector('#n_pix').value, base:m.querySelector('#n_base').value };
     if (!String(dados.contribuinte).trim()) return alert('Informe o beneficiário.');
@@ -1794,6 +1922,33 @@ function buscarBeneficiarios(termo, indice){
     .sort((a,b) => b.s - a.s || b.x.aberto - a.x.aberto || b.x.n - a.x.n || a.x.nome.localeCompare(b.x.nome))
     .slice(0, 8).map(o => o.x);
 }
+/** caixa de acréscimo: soma a porcentagem escolhida ao valor digitado */
+function ligarAcrescimo(m){
+  const liga = m.querySelector('#n_pct_on'), pct = m.querySelector('#n_pct'),
+        val = m.querySelector('#n_val'), prev = m.querySelector('#n_pct_prev'),
+        caixa = m.querySelector('.pctbox');
+  if (!liga) return;
+  const calcular = () => {
+    const base = parseNum(val.value), taxa = parseNum(pct.value);
+    if (!liga.checked) return {base, taxa:0, total:base};
+    const j = MotorFinanceiroMP.calcularJuros(base, taxa);
+    return {base, taxa, total: j.total, rendimento: j.rendimento};
+  };
+  const pintar = () => {
+    pct.disabled = !liga.checked;
+    caixa.classList.toggle('off', !liga.checked);
+    const c = calcular();
+    prev.textContent = !liga.checked ? 'sem acréscimo'
+      : !c.base ? 'informe o valor abaixo'
+      : `${brl(c.base)} + ${c.taxa}% = ${brl(c.total)}`;
+  };
+  liga.addEventListener('change', pintar);
+  pct.addEventListener('input', pintar);
+  val.addEventListener('input', pintar);
+  m.__valorFinal = () => calcular();
+  pintar();
+}
+
 function ligarAutocomplete(m){
   const campo = m.querySelector('#n_nome'), caixa = m.querySelector('#n_sug');
   if (!campo || !caixa) return;
@@ -1863,6 +2018,10 @@ $('#btnImport').addEventListener('click', () => {
 function openImport(){
   const m = modal('Importar planilha', `
     <div class="steps"><b>1.</b> Envie o arquivo &nbsp;·&nbsp; 2. confirme as colunas &nbsp;·&nbsp; 3. revise e importe</div>
+    <div class="modelo-linha">
+      <span>Não tem o arquivo pronto? Baixe a planilha modelo, preencha e importe de volta.</span>
+      <button class="btn sm" id="baixarModeloLanc">Baixar planilha modelo</button>
+    </div>
     <div class="drop" id="drop">
       <p style="margin:0 0 10px">Arraste aqui a planilha <b>.xlsx</b>, <b>.xls</b> ou <b>.csv</b></p>
       <button class="btn primary" id="pick">Escolher arquivo</button>
@@ -1872,6 +2031,7 @@ function openImport(){
     <textarea class="inp" id="paste" rows="4" placeholder="Cole aqui (a primeira linha deve ser o cabeçalho)"></textarea>
     <button class="btn sm" id="pasteGo" style="margin-top:8px">Ler texto colado</button>
     <div id="mapArea"></div>`, `<button class="btn" data-close>Cancelar</button>`);
+  m.querySelector('#baixarModeloLanc').onclick = () => baixarModeloImportacao(MODELO_LANC);
   const drop = m.querySelector('#drop'), file = m.querySelector('#file');
   m.querySelector('#pick').onclick = () => file.click();
   file.onchange = e => e.target.files[0] && readFile(e.target.files[0], m);
@@ -1958,7 +2118,7 @@ $('#btnExport').addEventListener('click', () => {
     <div style="display:flex;gap:9px;flex-wrap:wrap">
       <button class="btn primary" data-x="xlsx">Planilha .xlsx</button>
       <button class="btn" data-x="csv">CSV</button>
-      <button class="btn" data-x="pix">Lote Pix (.xlsx)</button>
+      <button class="btn" data-x="pix">Lote de pagamento (.xlsx)</button>
       <button class="btn" data-x="json">Backup .json</button>
     </div>
     <p style="color:var(--muted-2);font-size:12.5px;margin-bottom:0">O lote Pix sai só com pendentes que têm chave válida — os problemas ficam de fora e aparecem no painel.</p>`, '<button class="btn" data-close>Fechar</button>');
@@ -1969,8 +2129,8 @@ $('#btnExport').addEventListener('click', () => {
     let data, name;
     if (t === 'pix'){
       const ok = rows.filter(r => r.status !== 'Pago' && r.status !== 'Cancelado' && prontoParaLote(r));
-      const n = baixarLotePix(ok.map(r => ({pix:r.pix, valor:r.valor, nome:r.contribuinte})), `lote-pix-${stamp}.xlsx`);
-      if (n) toast(`${n} de ${rows.length} prontos para o lote`);
+      const fora = rows.filter(r => r.status !== 'Pago' && r.status !== 'Cancelado').length - ok.length;
+      escolherModeloLote(ok.map(r => ({pix:r.pix, valor:r.valor, nome:r.contribuinte, descricao:r.operacao})), 'lote-pix', fora);
       return;
     } else {
       data = rows.map(r => ({'Data Lançamento':fmtDate(r.dataLancamento),'Contribuinte':r.contribuinte,'Operação':r.operacao,
@@ -3379,22 +3539,27 @@ function ordenadorRec(a, b){
   return cmp * dir || String(dataRec(a)).localeCompare(String(dataRec(b))) || b.valor - a.valor;
 }
 
+const colsRec = () => S.recModo === 'detalhado' ? COLS_REC_DET : COLS_REC;
+
 function renderRec(){
   const rows = filteredRec();
+  const COLUNAS = colsRec();
+  $$('#recVisao button').forEach(x => x.classList.toggle('on', x.dataset.visao === S.recModo));
+  $('#gridRec').classList.toggle('detalhado', S.recModo === 'detalhado');
   const pagadores = [...new Set([...S.pagadores, ...S.rec.map(r => r.pagador)])].filter(Boolean).sort();
   const sel = (el, arr, ph, val) => { el.innerHTML = `<option value="">${ph}</option>` + arr.map(o => `<option>${esc(o)}</option>`).join(''); el.value = arr.includes(val) ? val : ''; };
   sel($('#rPg'), pagadores, 'Todos', S.fr.pg);
   sel($('#rSt'), STATUS_REC, 'Todos', S.fr.st);
 
   $('#theadRec').innerHTML = '<th class="cbx"><input type="checkbox" id="chkAllRec"></th>' +
-    COLS_REC.map(c => `<th data-kr="${c.k}" class="${c.al||''}" style="width:${c.w}" title="Ordenar por ${c.t}">${c.t}<span class="ar"> ${S.sortRec.k===c.k ? (S.sortRec.dir>0?'▲':'▼') : ''}</span></th>`).join('') +
+    COLUNAS.map(c => `<th data-kr="${c.k}" class="${c.al||''}" style="width:${c.w}" title="Ordenar por ${c.t}">${c.t}<span class="ar"> ${S.sortRec.k===c.k ? (S.sortRec.dir>0?'▲':'▼') : ''}</span></th>`).join('') +
     '<th class="rowmenu"></th>';
 
   $('#tbodyRec').innerHTML = rows.map(r => {
     const atraso = ABERTO_REC(r) && r.dataPrevista && r.dataPrevista < getTodaySP();
     return `<tr data-id="${r.id}" class="${S.sel.has(r.id)?'sel':''}">
       <td class="cbx"><input type="checkbox" data-selrec="${r.id}" ${S.sel.has(r.id)?'checked':''}></td>` +
-      COLS_REC.map(c => {
+      COLUNAS.map(c => {
         const v = r[c.k], al = c.al ? ' ' + c.al : '';
         if (c.type === 'money') return `<td><div class="cell num" data-ent="rec" data-id="${r.id}" data-k="${c.k}">${v ? brl(v) : '<span style="color:var(--muted-2)">—</span>'}</div></td>`;
         if (c.type === 'date')  return `<td><div class="cell${al}" data-ent="rec" data-id="${r.id}" data-k="${c.k}"><span class="txt" style="${c.k==='dataPrevista'&&atraso?'color:var(--bad);font-weight:700':''}">${fmtDate(v)}</span></div></td>`;
@@ -3410,6 +3575,8 @@ function renderRec(){
 
   const prev = rows.filter(ABERTO_REC).reduce((s,r) => s + toCents(r.valor), 0);
   const receb = rows.filter(r => r.status === 'Recebido').reduce((s,r) => s + toCents(valorRec(r)), 0);
+  const parceiros = rows.reduce((s,r) => s + toCents(r.valorParceiros || 0), 0);
+  $('#rtLiq').textContent = parceiros ? ` · parceiros ${brl(fromCents(parceiros))} · líquido ${brl(fromCents(prev + receb + parceiros))}` : '';
   $('#rtCount').textContent = `${rows.length} de ${S.rec.length} recebimentos`;
   $('#rtPrev').textContent = brl(fromCents(prev));
   $('#rtReceb').textContent = brl(fromCents(receb));
@@ -3464,6 +3631,13 @@ $('#rChips').addEventListener('click', e => { const b = e.target.closest('[data-
   S.fr[b.dataset.frclr] = ''; $('#' + {q:'rQ',pg:'rPg',st:'rSt',d1:'rD1',d2:'rD2'}[b.dataset.frclr]).value = ''; renderAll(); });
 [['rQ','q'],['rPg','pg'],['rSt','st'],['rD1','d1'],['rD2','d2']].forEach(([id,k]) =>
   $('#'+id).addEventListener('input', e => { S.fr[k] = e.target.value; renderAll(); }));
+$('#recVisao').addEventListener('click', e => {
+  const b = e.target.closest('[data-visao]'); if (!b) return;
+  S.recModo = b.dataset.visao;
+  Local.set('tesouraria:recmodo', S.recModo);
+  if (!colsRec().some(c => c.k === S.sortRec.k)) S.sortRec = {k:'dataPrevista', dir:1};
+  renderRec();
+});
 $('#rClear').addEventListener('click', () => { S.fr = {q:'',pg:'',st:'',d1:'',d2:''};
   ['rQ','rD1','rD2'].forEach(i => $('#'+i).value = ''); renderAll(); });
 
@@ -3503,7 +3677,10 @@ function novoRecebimento(){
       <div class="field"><label>Previsão de recebimento</label><input class="inp" id="x_dt" type="date"></div>
       <div class="field"><label>Valor previsto</label><input class="inp" id="x_vl" placeholder="810.495,12"></div>
       <div class="field"><label>Status</label><select class="inp" id="x_st">${STATUS_REC.map(s => `<option>${s}</option>`).join('')}</select></div>
-      <div class="field full"><label>Descrição / origem</label><input class="inp" id="x_ds"></div>
+      <div class="field full"><label>Referência / descrição</label><input class="inp" id="x_ds" placeholder="ex.: 80kk azul unique gunnar 12_08 - 123 17 36d"></div>
+      <div class="field"><label>Data da venda</label><input class="inp" id="x_dv" type="date"></div>
+      <div class="field"><label>Valor p/ parceiros (negativo)</label><input class="inp" id="x_vp" placeholder="-15.440,00"></div>
+      <div class="field"><label>Status NF</label><input class="inp" id="x_nf" placeholder="NF 28"></div>
       <div class="field"><label>Valor recebido (se já entrou)</label><input class="inp" id="x_vr"></div>
       <div class="field"><label>Recebido em</label><input class="inp" id="x_dr" type="date"></div>
     </div>`,
@@ -3511,7 +3688,9 @@ function novoRecebimento(){
   m.querySelector('#x_ok').onclick = async () => {
     const dados = {pagador:m.querySelector('#x_pg').value, dataPrevista:m.querySelector('#x_dt').value,
       valor:m.querySelector('#x_vl').value, status:m.querySelector('#x_st').value, descricao:m.querySelector('#x_ds').value,
-      valorRecebido:m.querySelector('#x_vr').value, dataRecebida:m.querySelector('#x_dr').value, base:'manual'};
+      valorRecebido:m.querySelector('#x_vr').value, dataRecebida:m.querySelector('#x_dr').value,
+      dataVenda:m.querySelector('#x_dv').value, valorParceiros:m.querySelector('#x_vp').value,
+      statusNF:m.querySelector('#x_nf').value, base:'manual'};
     if (!String(dados.pagador).trim()) return alert('Informe o pagador.');
     if (!parseDate(dados.dataPrevista)) return alert('Informe a previsão de recebimento.');
     m.remove(); await aplicarRec([{acao:'criar', dados}], 'manual', 'novo recebimento'); go('rec');
@@ -3519,11 +3698,22 @@ function novoRecebimento(){
 }
 
 /* ---------- importação (entende o formato pivô da planilha) ---------- */
-const CAMPOS_REC = [['dataPrevista','Previsão'],['pagador','Pagador'],['descricao','Descrição'],['valor','Valor previsto'],
-  ['status','Status'],['valorRecebido','Valor recebido'],['dataRecebida','Recebido em'],['base','Origem']];
-const PISTA_REC = {dataPrevista:/previs|data.*(pagamento|receb)|vencim/i, pagador:/pagador|cliente|origem do recurso/i,
-  descricao:/descri|obs|hist/i, valor:/valor|bruto|receber|total/i, status:/status|situa/i,
-  valorRecebido:/recebido/i, dataRecebida:/data.*recebid/i, base:/base|planilha/i};
+const CAMPOS_REC = [['dataPrevista','Data de pagamento / previsão'],['dataVenda','Data da venda'],['pagador','Pagador'],
+  ['descricao','Referência / descrição'],['valor','Valor'],['valorParceiros','Valor p/ parceiros'],
+  ['status','Confirmação / status'],['valorRecebido','Valor recebido'],['dataRecebida','Recebido em'],
+  ['statusNF','Status NF'],['base','Origem']];
+const PISTA_REC = {
+  dataPrevista:/data\s*(de\s*)?pagamento|previs|vencim/i,
+  dataVenda:/data\s*(da\s*)?venda/i,
+  pagador:/pagador|cliente|origem do recurso/i,
+  descricao:/refer|descri|obs|hist/i,
+  valor:/^valor(\s*\(r\$\))?$|valor bruto|bruto a receber/i,
+  valorParceiros:/parceir/i,
+  status:/confirma|situa|^status$/i,
+  valorRecebido:/valor.*recebid/i,
+  dataRecebida:/data.*recebid|recebido em/i,
+  statusNF:/nf|nota fiscal/i,
+  base:/base|planilha|origem$/i};
 
 /** linhas = datas, colunas = pagadores → um recebimento por cruzamento com valor */
 function expandirPivo(aoa){
@@ -3532,6 +3722,9 @@ function expandirPivo(aoa){
   const cab = aoa[iCab].map(x => String(x??'').trim());
   const colunas = cab.map((nome,i) => ({nome, i})).filter(c => c.i > 0 && c.nome && !/total/i.test(c.nome));
   if (!colunas.length) return null;
+  // se as outras colunas são campos conhecidos, é lista detalhada e não cruzamento de pagadores
+  const campoConhecido = /valor|refer|confirma|pagador|status|descri|venda|obs|parceir|nf/i;
+  if (colunas.some(c => campoConhecido.test(c.nome))) return null;
   const saida = [];
   aoa.slice(iCab+1).forEach(l => {
     const d = parseDate(l[0]);
@@ -3548,6 +3741,10 @@ function importarRecebimentos(){
   if (!podeEditar()) return toast('Seu acesso é somente leitura.');
   const m = modal('Importar recebimentos', `
     <div class="steps"><b>1.</b> Envie o arquivo &nbsp;·&nbsp; 2. confira &nbsp;·&nbsp; 3. importe</div>
+    <div class="modelo-linha">
+      <span>Não tem o arquivo pronto? Baixe a planilha modelo, preencha e importe de volta.</span>
+      <button class="btn sm" id="baixarModeloRec">Baixar planilha modelo</button>
+    </div>
     <div class="drop" id="dropR">
       <p style="margin:0 0 10px">Arraste a planilha <b>.xlsx</b> ou <b>.csv</b> — entendo tanto a lista simples quanto o formato com datas nas linhas e pagadores nas colunas.</p>
       <button class="btn primary" id="pickR">Escolher arquivo</button>
@@ -3557,6 +3754,7 @@ function importarRecebimentos(){
     <textarea class="inp" id="pasteR" rows="4" placeholder="Cole aqui com o cabeçalho"></textarea>
     <button class="btn sm" id="pasteRGo" style="margin-top:8px">Ler texto colado</button>
     <div id="mapR"></div>`, `<button class="btn" data-close>Cancelar</button>`);
+  m.querySelector('#baixarModeloRec').onclick = () => baixarModeloImportacao(MODELO_REC);
   const file = m.querySelector('#fileR'), drop = m.querySelector('#dropR');
   m.querySelector('#pickR').onclick = () => file.click();
   file.onchange = e => e.target.files[0] && lerArquivoRec(e.target.files[0], m);
@@ -3645,8 +3843,10 @@ function mapearRec(aoa, m, nome){
 
 function exportarRecebimentos(){
   const rows = filteredRec();
-  const dados = rows.map(r => ({'Previsão':fmtDate(r.dataPrevista), 'Pagador':r.pagador, 'Descrição':r.descricao,
-    'Valor previsto':r.valor, 'Status':r.status, 'Valor recebido':r.valorRecebido, 'Recebido em':fmtDate(r.dataRecebida), 'Origem':r.base}));
+  const dados = rows.map(r => ({'Data pagamento':fmtDate(r.dataPrevista), 'Data venda':fmtDate(r.dataVenda),
+    'Pagador':r.pagador, 'Referência':r.descricao, 'Valor':r.valor, 'Valor p/ parceiros':r.valorParceiros,
+    'Confirmação':r.status, 'Valor recebido':r.valorRecebido, 'Recebido em':fmtDate(r.dataRecebida),
+    'Status NF':r.statusNF, 'Origem':r.base}));
   const ws = XLSX.utils.json_to_sheet(dados), wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Recebimentos');
   XLSX.writeFile(wb, `recebimentos-${getTodaySP()}.xlsx`);
@@ -3657,9 +3857,35 @@ function exportarRecebimentos(){
    LOTE PIX — sempre no modelo do banco
    Coluna A chave · B CPF/CNPJ · C valor · D nome
    ========================================================= */
-const CAB_LOTE = ['Chave Pix ou Código Pix copia e cola (Opcional se CPF/CNPJ do Fornecedor informado)',
-                  'CPF/CNPJ do Fornecedor cadastrado', 'Valor', 'Descrição (Opcional)'];
-const LARG_LOTE = [{wch:71.3},{wch:31.2},{wch:9.7},{wch:108.3}];
+/* Modelo Clara — aba Sheet1, chave em A, valor em C, nome em D */
+const CLARA = {
+  aba: 'Sheet1',
+  cab: ['Chave Pix ou Código Pix copia e cola (Opcional se CPF/CNPJ do Fornecedor informado)',
+        'CPF/CNPJ do Fornecedor cadastrado', 'Valor', 'Descrição (Opcional)'],
+  larg: [{wch:72.1},{wch:32.0},{wch:10.5},{wch:109.1}],
+  colValor: 3,
+  linha: l => [chaveFormatada(l.pix), '', dinheiro(l.valor), l.nome]
+};
+/* Modelo Conta Simples — aba Página1, apelido em A, tipo em B, chave em C, valor em D */
+const CONTA_SIMPLES = {
+  aba: 'Página1',
+  cab: ['Apelido', 'Tipo de Transação', 'Dados de Pagamento (Número do Boleto ou Chave Pix)',
+        'Valor (R$)', 'Categoria (Opcional)', 'Centro de Custo (Opcional)', 'Descrição (Opcional) (Max. 240 Caractéres)'],
+  larg: [{wch:20.4},{wch:15.7},{wch:44.9},{wch:12.7},{wch:22.1},{wch:12.7},{wch:60.7}],
+  colValor: 4,
+  linha: l => [l.nome, tipoContaSimples(l.pix), chaveFormatada(l.pix), dinheiro(l.valor), '', '', l.descricao || '']
+};
+/** os únicos valores aceitos na coluna "Tipo de Transação" da Conta Simples */
+function tipoContaSimples(pix){
+  switch (detectKey(pix).tipo){
+    case 'CPF': return 'Pix - CPF';
+    case 'CNPJ': return 'Pix - CNPJ';
+    case 'EMAIL': return 'Pix - Email';
+    case 'ALEATÓRIA': return 'Pix - Chave Aleatória';
+    case 'BOLETO': return 'Boleto';
+    default: return 'Pix - Celular';
+  }
+}
 
 const formataCPF  = d => d.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
 const formataCNPJ = d => d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
@@ -3673,16 +3899,77 @@ function chaveFormatada(pix){
 }
 const prontoParaLote = r => r.valor > 0 && detectKey(r.pix).ok && detectKey(r.pix).tipo !== 'BOLETO';
 
-/** Gera a planilha no layout do banco. linhas: [{pix, valor, nome}] */
-function baixarLotePix(linhas, nomeArquivo){
+/** Gera a planilha de lote no modelo escolhido. linhas: [{pix, valor, nome, descricao}] */
+function baixarLotePix(linhas, nomeArquivo, modelo){
+  const M = modelo || CLARA;
   if (!linhas.length){ alert('Nenhum pagamento válido para o lote.'); return 0; }
-  const aoa = [CAB_LOTE, ...linhas.map(l => [chaveFormatada(l.pix), '', Math.round(parseNum(l.valor)*100)/100, l.nome])];
+  const aoa = [M.cab, ...linhas.map(M.linha)];
   const ws = XLSX.utils.aoa_to_sheet(aoa);
-  ws['!cols'] = LARG_LOTE;
+  ws['!cols'] = M.larg;
+  // texto onde é texto, número com duas casas na coluna de valor
+  const total = XLSX.utils.decode_range(ws['!ref']);
+  for (let l = 1; l <= total.e.r; l++){
+    for (let c = 0; c <= total.e.c; c++){
+      const cel = ws[XLSX.utils.encode_cell({r:l, c})];
+      if (!cel) continue;
+      if (c === M.colValor - 1){ cel.t = 'n'; cel.z = '0.00'; }
+      else { cel.t = 's'; cel.z = '@'; }
+    }
+  }
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+  XLSX.utils.book_append_sheet(wb, ws, M.aba);
   XLSX.writeFile(wb, nomeArquivo || `lote-pix-${getTodaySP()}.xlsx`);
   return linhas.length;
+}
+
+/** pergunta em qual modelo exportar e gera o arquivo */
+function escolherModeloLote(linhas, prefixo, fora){
+  if (!linhas.length) return alert('Nenhum pagamento com chave válida para o lote.');
+  const m = modal('Exportar lote de pagamento', `
+    <p style="color:var(--muted);margin-top:0">${linhas.length} pagamento(s) · ${brl(linhas.reduce((s,l) => s + toCents(l.valor), 0)/100)}
+      ${fora ? `<br><span style="color:var(--bad)">${fora} ficaram de fora por chave ausente ou inválida.</span>` : ''}</p>
+    <p style="color:var(--muted-2);font-size:12.5px">Escolha o modelo do banco:</p>
+    <div style="display:flex;gap:9px;flex-wrap:wrap">
+      <button class="btn primary" data-modelo="clara">Modelo Clara</button>
+      <button class="btn primary" data-modelo="conta">Modelo Conta Simples</button>
+    </div>`, '<button class="btn" data-close>Cancelar</button>');
+  m.addEventListener('click', e => {
+    const b = e.target.closest('[data-modelo]'); if (!b) return;
+    const clara = b.dataset.modelo === 'clara';
+    baixarLotePix(linhas, `${prefixo}-${clara ? 'clara' : 'conta-simples'}-${getTodaySP()}.xlsx`, clara ? CLARA : CONTA_SIMPLES);
+    m.remove();
+    toast(`${linhas.length} pagamento(s) no lote ${clara ? 'Clara' : 'Conta Simples'}`);
+  });
+}
+
+/* =========================================================
+   PLANILHAS MODELO PARA IMPORTAR
+   ========================================================= */
+const MODELO_LANC = {
+  arquivo: 'modelo-lancamentos.xlsx', aba: 'Lançamentos',
+  cab: ['Data Lançamento','Contribuinte','Operação','Acordo','Valor a Pagar','Data de Pagamento','Status','Pix','TIPO DE CHAVE','Base'],
+  larg: [{wch:16},{wch:34},{wch:28},{wch:30},{wch:14},{wch:18},{wch:12},{wch:26},{wch:14},{wch:22}],
+  exemplos: [
+    ['12/08/2026','Fulano de Tal 11 98765-4321','Azul e Cartões MP 03/08','acordo fechado no grupo','10766,25','21/09/2026','Pendente','074.033.077-20','CPF','Planilha de fechamento'],
+    ['12/08/2026','Empresa Exemplo Ltda','Forms Julho - PG 17/09','','25000','17/09/2026','Pendente','contato@exemplo.com.br','EMAIL','']
+  ]
+};
+const MODELO_REC = {
+  arquivo: 'modelo-recebimentos.xlsx', aba: 'Recebimentos',
+  cab: ['DATA PAGAMENTO','DATA VENDA','VALOR','VALOR P/ PARCEIROS','REFERENCIA','CONFIRMAÇÃO','PAGADOR','STATUS NF'],
+  larg: [{wch:16},{wch:14},{wch:16},{wch:18},{wch:52},{wch:14},{wch:12},{wch:12}],
+  exemplos: [
+    ['17/09/2026','12/08/2026','1360000','','80kk azul unique gunnar 12_08 - 123 17 36d','OK','123',''],
+    ['21/09/2026','14/08/2026','13656492,97','-15440','803.323.116 Pontos Smiles - Milheiro R$ 17,00 - 40 dias','PREVISTO','VDP','NF 28']
+  ]
+};
+function baixarModeloImportacao(M){
+  const ws = XLSX.utils.aoa_to_sheet([M.cab, ...M.exemplos]);
+  ws['!cols'] = M.larg;
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, M.aba);
+  XLSX.writeFile(wb, M.arquivo);
+  toast('Modelo baixado — preencha e importe de volta');
 }
 
 /* =========================================================
@@ -3831,10 +4118,10 @@ $('#bulkAdi').addEventListener('click', async e => {
     return aplicarAdi(alvos.map(r => ({acao:'excluir', id:r.id})), 'lote', `${alvos.length} itens fora da fila`); }
 });
 $('#btnLoteAdi').addEventListener('click', () => {
-  const rows = filteredAdi().filter(r => r.status === 'Aguardando' && prontoParaLote(r));
-  const fora = filteredAdi().filter(r => r.status === 'Aguardando').length - rows.length;
-  const n = baixarLotePix(rows.map(r => ({pix:r.pix, valor:r.valor, nome:r.contribuinte})), `lote-adiantamento-${getTodaySP()}.xlsx`);
-  if (n) toast(`${n} pagamento(s) no lote` + (fora ? ` · ${fora} fora por chave inválida` : ''));
+  const aguardando = filteredAdi().filter(r => r.status === 'Aguardando');
+  const ok = aguardando.filter(prontoParaLote);
+  escolherModeloLote(ok.map(r => ({pix:r.pix, valor:r.valor, nome:r.contribuinte, descricao:r.operacao})),
+    'lote-adiantamento', aguardando.length - ok.length);
 });
 
 /* ---------- seleção arrastando na grade de lançamentos ---------- */
@@ -3866,6 +4153,130 @@ document.addEventListener('mouseup', () => {
 });
 /** um arraste não deve abrir o editor da célula onde o dedo soltou */
 $('#tbody').addEventListener('click', e => { if (arrasto && arrasto.moveu){ e.stopPropagation(); e.preventDefault(); } }, true);
+
+
+/* =========================================================
+   BALANÇO GERAL — caixa disponível e projeção dos próximos meses
+   ========================================================= */
+const SALDO_PADRAO = {valor: 0, mesRef: '', em: 0, porQuem: ''};
+const saldoBase = () => S.saldoInicial || SALDO_PADRAO;
+/** primeiro dia contado depois do saldo informado */
+function inicioContagem(){
+  const ref = saldoBase().mesRef;
+  if (!ref) return '';
+  const [a, m] = ref.split('-').map(Number);
+  return m === 12 ? `${a+1}-01-01` : `${a}-${String(m+1).padStart(2,'0')}-01`;
+}
+async function gravarSaldoInicial(valor, mesRef){
+  const dados = {valor: dinheiro(valor), mesRef, em: Date.now(), porQuem: APP.nome || 'Local'};
+  const antes = saldoBase();
+  S.saldoInicial = dados;
+  if (APP.modo === 'nuvem'){ try { await fdb.collection('config').doc('saldo').set(dados); }
+    catch(e){ toast('Não consegui gravar o saldo: ' + (e.code || e.message)); return false; } }
+  else Local.set('tesouraria:saldo', JSON.stringify(dados));
+  await Repo.registrar({ts: Date.now(), uid: APP.uid || 'local', nome: APP.nome || 'Local', origem: 'manual',
+    label: 'saldo inicial de caixa',
+    resumo: [`saldo no fim de ${mesRef || '—'}: ${brl(antes.valor)} → ${brl(dados.valor)}`], total: 1});
+  if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
+  renderAll();
+  return true;
+}
+
+/* ---------- números do balanço ---------- */
+const Balanco = {
+  /** meses com movimento, do saldo informado em diante */
+  meses(){
+    const ini = inicioContagem();
+    const chaves = new Set();
+    S.rows.filter(r => r.status !== 'Cancelado' && r.dataPagamento).forEach(r => chaves.add(r.dataPagamento.slice(0,7)));
+    S.rec.filter(r => r.status !== 'Cancelado').forEach(r => { const d = dataRec(r); if (d) chaves.add(d.slice(0,7)); });
+    return [...chaves].filter(k => !ini || k >= ini.slice(0,7)).sort();
+  },
+  doMes(ym){
+    const ent = S.rec.filter(r => r.status !== 'Cancelado' && String(dataRec(r)).startsWith(ym));
+    const sai = S.rows.filter(r => (ABERTO(r) || r.status === 'Pago') && String(r.dataPagamento).startsWith(ym));
+    const c = l => l.reduce((s,r) => s + toCents(r.valor), 0);
+    const entradas = ent.reduce((s,r) => s + toCents(valorRec(r)), 0);
+    const recebido = ent.filter(r => r.status === 'Recebido').reduce((s,r) => s + toCents(valorRec(r)), 0);
+    const saidas = c(sai), pago = c(sai.filter(r => r.status === 'Pago'));
+    return {ym, entradas: fromCents(entradas), recebido: fromCents(recebido), aReceber: fromCents(entradas - recebido),
+            saidas: fromCents(saidas), pago: fromCents(pago), aPagar: fromCents(saidas - pago),
+            resultado: fromCents(entradas - saidas), nEnt: ent.length, nSai: sai.length};
+  },
+  /** projeção acumulada partindo do saldo informado */
+  projecao(){
+    let acum = toCents(saldoBase().valor);
+    return this.meses().map(ym => {
+      const m = this.doMes(ym);
+      acum += toCents(m.resultado);
+      return {...m, acumulado: fromCents(acum)};
+    });
+  },
+  /** o que já entrou menos o que já saiu de fato, desde o saldo informado */
+  caixaHoje(){
+    const ini = inicioContagem(), h = getTodaySP();
+    const dentro = (d) => d && d <= h && (!ini || d >= ini);
+    const entrou = S.rec.filter(r => r.status === 'Recebido' && dentro(dataRec(r)))
+      .reduce((s,r) => s + toCents(valorRec(r)), 0);
+    const saiu = S.rows.filter(r => r.status === 'Pago' && dentro(r.dataPagamento))
+      .reduce((s,r) => s + toCents(r.valor), 0);
+    return {saldo: fromCents(toCents(saldoBase().valor) + entrou - saiu), entrou: fromCents(entrou), saiu: fromCents(saiu)};
+  },
+  aberto(){
+    const aReceber = S.rec.filter(ABERTO_REC).reduce((s,r) => s + toCents(r.valor), 0);
+    const aPagar = S.rows.filter(ABERTO).reduce((s,r) => s + toCents(r.valor), 0);
+    return {aReceber: fromCents(aReceber), aPagar: fromCents(aPagar), projetado: fromCents(aReceber - aPagar)};
+  },
+  /** primeiro mês em que o caixa projetado fica negativo */
+  primeiroNegativo(){ return this.projecao().find(x => x.acumulado < 0) || null; }
+};
+
+function renderBalanco(){
+  if (S.view !== 'bal') return;
+  const s = saldoBase(), caixa = Balanco.caixaHoje(), ab = Balanco.aberto();
+  const projecao = Balanco.projecao(), neg = Balanco.primeiroNegativo();
+  const finalProjetado = projecao.length ? projecao[projecao.length-1].acumulado : caixa.saldo;
+
+  $('#balSaldoVal').value = s.valor ? s.valor.toFixed(2) : '';
+  $('#balSaldoMes').value = s.mesRef || '';
+  $('#balSaldoInfo').textContent = s.em
+    ? `informado por ${s.porQuem} em ${hora(s.em)}`
+    : 'ainda não informado — o caixa parte de zero';
+
+  $('#balKpis').innerHTML = `
+    <div class="kpi lead"><div class="lab">Caixa disponível hoje</div>
+      <div class="val" style="color:${caixa.saldo < 0 ? 'var(--bad)' : 'var(--ok)'}">${brl(caixa.saldo)}</div>
+      <div class="note">${brl(s.valor)} do saldo inicial + ${brl(caixa.entrou)} recebidos − ${brl(caixa.saiu)} pagos</div></div>
+    <div class="kpi"><div class="lab">A receber em aberto</div><div class="val" style="color:var(--ok)">${brlShort(ab.aReceber)}</div>
+      <div class="note">${S.rec.filter(ABERTO_REC).length} recebimentos</div></div>
+    <div class="kpi"><div class="lab">A pagar em aberto</div><div class="val" style="color:var(--accent-2)">${brlShort(ab.aPagar)}</div>
+      <div class="note">${S.rows.filter(ABERTO).length} lançamentos</div></div>
+    <div class="kpi"><div class="lab">Sobra projetada</div>
+      <div class="val" style="color:${finalProjetado < 0 ? 'var(--bad)' : 'var(--ok)'}">${brlShort(finalProjetado)}</div>
+      <div class="note">depois de tudo que está previsto</div></div>
+    <div class="kpi"><div class="lab">Meses projetados</div><div class="val">${projecao.length}</div>
+      <div class="note">${projecao.length ? mesLongo(projecao[0].ym) + ' a ' + mesLongo(projecao[projecao.length-1].ym) : 'sem movimento'}</div></div>`;
+
+  $('#balAlerta').innerHTML = neg
+    ? `<div class="alert" data-mesneg="${neg.ym}"><div><b>O caixa fica negativo em ${mesLongo(neg.ym)}</b>
+         <span>faltam ${brl(Math.abs(neg.acumulado))} para cobrir o que está previsto até lá — clique para abrir o mês</span></div></div>`
+    : (projecao.length ? '<div class="empty">O caixa se mantém positivo em todos os meses projetados.</div>' : '');
+
+  const maior = Math.max(1, ...projecao.map(x => Math.max(toCents(x.entradas), toCents(x.saidas))));
+  $('#balProj').innerHTML = projecao.length ? `
+    <div class="bl-linha bl-cab"><span>Mês</span><span></span><span>Entradas</span><span>Saídas</span><span>Resultado</span><span>Saldo acumulado</span></div>`
+    + projecao.map(x => `
+      <div class="bl-linha ${x.acumulado < 0 ? 'neg' : ''}" data-mes="${x.ym}" title="Abrir ${mesLongo(x.ym)} no controle mensal">
+        <span class="bl-mes">${mesLongo(x.ym)}</span>
+        <span class="bl-barras"><i class="e" style="width:${(toCents(x.entradas)/maior*100).toFixed(1)}%"></i><i class="s" style="width:${(toCents(x.saidas)/maior*100).toFixed(1)}%"></i></span>
+        <span class="bl-e">${brl(x.entradas)}</span>
+        <span class="bl-s">${brl(x.saidas)}</span>
+        <span class="${x.resultado < 0 ? 'bl-neg' : 'bl-pos'}">${x.resultado > 0 ? '+' : ''}${brl(x.resultado)}</span>
+        <span class="bl-acum ${x.acumulado < 0 ? 'bl-neg' : ''}">${brl(x.acumulado)}</span>
+      </div>`).join('')
+    : '<div class="empty">Nenhum lançamento ou recebimento com data a partir do saldo informado.</div>';
+}
+const mesLongo = ym => { const [a,m] = String(ym).split('-'); return `${MESES[+m-1]} de ${a}`; };
 
 /* =========================================================
    TESTES LOCAIS — rode runAITests() no console
@@ -4416,7 +4827,13 @@ const Mensal = (() => {
       const c = valFn(r); o[k].v += c; if (realFn(r)) o[k].real += c; o[k].n++; });
     return Object.values(o).sort((a,b) => b.v - a.v);
   }
-  const acumuladoAte = (ano, mes) => { let a = 0; for (let m = 1; m <= mes; m++) a += resumo(ym(ano, m)).resultado; return a; };
+  /** caixa acumulado desde o saldo informado no Balanço geral, até o mês aberto */
+  const acumuladoAte = (ano, mes) => {
+    const ate = ym(ano, mes);
+    let a = toCents((S.saldoInicial || {}).valor || 0);
+    Balanco.meses().filter(k => k <= ate).forEach(k => { a += toCents(Balanco.doMes(k).resultado); });
+    return a;   // em centavos, como o resto deste módulo
+  };
   function compara(atual, anterior, saida){
     if (!anterior && !atual) return '<span class="mn-var flat">—</span>';
     if (!anterior) return '<span class="mn-var flat">novo</span>';
@@ -4477,7 +4894,7 @@ const Mensal = (() => {
         <div class="lab">Resultado do mês (entradas − saídas)</div>
         <div class="big ${R.resultado < 0 ? 'mn-neg' : 'mn-pos'}">${sinal(R.resultado)}</div>
         <div class="mn-lin"><span>Realizado até agora</span><b class="${R.resultadoReal < 0 ? 'mn-neg' : 'mn-pos'}">${sinal(R.resultadoReal)}</b></div>
-        <div class="mn-lin"><span>Acumulado no ano até ${MES_CURTO[mes-1]}</span><b class="${acum < 0 ? 'mn-neg' : 'mn-pos'}">${sinal(acum)}</b></div>
+        <div class="mn-lin"><span>Caixa acumulado até ${MES_CURTO[mes-1]}</span><b class="${acum < 0 ? 'mn-neg' : 'mn-pos'}">${sinal(acum)}</b></div>
         <div class="mn-lin"><span>Resultado de ${antCurto}/${String(pm[0]).slice(2)}</span><b>${sinal(P.resultado)} ${compara(R.resultado, P.resultado)}</b></div>
         ${R.reinv ? `<div class="mn-lin"><span>Reinvestido, fora do caixa (${R.nReinv})</span><b>${brlC(R.reinv)}</b></div>` : ''}
       </div>`;
@@ -4638,7 +5055,7 @@ const Mensal = (() => {
       ['Entradas', v(R.recebido), v(R.aReceber), v(R.entradas)],
       ['Saídas', v(R.pago), v(R.aPagar), v(R.saidas)],
       ['Resultado', v(R.resultadoReal), v(R.aReceber - R.aPagar), v(R.resultado)], [],
-      ['Acumulado no ano até o mês', v(acumuladoAte(ano, mes))],
+      ['Caixa acumulado até o mês (parte do saldo inicial)', v(acumuladoAte(ano, mes))],
       ['Pagamentos vencidos sem baixa', v(R.atrP), R.nAtrP + ' itens'],
       ['Recebimentos em atraso', v(R.atrR), R.nAtrR + ' itens'],
       ['Reinvestido (fora do caixa)', v(R.reinv), R.nReinv + ' itens'],
@@ -4672,6 +5089,7 @@ const Mensal = (() => {
     if (m < 1){ m = 12; a--; } if (m > 12){ m = 1; a++; }
     M.ano = a; M.mes = m; render();
   }
+  window.__mensalIr = irPara;
   function abrirDia(dia){
     S.f = {...FILTROS_PADRAO, st:'', d1:dia, d2:dia};
     ['fQ','fOp','fSt','fTp','fV1','fV2'].forEach(id => { const x = $('#'+id); if (x) x.value = ''; });
@@ -4708,6 +5126,7 @@ const Mensal = (() => {
 
 /* ---------- boot ---------- */
 (function init(){
+  S.recModo = Local.get('tesouraria:recmodo') || 'simples';
   $('#versaoBox').textContent = 'versão ' + VERSAO;
   aplicarTema(Local.get('tesouraria:tema') || document.documentElement.dataset.tema || 'escuro');
   modoChat();
