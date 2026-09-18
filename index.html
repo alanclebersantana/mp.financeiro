@@ -92,7 +92,7 @@ button{cursor:pointer;border:none;background:none}
 .topbar .sub{color:var(--nav-muted-2);font-size:12.5px}
 .spacer{flex:1}
 .view{flex:1;min-height:0;overflow:auto;padding:20px}
-#view-dash{padding-bottom:96px}
+#view-dash{padding-top:4px;padding-bottom:96px}
 .view.flush{padding:0;display:flex;flex-direction:column}
 .hide{display:none !important}
 
@@ -506,6 +506,38 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .btn.perigo{color:var(--bad);border-color:var(--bad)}
 .btn.perigo:hover{background:var(--bad-dim)}
 .rail-foot .bkline{font-size:11px;color:var(--nav-muted)}
+.pl-painel{display:grid;grid-template-columns:1fr 1fr minmax(240px,.9fr);gap:14px}
+.pl-bloco{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--rs);padding:12px 14px}
+.pl-bloco.total{background:linear-gradient(160deg,var(--lead-a),var(--lead-b));border-color:var(--lead-line);display:flex;flex-direction:column;justify-content:center}
+.pl-tit{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;color:var(--muted-2);margin-bottom:9px}
+.pl-lin{display:flex;justify-content:space-between;gap:12px;align-items:baseline;padding:4px 0;font-size:13px;font-variant-numeric:tabular-nums}
+.pl-lin span{color:var(--muted)}
+.pl-lin.destaque{border-top:1px solid var(--line);margin-top:6px;padding-top:8px}
+.pl-lin b{white-space:nowrap}
+.pl-e{color:var(--ok)} .pl-s{color:var(--accent-2)}
+.pl-big{font-size:26px;font-weight:800;letter-spacing:-.5px;color:var(--accent-2);font-variant-numeric:tabular-nums}
+.pl-nota{color:var(--muted-2);font-size:11.5px;margin-top:4px}
+.pl-tab{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.pl-tab th{text-align:left;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.2px;color:var(--muted-2);
+  padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.pl-tab td{padding:5px 8px;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+.pl-tab .num{text-align:right}
+.pl-tab .forte{font-weight:800}
+.pl-tab tfoot td{border-top:1px solid var(--line);border-bottom:none;font-weight:800;background:var(--surface-2)}
+.pl-tab tbody tr:hover td{background:var(--hover)}
+.pl-tab.estoque{margin-bottom:12px}
+.pl-tab.estoque tr.bloq td:first-child{color:var(--bad);font-weight:700}
+.pl-tab .inp.mini{height:28px;padding:0 8px;font-size:12.5px;text-align:right;width:100%;min-width:90px}
+.pl-tab .inp.mini[type=date]{text-align:left}
+.lixo{color:var(--muted-2);padding:2px 6px;border-radius:4px}
+.lixo:hover{background:var(--bad);color:#fff}
+.pl-acoes{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.pl-conts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.pl-cont{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--rs);padding:10px 12px}
+.pl-cont span{display:block;font-size:11.5px;color:var(--muted-2);font-weight:700}
+.pl-cont b{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+.pl-pivos{align-items:start}
+@media (max-width:1100px){.pl-painel{grid-template-columns:1fr}.pl-pivos{grid-template-columns:1fr}}
 .bl-saldo .bl-form{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
 .bl-saldo .field{width:190px}
 .bl-info{color:var(--muted-2);font-size:12px;padding-bottom:9px}
@@ -705,13 +737,12 @@ try { document.documentElement.dataset.tema =
   <aside class="rail">
     <div class="brand"><img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAABYCAMAAABGS8AGAAAAYFBMVEX03VgDJSqVnVNWaTopSTQAAABnrqxic0r3lB0qXVr57l/13lh3hEbHvE/8/Ab03ld1wL55xMKhcCP/vz//fwD/f3//qlV/f38AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABuDXH5AAAAGHRSTlP+/////wD/////EaX//wFf////BAICAwJQRH6XAAADxUlEQVR42u2Za3ekIAyGJQnFu9tO2/3//3S5qRCCtR09+6U5p6fjDDy+hhCINLofmmdtGJZea+3+Nmsu4Ab4Mus5QTcXcZ0tqejmSht63c93gJ3o+e8t4GaY9cctYOuO+f0WcDM8PudbwM2gHwyMqmKY90zbEcJUjmCfgUnVLe1X/EjAyL2dKfsVWGUgGmaaMW03IgnoQX/qtAPVvJb9RMwzk3HokTvjFNgU4BHz3/k4nASXipXKHn4iRu5/6ApgYD/ymHn5EAzRdwUY8ziJ5PRegisAEq5SkwTmAxij8BDswicEvefK4KAOgT1ecreFg2GbUWafdAxswN+PmD8wqIhO5uBJmswc7K9XheMqdFKCg/beICSJUvG4CbYPRsdxtX09AbLkI828GHEmGbMyCIveeAhWftQIGdf54gvwqpgqYGumCf7NBpBEJ68+TvNtHezFAUuoB2DXNPTEOhjbNwyOIsqmFNbBo9r0RFUiuG3fNk8BJe3qrqDtOekQ3LYYyJiNRR08TRATFW1DJINbv7CASkLhAEwqrD1RCh6BHRkazFYtGezSoRsKtWWN8RDc7k5owN2gqthxbdvoAsCxOQa/BTfYJTUse7VwU4HrY/lwBWkzybRN05rilfvl0tQmkkPoh9RcBUNl2SM289pEMuzzA+S86fMlSaay5AJps6yLkpNQnokPNm9YbzfKq/xkUDamAyrNDDS/9mu/9gObTn45ne58nARo4nXBqXrw6TovUVBJbt+v83i78atl4ht13tm927k6ryYA71H8n8CA94BBCJorwMDC0a/tF4DjxjstGuAKsN8Iwl5hYdgrPwvGwIWNbIHGfobxSbCK3JXsuY5MT4HHnRvIkevIT4Eh4Xqy3SablczBgJS8YbLVhd9vymCbDrskVXmdEUzCi5AkLLcNMtaqdAUymYMdtzPdXkV2Xef3nTLYtjAymYrKtHuxZtb8btxVx6bWkL/WEckF2HNf/gRYZz+sZBLfsUDu5Z3MwJ5kn/7l1QPtP3fh70PiWyHnZSOROfg1SI3Ct4vXKtitkxK5UOzHayV365XJwHpgsSyQy8FTGdHz+TKtez5LSj8refCiD9Kr1BWZ5JCPi6jjrtis88O2GuXgRUhGZPbZ3R2Ac8v2Hzr3cnyzkW1v6nVebCDWebqf+2IOIv2szkvrMXc+tAhbR1vS1+o3qNSDY7Z31Fo/9IUnWSl47ufhFrCe328g+xOneb7eG3olL7eAtZ0o/XAH2J9KLtehlx2se4u+7Gj20aRHvu7As+8v0L18zP8AmtYi63DWszMAAAAASUVORK5CYII=" alt="Milhas Plus"><div class="brand-txt"><b>MP Planejamento Financeiro</b></div></div>
     <nav class="nav" id="nav">
-      <button data-view="dash" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 13h5v8H3zM10 3h5v18h-5zM17 9h4v12h-4z"/></svg>Painel</button>
       <button data-view="bal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M6 8h8.5a2.5 2.5 0 0 1 0 5H6M6 18h9"/></svg>Balanço geral</button>
       <button data-view="mensal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M7.5 14h3M13.5 14h3M7.5 17h3"/></svg>Controle mensal</button>
       <button data-view="lanc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M3 12h18M3 19h18"/></svg>Lançamentos</button>
       <button data-view="rec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Recebimentos</button>
-      <button data-view="adi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg>Adiantamentos</button>
-      <button data-view="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>Atividade</button>
+      <button data-view="adi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg>Pagamentos e Adiantamentos</button>
+      <button data-view="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>Auditoria</button>
       <button data-view="users" id="navUsers" class="hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 11.2a3 3 0 1 0-1.6-5.5M18 20a5.6 5.6 0 0 0-2.2-4.4"/></svg>Usuários</button>
       <button data-view="bkp" id="navBkp" class="hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.7-6.4L3 8"/><path d="M3 3v5h5"/><path d="M12 7.5V12l3 2"/></svg>Backups</button>
       <button id="btnImport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Importar</button>
@@ -738,31 +769,7 @@ try { document.documentElement.dataset.tema =
     </div>
 
     <!-- PAINEL -->
-    <section class="view" id="view-dash">
-      <div class="kpis" id="kpis"></div>
-      <div class="panel" id="painelCaixa">
-        <h3>Caixa por dia — entra × sai</h3>
-        <div id="caixaDias"></div>
-      </div>
-      <div class="panel">
-        <h3>Calendário de desembolso</h3>
-        <div class="timeline" id="timeline"></div>
-      </div>
-      <div class="grid2">
-        <div class="panel">
-          <h3>Por operação</h3>
-          <div class="bars" id="byOp"></div>
-        </div>
-        <div class="panel">
-          <h3>Pontos de atenção</h3>
-          <div class="alert-list" id="alerts"></div>
-        </div>
-      </div>
-      <div class="panel">
-        <h3>Maiores beneficiários pendentes</h3>
-        <div class="bars" id="topBen"></div>
-      </div>
-    </section>
+
 
     <!-- CONTROLE MENSAL -->
     <section class="view hide" id="view-mensal">
@@ -874,8 +881,34 @@ try { document.documentElement.dataset.tema =
         <span style="color:var(--muted-2)">Clique na célula para editar · Enter salva · Esc cancela · para editar uma origem com link, clique ao lado do texto</span>
       </div>
     </section>
+    <section class="view hide" id="view-dash">
+      <div class="kpis" id="kpis"></div>
+      <div class="panel" id="painelCaixa">
+        <h3>Caixa por dia — entra × sai</h3>
+        <div id="caixaDias"></div>
+      </div>
+      <div class="panel">
+        <h3>Calendário de desembolso</h3>
+        <div class="timeline" id="timeline"></div>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <h3>Por operação</h3>
+          <div class="bars" id="byOp"></div>
+        </div>
+        <div class="panel">
+          <h3>Pontos de atenção</h3>
+          <div class="alert-list" id="alerts"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Maiores beneficiários pendentes</h3>
+        <div class="bars" id="topBen"></div>
+      </div>
+    </section>
+
     <!-- BALANÇO GERAL -->
-    <section class="view hide" id="view-bal">
+    <section class="view" id="view-bal">
       <div class="panel bl-saldo">
         <h3>Ponto de partida</h3>
         <div class="bl-form">
@@ -886,6 +919,13 @@ try { document.documentElement.dataset.tema =
         </div>
         <p class="bl-nota">Tudo que foi pago ou recebido depois desse mês entra na conta do caixa de hoje, e a projeção dos próximos meses parte desse valor.</p>
       </div>
+      <div class="panel"><div id="balCaixa" class="pl-painel"></div></div>
+      <div class="grid2 pl-pivos">
+        <div class="panel"><h3>A receber</h3><div id="balReceber"></div></div>
+        <div class="panel"><h3>A pagar — Milhas Plus</h3><div id="balPagar"></div></div>
+      </div>
+      <div class="panel"><h3>Futuros pagamentos</h3><div id="balFuturos" class="pl-conts"></div></div>
+      <div class="panel"><h3>Controle médio de estoques</h3><div id="balEstoque"></div></div>
       <div class="kpis" id="balKpis"></div>
       <div id="balAlerta" class="alert-list" style="margin-bottom:14px"></div>
       <div class="panel">
@@ -1060,7 +1100,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "18/09/2026 08:14";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "18/09/2026 08:38";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -1116,9 +1156,9 @@ const S = {
   rows: [], rec: [], adi: [], pagadores: [], ops: OPS_BASE.slice(), sel: new Set(), hist: [], log: [], users: [],
   sort: {k:'dataPagamento', dir:1}, sortRec: {k:'dataPrevista', dir:1}, sortAdi: {k:'dataAdiantada', dir:1},
   f: {...FILTROS_PADRAO}, fr: {q:'', pg:'', st:'', d1:'', d2:''},
-  fa: {q:'', st:'', d1:'', d2:''}, recModo: 'simples', saldoInicial: null,
+  fa: {q:'', st:'', d1:'', d2:''}, recModo: 'simples', saldoInicial: null, estoque: null,
   cfg: {autoAplicar: true}, chat: [], alias: {}, avisado: false,
-  view: 'dash'
+  view: 'bal'
 };
 const APP = {modo:'local', uid:null, nome:'', email:'', foto:'', papel:'admin', online:false};
 
@@ -1294,7 +1334,7 @@ const Local = {
   get(k){ try { const v = localStorage.getItem(k); if (v != null) return v; } catch(e){} return MEM[k] ?? null; },
   set(k,v){ MEM[k] = v; try { localStorage.setItem(k,v); } catch(e){} }
 };
-let fdb = null, fauth = null, unsubRows = null, unsubRec = null, unsubSaldo = null, unsubAdi = null, unsubLog = null, unsubUsers = null;
+let fdb = null, fauth = null, unsubRows = null, unsubRec = null, unsubSaldo = null, unsubEstoque = null, unsubAdi = null, unsubLog = null, unsubUsers = null;
 
 const Repo = {
   async escutar(){
@@ -1325,6 +1365,12 @@ const Repo = {
         if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
         renderAll();
       }, () => {});
+      unsubEstoque && unsubEstoque();
+      unsubEstoque = fdb.collection('config').doc('estoque').onSnapshot(d => {
+        S.estoque = d.exists ? {...ESTOQUE_PADRAO, ...d.data()} : {...ESTOQUE_PADRAO};
+        if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
+        renderAll();
+      }, () => {});
       unsubSaldo && unsubSaldo();
       unsubSaldo = fdb.collection('config').doc('saldo').onSnapshot(d => {
         S.saldoInicial = d.exists ? {...SALDO_PADRAO, ...d.data()} : {...SALDO_PADRAO};
@@ -1342,6 +1388,8 @@ const Repo = {
       S.rec = rawRec ? JSON.parse(rawRec).map(normalizeRec) : seedRec();
       try { S.saldoInicial = JSON.parse(Local.get('tesouraria:saldo') || 'null') || {...SALDO_PADRAO}; }
       catch(e){ S.saldoInicial = {...SALDO_PADRAO}; }
+      try { S.estoque = JSON.parse(Local.get('tesouraria:estoque') || 'null') || {...ESTOQUE_PADRAO}; }
+      catch(e){ S.estoque = {...ESTOQUE_PADRAO}; }
       const rawAdi = Local.get('tesouraria:adi');
       S.adi = rawAdi ? JSON.parse(rawAdi).map(normalizeAdi) : [];
       S.log = JSON.parse(Local.get('tesouraria:log') || '[]');
@@ -1770,6 +1818,38 @@ $('#balSalvar').addEventListener('click', async () => {
   if (!mes) return alert('Informe o mês de referência do saldo.');
   if (await gravarSaldoInicial(valor, mes)) toast('Saldo inicial salvo — projeção recalculada');
 });
+function lerEstoqueDaTela(){
+  return [...document.querySelectorAll('#balEstoque tr[data-est]')].map(tr => {
+    const base = (estoqueBase().itens || []).find(i => i.id === tr.dataset.est) || {};
+    const v = c => { const el = tr.querySelector(`[data-campo="${c}"]`); return el ? el.value : ''; };
+    return {...base, saldo: Math.round(parseNum(v('saldo'))), media: dinheiro(v('media')), data: v('data')};
+  });
+}
+$('#balEstoque').addEventListener('click', async e => {
+  if (e.target.closest('#salvarEstoque')){
+    if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+    if (await gravarEstoque(lerEstoqueDaTela())) toast('Estoque salvo');
+    return;
+  }
+  if (e.target.closest('#addEstoque')){
+    const comp = prompt('Companhia (AZUL, GOL, TAM…):'); if (!comp) return;
+    const tipo = prompt('Tipo da linha:', 'MILHAS PLUS'); if (!tipo) return;
+    const itens = [...lerEstoqueDaTela(), {id:'e' + Date.now().toString(36), companhia:comp.trim().toUpperCase(), tipo:tipo.trim().toUpperCase(), saldo:0, media:0, data:''}];
+    return gravarEstoque(itens);
+  }
+  const rem = e.target.closest('[data-remest]');
+  if (rem){
+    if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+    if (!confirm('Remover esta linha do estoque?')) return;
+    return gravarEstoque(lerEstoqueDaTela().filter(i => i.id !== rem.dataset.remest));
+  }
+});
+$('#balPagar').addEventListener('click', e => {
+  const l = e.target.closest('[data-mespag]'); if (!l) return;
+  S.f = {...FILTROS_PADRAO, d1:l.dataset.mespag, d2:l.dataset.mespag};
+  $('#fQ').value = ''; $('#fD1').value = l.dataset.mespag; $('#fD2').value = l.dataset.mespag;
+  go('lanc');
+});
 $('#balProj').addEventListener('click', e => {
   const l = e.target.closest('[data-mes]'); if (!l) return;
   abrirMes(l.dataset.mes);
@@ -1834,14 +1914,16 @@ $('#bulkbar').addEventListener('click', async e => {
 function go(v){
   S.view = v;
   $$('#nav button[data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === v));
-  ['dash','bal','mensal','lanc','rec','adi','log','users','bkp'].forEach(x => $('#view-'+x).classList.toggle('hide', x !== v));
-  const t = {dash:['Painel','Visão consolidada da fila de pagamentos'],
-             mensal:['Controle mensal','Entradas e saídas do mês, com relatório completo'],
+  // o Painel deixou de ser uma tela própria: ele é a segunda metade do Controle mensal
+  ['bal','mensal','lanc','rec','adi','log','users','bkp'].forEach(x => $('#view-'+x).classList.toggle('hide', x !== v));
+  $('#view-dash').classList.toggle('hide', v !== 'mensal');
+  const t = {dash:['Controle mensal','Entradas e saídas do mês, com o painel consolidado'],
+             mensal:['Controle mensal','Entradas e saídas do mês, com o painel consolidado'],
              lanc:['Lançamentos','Edite direto na grade, filtre e trabalhe em lote'],
-             adi:['Adiantamentos','Fila de pagamentos antecipados — exporte o lote e dê baixa'],
+             adi:['Pagamentos e Adiantamentos','Fila de pagamentos antecipados — exporte o lote e dê baixa'],
              bal:['Balanço geral','Caixa disponível hoje e projeção dos próximos meses'],
              rec:['Recebimentos','Previsões e entradas confirmadas, por pagador'],
-             log:['Atividade','Quem alterou o quê, e quando'],
+             log:['Auditoria','Quem alterou o quê, e quando'],
              users:['Usuários','Controle de acesso da equipe'],
              bkp:['Backups','Cópias automáticas a cada 20 minutos — compare e recupere']}[v];
   $('#vTitle').textContent = t[0]; $('#vSub').textContent = t[1];
@@ -4262,6 +4344,7 @@ const Balanco = {
 function renderBalanco(){
   if (S.view !== 'bal') return;
   if (!$('#balKpis')) return;
+  renderPainelPlanilha();
   const s = saldoBase(), caixa = Balanco.caixaHoje(), ab = Balanco.aberto();
   const projecao = Balanco.projecao(), neg = Balanco.primeiroNegativo();
   const finalProjetado = projecao.length ? projecao[projecao.length-1].acumulado : caixa.saldo;
@@ -4306,6 +4389,152 @@ function renderBalanco(){
     : '<div class="empty">Nenhum lançamento ou recebimento com data a partir do saldo informado.</div>';
 }
 const mesLongo = ym => { const [a,m] = String(ym).split('-'); return `${MESES[+m-1]} de ${a}`; };
+
+
+/* =========================================================
+   PAINEL DA PLANILHA — controle de caixa, estoque e pivôs
+   ========================================================= */
+const ESTOQUE_PADRAO = {itens: [
+  {id:'e1', companhia:'AZUL', tipo:'MILHAS PLUS',            saldo:0, media:0, data:''},
+  {id:'e2', companhia:'AZUL', tipo:'MILHAS PLUS BLOQUEADAS', saldo:0, media:0, data:''},
+  {id:'e3', companhia:'GOL',  tipo:'MILHAS PLUS',            saldo:0, media:0, data:''},
+  {id:'e4', companhia:'TAM',  tipo:'MILHAS PLUS',            saldo:0, media:0, data:''},
+  {id:'e5', companhia:'TAM',  tipo:'MILHAS PLUS BLOQUEADAS', saldo:0, media:0, data:''}
+], em:0, porQuem:''};
+const estoqueBase = () => S.estoque || ESTOQUE_PADRAO;
+const bloqueada = i => /BLOQUEAD/i.test(i.tipo);
+/** o total de cada linha é saldo × preço do milheiro ÷ 1000, como na planilha */
+const totalItem = i => fromCents(Math.round(toCents(i.media) * (Number(i.saldo) || 0) / 1000));
+
+async function gravarEstoque(itens){
+  const dados = {itens, em: Date.now(), porQuem: APP.nome || 'Local'};
+  S.estoque = dados;
+  if (APP.modo === 'nuvem'){ try { await fdb.collection('config').doc('estoque').set(dados); }
+    catch(e){ toast('Não consegui gravar o estoque: ' + (e.code || e.message)); return false; } }
+  else Local.set('tesouraria:estoque', JSON.stringify(dados));
+  await Repo.registrar({ts: Date.now(), uid: APP.uid || 'local', nome: APP.nome || 'Local', origem: 'manual',
+    label: 'controle médio de estoques',
+    resumo: itens.filter(i => i.saldo).map(i => `${i.companhia} ${i.tipo}: ${(Number(i.saldo)||0).toLocaleString('pt-BR')} × ${brl(i.media)} = ${brl(totalItem(i))}`).slice(0,8),
+    total: itens.length});
+  if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
+  renderAll();
+  return true;
+}
+
+/* ---------- os números do painel, na mecânica da planilha ---------- */
+Object.assign(Balanco, {
+  entradasFuturas(){ return fromCents(S.rec.filter(ABERTO_REC).reduce((s,r) => s + toCents(r.valor), 0)); },
+  saidasFuturas(){ return fromCents(S.rows.filter(ABERTO).reduce((s,r) => s + toCents(r.valor), 0)); },
+  lucroPrevisto(){ return subtractMoney(this.entradasFuturas(), this.saidasFuturas()); },
+  estoque(){
+    const itens = estoqueBase().itens || [];
+    const soma = f => fromCents(itens.filter(f).reduce((s,i) => s + toCents(totalItem(i)), 0));
+    const bloqueados = soma(bloqueada), livres = soma(i => !bloqueada(i));
+    return {itens, bloqueados, livres, indisponivel: bloqueados,
+            disponivel: addMoney(this.lucroPrevisto(), livres)};
+  },
+  /** A RECEBER: datas nas linhas, pagadores nas colunas, como o pivô da planilha */
+  pivoReceber(){
+    const abertos = S.rec.filter(ABERTO_REC);
+    const pagadores = [...new Set(abertos.map(r => r.pagador || '(sem pagador)'))].sort();
+    const datas = [...new Set(abertos.map(r => r.dataPrevista).filter(Boolean))].sort();
+    const linhas = datas.map(d => {
+      const celulas = pagadores.map(p => fromCents(abertos
+        .filter(r => r.dataPrevista === d && (r.pagador || '(sem pagador)') === p)
+        .reduce((s,r) => s + toCents(r.valor), 0)));
+      return {data:d, celulas, total: fromCents(celulas.reduce((s,v) => s + toCents(v), 0))};
+    });
+    const totais = pagadores.map((p,i) => fromCents(linhas.reduce((s,l) => s + toCents(l.celulas[i]), 0)));
+    return {pagadores, linhas, totais, total: fromCents(totais.reduce((s,v) => s + toCents(v), 0))};
+  },
+  /** A PAGAR - MILHAS PLUS: uma linha por data de pagamento */
+  aPagarPorData(){
+    const abertos = S.rows.filter(ABERTO);
+    const datas = [...new Set(abertos.map(r => r.dataPagamento))].sort();
+    const linhas = datas.map(d => ({data:d,
+      valor: fromCents(abertos.filter(r => r.dataPagamento === d).reduce((s,r) => s + toCents(r.valor), 0)),
+      n: abertos.filter(r => r.dataPagamento === d).length}));
+    return {linhas, total: fromCents(linhas.reduce((s,l) => s + toCents(l.valor), 0)),
+            semData: fromCents(abertos.filter(r => !r.dataPagamento).reduce((s,r) => s + toCents(r.valor), 0))};
+  },
+  futurosPagamentos(){
+    return {total: this.saidasFuturas(),
+            pendentes: S.rows.filter(ABERTO).length,
+            suspensos: S.rows.filter(r => r.status === 'Cancelado').length,
+            pagos: S.rows.filter(r => r.status === 'Pago').length};
+  }
+});
+
+/* ---------- desenho dos blocos ---------- */
+function renderPainelPlanilha(){
+  const e = Balanco.estoque(), fp = Balanco.futurosPagamentos();
+  const entradas = Balanco.entradasFuturas(), saidas = Balanco.saidasFuturas(), lucro = Balanco.lucroPrevisto();
+
+  $('#balCaixa').innerHTML = `
+    <div class="pl-bloco">
+      <div class="pl-tit">Controle de caixa</div>
+      <div class="pl-lin"><span>Entradas futuras</span><b class="pl-e">${brl(entradas)}</b></div>
+      <div class="pl-lin"><span>Saídas futuras</span><b class="pl-s">${brl(saidas)}</b></div>
+      <div class="pl-lin destaque"><span>Total em lucro previsto</span><b class="${lucro < 0 ? 'bl-neg' : 'bl-pos'}">${brl(lucro)}</b></div>
+    </div>
+    <div class="pl-bloco">
+      <div class="pl-tit">Controle de estoque</div>
+      <div class="pl-lin"><span>Total R$ bloqueados</span><b>${brl(e.bloqueados)}</b></div>
+      <div class="pl-lin"><span>Total R$ em pontos disp. p/ uso</span><b>${brl(e.livres)}</b></div>
+      <div class="pl-lin"><span>Total indisponível</span><b class="pl-s">${brl(e.indisponivel)}</b></div>
+    </div>
+    <div class="pl-bloco total">
+      <div class="pl-tit">Total disponível</div>
+      <div class="pl-big ${e.disponivel < 0 ? 'bl-neg' : ''}">${brl(e.disponivel)}</div>
+      <div class="pl-nota">lucro previsto ${brl(lucro)} + pontos disponíveis ${brl(e.livres)}</div>
+    </div>`;
+
+  const pv = Balanco.pivoReceber();
+  $('#balReceber').innerHTML = pv.linhas.length ? `
+    <table class="pl-tab">
+      <thead><tr><th>Data pagamento</th>${pv.pagadores.map(p => `<th class="num">${esc(p)}</th>`).join('')}<th class="num">Total geral</th></tr></thead>
+      <tbody>${pv.linhas.map(l => `<tr><td>${fmtDate(l.data)}</td>
+        ${l.celulas.map(v => `<td class="num">${v ? brl(v) : ''}</td>`).join('')}
+        <td class="num forte">${brl(l.total)}</td></tr>`).join('')}</tbody>
+      <tfoot><tr><td>Total geral</td>${pv.totais.map(v => `<td class="num">${brl(v)}</td>`).join('')}
+        <td class="num forte">${brl(pv.total)}</td></tr></tfoot>
+    </table>` : '<div class="empty">Nenhum recebimento em aberto.</div>';
+
+  const ap = Balanco.aPagarPorData();
+  $('#balPagar').innerHTML = ap.linhas.length ? `
+    <table class="pl-tab">
+      <thead><tr><th>Data de pagamento</th><th class="num">A pagar</th></tr></thead>
+      <tbody>${ap.linhas.map(l => `<tr data-mespag="${l.data}"><td>${fmtDate(l.data)}</td><td class="num">${brl(l.valor)}</td></tr>`).join('')}
+        ${ap.semData ? `<tr><td>sem data</td><td class="num">${brl(ap.semData)}</td></tr>` : ''}</tbody>
+      <tfoot><tr><td>Total geral</td><td class="num forte">${brl(ap.total)}</td></tr></tfoot>
+    </table>` : '<div class="empty">Nenhum lançamento em aberto.</div>';
+
+  $('#balFuturos').innerHTML = `
+    <div class="pl-cont"><span>Total pendente a pagar</span><b>${brl(fp.total)}</b></div>
+    <div class="pl-cont"><span>Pagamentos pendentes</span><b>${fp.pendentes}</b></div>
+    <div class="pl-cont"><span>Suspensos</span><b>${fp.suspensos}</b></div>
+    <div class="pl-cont"><span>Pagos</span><b>${fp.pagos}</b></div>`;
+
+  const porCompanhia = {};
+  e.itens.forEach(i => { (porCompanhia[i.companhia] = porCompanhia[i.companhia] || []).push(i); });
+  $('#balEstoque').innerHTML = Object.entries(porCompanhia).map(([comp, itens]) => `
+    <table class="pl-tab estoque">
+      <thead><tr><th>${esc(comp)}</th><th class="num">Saldo</th><th class="num">Média milha venda</th>
+        <th class="num">Total</th><th>Data da atualização</th><th></th></tr></thead>
+      <tbody>${itens.map(i => `<tr data-est="${i.id}" class="${bloqueada(i) ? 'bloq' : ''}">
+        <td>${esc(i.tipo)}</td>
+        <td class="num"><input class="inp mini" data-campo="saldo" value="${i.saldo ? Number(i.saldo).toLocaleString('pt-BR') : ''}" placeholder="0"></td>
+        <td class="num"><input class="inp mini" data-campo="media" value="${i.media ? i.media.toFixed(2).replace('.', ',') : ''}" placeholder="0,00"></td>
+        <td class="num forte">${brl(totalItem(i))}</td>
+        <td><input class="inp mini" data-campo="data" type="date" value="${i.data || ''}"></td>
+        <td><button class="lixo" data-remest="${i.id}" title="Remover linha">✕</button></td></tr>`).join('')}</tbody>
+    </table>`).join('')
+    + `<div class="pl-acoes">
+        <button class="btn sm" id="addEstoque">Adicionar linha</button>
+        <button class="btn sm primary" id="salvarEstoque">Salvar estoque</button>
+        <span class="bl-info">${estoqueBase().em ? 'atualizado por ' + esc(estoqueBase().porQuem) + ' em ' + hora(estoqueBase().em) : 'ainda não informado'}</span>
+      </div>`;
+}
 
 /* =========================================================
    TESTES LOCAIS — rode runAITests() no console
@@ -5162,6 +5391,7 @@ $('#erroCopiar').addEventListener('click', () => {
 });
 
 (function init(){
+  go('bal');   // o sistema abre no Balanço geral, primeiro item do menu
   S.recModo = Local.get('tesouraria:recmodo') || 'simples';
   $('#versaoBox').textContent = 'versão ' + VERSAO;
   aplicarTema(Local.get('tesouraria:tema') || document.documentElement.dataset.tema || 'escuro');
