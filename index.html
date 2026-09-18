@@ -417,6 +417,11 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
 @keyframes bl{0%,60%,100%{opacity:.25}30%{opacity:1}}
 
+.erro-banner{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:95;max-width:min(760px,94vw);
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--bad);
+  border-left:4px solid var(--bad);border-radius:var(--r);padding:12px 14px;box-shadow:var(--sombra);font-size:13px}
+.erro-banner b{color:var(--bad)}
+.erro-banner span{color:var(--muted);font-family:ui-monospace,monospace;font-size:11.5px;word-break:break-word;flex:1;min-width:200px}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--surface-3);border:1px solid var(--line);padding:10px 16px;border-radius:999px;z-index:90;font-weight:700;font-size:13px;box-shadow:var(--sombra)}
 
 /* ---------- login / papéis / atividade ---------- */
@@ -1033,6 +1038,12 @@ try { document.documentElement.dataset.tema =
   </div>
 </aside>
 
+<div id="erroBanner" class="erro-banner hide">
+  <b>Algo falhou ao montar a tela</b>
+  <span id="erroTxt"></span>
+  <button class="btn sm" id="erroCopiar">Copiar detalhes</button>
+  <button class="btn sm ghost" id="erroFechar">✕</button>
+</div>
 <div id="layers"></div>
 <script>
 /* =========================================================
@@ -1049,7 +1060,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "17/09/2026 14:04";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "18/09/2026 08:14";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -1257,6 +1268,20 @@ const ABERTO_REC = r => r.status === 'Previsto' || r.status === 'Atrasado';
 
 const opColor = op => 'c-op' + (Math.abs([...String(op)].reduce((a,c)=>a+c.charCodeAt(0),0)) % 8);
 const podeEditar = () => APP.papel === 'admin' || APP.papel === 'operador';
+/** mostra a falha na tela em vez de deixar a página em branco */
+let ultimoErro = '';
+function mostrarErro(onde, e){
+  const detalhe = `${onde}: ${(e && e.message) || e}` + (e && e.stack ? ' | ' + String(e.stack).split('\n')[1].trim() : '');
+  console.error('[MP]', onde, e);
+  if (detalhe === ultimoErro) return;
+  ultimoErro = detalhe;
+  const el = $('#erroBanner'); if (!el) return;
+  $('#erroTxt').textContent = detalhe;
+  el.classList.remove('hide');
+}
+window.addEventListener('error', e => mostrarErro('erro na página', e.error || e.message));
+window.addEventListener('unhandledrejection', e => mostrarErro('falha assíncrona', e.reason));
+
 function toast(msg){ const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
   document.body.appendChild(t); setTimeout(()=>t.remove(), 2800); }
 function scrollTo(id){ const tr = $(`tr[data-id="${id}"]`); if (tr){ tr.classList.add('flash'); if (tr.scrollIntoView) tr.scrollIntoView({block:'center'}); } }
@@ -1617,7 +1642,10 @@ function fillSelects(){
   set($('#fTp'), TIPOS, 'Todos', S.f.tp);
 }
 function renderAll(){
-  fillSelects(); renderDash(); renderTable(); renderRec(); renderAdi(); renderBalanco();
+  [['filtros',fillSelects], ['painel',renderDash], ['lançamentos',renderTable], ['recebimentos',renderRec],
+   ['adiantamentos',renderAdi], ['balanço',renderBalanco]].forEach(([nome, fn]) => {
+    try { fn(); } catch(e){ mostrarErro(`ao montar ${nome}`, e); }
+  });
   if (S.view === 'mensal') Mensal.render();
   if (S.view === 'log') renderLog();
   if (S.view === 'users') renderUsers();
@@ -1806,7 +1834,7 @@ $('#bulkbar').addEventListener('click', async e => {
 function go(v){
   S.view = v;
   $$('#nav button[data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === v));
-  ['dash','mensal','lanc','rec','adi','log','users','bkp'].forEach(x => $('#view-'+x).classList.toggle('hide', x !== v));
+  ['dash','bal','mensal','lanc','rec','adi','log','users','bkp'].forEach(x => $('#view-'+x).classList.toggle('hide', x !== v));
   const t = {dash:['Painel','Visão consolidada da fila de pagamentos'],
              mensal:['Controle mensal','Entradas e saídas do mês, com relatório completo'],
              lanc:['Lançamentos','Edite direto na grade, filtre e trabalhe em lote'],
@@ -4233,6 +4261,7 @@ const Balanco = {
 
 function renderBalanco(){
   if (S.view !== 'bal') return;
+  if (!$('#balKpis')) return;
   const s = saldoBase(), caixa = Balanco.caixaHoje(), ab = Balanco.aberto();
   const projecao = Balanco.projecao(), neg = Balanco.primeiroNegativo();
   const finalProjetado = projecao.length ? projecao[projecao.length-1].acumulado : caixa.saldo;
@@ -5125,6 +5154,13 @@ const Mensal = (() => {
 })();
 
 /* ---------- boot ---------- */
+$('#erroFechar').addEventListener('click', () => { $('#erroBanner').classList.add('hide'); ultimoErro = ''; });
+$('#erroCopiar').addEventListener('click', () => {
+  const t = $('#erroTxt').textContent + ' · versão ' + VERSAO;
+  if (navigator.clipboard) navigator.clipboard.writeText(t).then(() => toast('Detalhes copiados'));
+  else toast(t);
+});
+
 (function init(){
   S.recModo = Local.get('tesouraria:recmodo') || 'simples';
   $('#versaoBox').textContent = 'versão ' + VERSAO;
