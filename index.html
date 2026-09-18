@@ -527,6 +527,10 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .pl-tab tfoot td{border-top:1px solid var(--line);border-bottom:none;font-weight:800;background:var(--surface-2)}
 .pl-tab tbody tr:hover td{background:var(--hover)}
 .pl-tab.estoque{margin-bottom:12px;table-layout:fixed}
+.pl-tab.estoque thead tr{background:var(--surface-3)}
+.pl-tab.estoque thead th{padding:8px;border-bottom:1px solid var(--line)}
+.pl-tab.estoque thead th:first-child{border-radius:var(--rs) 0 0 var(--rs)}
+.pl-tab.estoque thead th:last-child{border-radius:0 var(--rs) var(--rs) 0}
 .pl-tab.estoque .comp{font-size:14.5px;font-weight:800;letter-spacing:.2px;text-transform:none}
 .comp-AZUL{color:#2F80ED} .comp-GOL{color:#F2801A} .comp-TAM{color:#D93A2F} .comp-LATAM{color:#D93A2F}
 html[data-tema="claro"] .comp-AZUL{color:#15539F} html[data-tema="claro"] .comp-GOL{color:#B85008}
@@ -679,7 +683,17 @@ html[data-tema="claro"] .comp-TAM{color:#A31F18} html[data-tema="claro"] .comp-L
 #view-mensal .rs-Cancelado{background:var(--surface-3);color:var(--muted)}
 
 #view-mensal .mn-anowrap{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;align-items:start}
-#view-mensal .mn-graf svg{width:100%;height:auto;display:block}
+#view-mensal .mn-graf svg,#view-bal .mn-graf svg{width:100%;height:auto;display:block}
+#view-bal .mn-anowrap{display:grid;grid-template-columns:minmax(320px,.95fr) 1fr;gap:16px;align-items:start}
+#view-bal .mn-graf{max-width:480px}
+#view-bal .mn-graf svg{max-height:185px}
+#view-bal .mn-leg{font-size:10.5px;gap:8px 12px}
+#view-bal #mn-tabAno{font-size:11.5px}
+#view-bal #mn-tabAno td,#view-bal #mn-tabAno th{padding:3px 7px}
+#view-bal .mn-ph h3{font-size:13px}
+#view-bal .mn-leg{font-size:11px}
+#view-bal .mn-t{font-size:12px}
+@media (max-width:1100px){#view-bal .mn-anowrap{grid-template-columns:1fr}#view-bal .mn-graf{max-width:none}}
 #view-mensal .mn-graf .mcol{cursor:pointer}
 #view-mensal .mn-graf .mcol:hover .hl{fill:var(--hover)}
 #view-mensal .mn-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}
@@ -890,6 +904,12 @@ try { document.documentElement.dataset.tema =
       </div>
       <div class="panel"><h3>Futuros pagamentos</h3><div id="balFuturos" class="pl-conts"></div></div>
       <div class="panel"><h3>Controle médio de estoques</h3><div id="balEstoque"></div></div>
+
+      <div id="balAlerta" class="alert-list" style="margin-bottom:14px"></div>
+      <div class="panel">
+        <h3>Projeção mês a mês</h3>
+        <div id="balProj"></div>
+      </div>
       <div class="panel">
         <div class="mn-ph"><h3 id="mn-anoTitulo">Visão do ano</h3><small>clique em um mês para abrir o relatório</small></div>
         <div class="mn-anowrap">
@@ -904,11 +924,6 @@ try { document.documentElement.dataset.tema =
           </div>
           <div class="mn-scroll"><table class="mn-t" id="mn-tabAno"></table></div>
         </div>
-      </div>
-      <div id="balAlerta" class="alert-list" style="margin-bottom:14px"></div>
-      <div class="panel">
-        <h3>Projeção mês a mês</h3>
-        <div id="balProj"></div>
       </div>
     </section>
 
@@ -1078,7 +1093,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "18/09/2026 13:35";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "18/09/2026 14:24";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
