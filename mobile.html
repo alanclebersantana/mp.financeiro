@@ -128,6 +128,31 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
 .chips button{flex:0 0 auto;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);
   font-size:13px;font-weight:700;color:var(--muted)}
 .chips button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.barra-fer{display:flex;gap:8px;margin:0 0 8px}
+.fer{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;height:42px;border-radius:12px;
+  border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:13.5px;color:var(--text)}
+.fer svg{width:17px;height:17px;color:var(--muted-2)}
+.fer.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.fer.on svg{color:#fff}
+.conta{background:var(--accent);color:#fff;border-radius:999px;padding:1px 7px;font-size:11px}
+.fer.on .conta{background:rgba(255,255,255,.25)}
+.item.sel{border-color:var(--accent);background:var(--accent-dim)}
+.marca{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);flex:0 0 auto;margin-right:10px;
+  display:inline-flex;align-items:center;justify-content:center;color:transparent;font-size:14px;font-weight:800}
+.item.sel .marca{background:var(--accent);border-color:var(--accent);color:#fff}
+.item .l1{align-items:center}
+.selbar{position:fixed;left:8px;right:8px;bottom:calc(68px + env(safe-area-inset-bottom));z-index:45;
+  background:var(--surface);border:1px solid var(--accent);border-radius:14px;padding:10px 12px;box-shadow:var(--sombra)}
+.selinfo{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px}
+.selinfo b{font-size:14px}
+.selinfo span{font-size:15px;font-weight:800;color:var(--accent-2)}
+.selacoes{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none}
+.selacoes::-webkit-scrollbar{display:none}
+.selacoes button{flex:0 0 auto;height:40px;padding:0 14px;border-radius:11px;font-weight:700;font-size:13.5px;
+  background:var(--surface-2);border:1px solid var(--line);color:var(--text)}
+.selacoes button.forte{background:var(--accent);border-color:var(--accent);color:#fff}
+.selacoes button.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.hide{display:none !important}
 .resumo-lista{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--muted-2);
   padding:2px 4px 10px;font-weight:700}
 .mais{width:100%;padding:13px;border-radius:12px;border:1px dashed var(--line);color:var(--muted);font-weight:700;margin-bottom:8px}
@@ -259,6 +284,10 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
       <button class="limpar" id="qLancX" aria-label="Limpar">✕</button>
     </div>
     <div class="chips" id="chipsLanc"></div>
+    <div class="barra-fer">
+      <button class="fer" data-filtros="lanc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>Filtros<span class="conta hide" id="nLanc"></span></button>
+      <button class="fer" data-selecionar="lanc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Selecionar</button>
+    </div>
     <div class="resumo-lista"><span id="rLancN">—</span><span id="rLancV"></span></div>
     <div id="listaLanc"></div>
   </section>
@@ -271,6 +300,10 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
       <button class="limpar" id="qRecX" aria-label="Limpar">✕</button>
     </div>
     <div class="chips" id="chipsRec"></div>
+    <div class="barra-fer">
+      <button class="fer" data-filtros="rec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>Filtros<span class="conta hide" id="nRec"></span></button>
+      <button class="fer" data-selecionar="rec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Selecionar</button>
+    </div>
     <div class="resumo-lista"><span id="rRecN">—</span><span id="rRecV"></span></div>
     <div id="listaRec"></div>
   </section>
@@ -283,6 +316,10 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
       <button class="limpar" id="qAdiX" aria-label="Limpar">✕</button>
     </div>
     <div class="chips" id="chipsAdi"></div>
+    <div class="barra-fer">
+      <button class="fer" data-filtros="adi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>Filtros<span class="conta hide" id="nAdi"></span></button>
+      <button class="fer" data-selecionar="adi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Selecionar</button>
+    </div>
     <div class="resumo-lista"><span id="rAdiN">—</span><span id="rAdiV"></span></div>
     <div id="listaAdi"></div>
   </section>
@@ -304,6 +341,10 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
 
 <div class="fundo" id="fundo"></div>
 <div class="folha" id="folha"><div class="alca"></div><div id="folhaCorpo"></div></div>
+<div class="selbar hide" id="selbar">
+  <div class="selinfo"><b id="selN">0 selecionados</b><span id="selV">R$ 0,00</span></div>
+  <div class="selacoes" id="selAcoes"></div>
+</div>
 <div class="aviso-topo" id="recado"></div>
 <script>
 /* =========================================================
@@ -319,7 +360,7 @@ const FIREBASE = {
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
 const ADMINS = ["alanclebersantana@gmail.com"];
-const VERSAO = "18/09/2026 20:09";
+const VERSAO = "18/09/2026 20:58";
 
 const STATUS = ['Pendente','Agendado','Pago','Reinvestido','Cancelado'];
 const STATUS_REC = ['Previsto','Recebido','Atrasado','Cancelado'];
@@ -328,7 +369,10 @@ const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','ag
 
 const S = {rows:[], rec:[], adi:[], log:[], estoque:{itens:[]}, saldo:{valor:0, mesRef:''},
   tela:'bal', mesSel:'', limite:{lanc:40, rec:40, adi:40},
-  f:{lanc:{q:'', st:'Pendente'}, rec:{q:'', st:'Previsto'}, adi:{q:'', st:'Aguardando'}}};
+  sel:new Set(), selTipo:'', selModo:false,
+  f:{lanc:{q:'', st:'Pendente', op:'', d1:'', d2:'', v1:'', v2:''},
+     rec:{q:'', st:'Previsto', pg:'', d1:'', d2:''},
+     adi:{q:'', st:'Aguardando', d1:'', d2:''}}};
 const APP = {uid:null, nome:'', email:'', papel:'pendente', online:false};
 
 /* ---------- utilidades ---------- */
@@ -351,6 +395,7 @@ function parseNum(v){
   if (!s) return 0;
   if (s.includes(',')) s = s.replace(/\./g,'').replace(',','.');
   else if ((s.match(/\./g)||[]).length > 1) s = s.replace(/\./g,'');
+  else if (/^-?\d{1,3}(\.\d{3})$/.test(s)) s = s.replace(/\./g,'');   // "50.000" é cinquenta mil, não cinquenta
   const n = parseFloat(s.replace(/[^\d.-]/g,''));
   return isNaN(n) ? 0 : n;
 }
@@ -487,9 +532,13 @@ const Calc = {
 function filtrar(tipo){
   const f = S.f[tipo];
   const q = semAcento(f.q.trim());
+  const faixa = (v) => (!f.v1 || v >= parseNum(f.v1)) && (!f.v2 || v <= parseNum(f.v2));
+  const periodo = (d) => (!f.d1 || (d && d >= f.d1)) && (!f.d2 || (d && d <= f.d2));
   if (tipo === 'lanc'){
     return S.rows.filter(r => {
       if (f.st && f.st !== 'Todos' && (f.st === 'Aberto' ? !ABERTO(r) : r.status !== f.st)) return false;
+      if (f.op && r.operacao !== f.op) return false;
+      if (!periodo(r.dataPagamento) || !faixa(r.valor)) return false;
       if (q && !semAcento(`${r.codigo} ${r.contribuinte} ${r.operacao} ${r.pix} ${r.acordo}`).includes(q)) return false;
       return true;
     }).sort((a,b) => String(a.dataPagamento).localeCompare(String(b.dataPagamento)) || b.valor - a.valor);
@@ -497,16 +546,21 @@ function filtrar(tipo){
   if (tipo === 'rec'){
     return S.rec.filter(r => {
       if (f.st && f.st !== 'Todos' && r.status !== f.st) return false;
+      if (f.pg && r.pagador !== f.pg) return false;
+      if (!periodo(dataRec(r))) return false;
       if (q && !semAcento(`${r.pagador} ${r.descricao} ${r.statusNF}`).includes(q)) return false;
       return true;
     }).sort((a,b) => String(dataRec(a)).localeCompare(String(dataRec(b))) || b.valor - a.valor);
   }
   return S.adi.filter(r => {
     if (f.st && f.st !== 'Todos' && r.status !== f.st) return false;
+    if (!periodo(r.dataAdiantada)) return false;
     if (q && !semAcento(`${r.contribuinte} ${r.operacao} ${r.pix}`).includes(q)) return false;
     return true;
   }).sort((a,b) => String(a.dataAdiantada).localeCompare(String(b.dataAdiantada)) || b.valor - a.valor);
 }
+const filtrosAtivos = tipo => Object.entries(S.f[tipo])
+  .filter(([k,v]) => v && k !== 'q' && !(k === 'st' && v === {lanc:'Pendente', rec:'Previsto', adi:'Aguardando'}[tipo])).length;
 
 const chipsHTML = (opcoes, atual) => opcoes.map(o =>
   `<button data-chip="${esc(o)}" class="${o === atual ? 'on' : ''}">${esc(o)}</button>`).join('');
@@ -515,17 +569,19 @@ function pintarLista(tipo){
   const lista = filtrar(tipo), lim = S.limite[tipo];
   const alvo = {lanc:'#listaLanc', rec:'#listaRec', adi:'#listaAdi'}[tipo];
   const atrasa = hojeSP();
+  const marcado = r => S.selModo && S.selTipo === tipo && S.sel.has(r.id);
+  const marca = r => S.selModo && S.selTipo === tipo ? `<span class="marca">✓</span>` : '';
   const cartao = r => {
-    if (tipo === 'lanc') return `<button class="item" data-abrir="lanc:${r.id}">
-      <div class="l1"><span class="nome">${esc(r.contribuinte || '(sem nome)')}</span><span class="valor">${brl(r.valor)}</span></div>
+    if (tipo === 'lanc') return `<button class="item ${marcado(r) ? 'sel' : ''}" data-abrir="lanc:${r.id}">
+      <div class="l1">${marca(r)}<span class="nome">${esc(r.contribuinte || '(sem nome)')}</span><span class="valor">${brl(r.valor)}</span></div>
       <div class="l2"><span class="meta">${r.codigo ? `<span class="codigo">${esc(r.codigo)}</span> ` : ''}${fmtData(r.dataPagamento)}${r.operacao ? ' · ' + esc(r.operacao) : ''}</span>
         <span class="tag t-${esc(r.status)}">${esc(r.status)}</span></div></button>`;
-    if (tipo === 'rec') return `<button class="item" data-abrir="rec:${r.id}">
-      <div class="l1"><span class="nome">${esc(r.pagador || '(sem pagador)')}</span><span class="valor">${brl(valorRec(r))}</span></div>
+    if (tipo === 'rec') return `<button class="item ${marcado(r) ? 'sel' : ''}" data-abrir="rec:${r.id}">
+      <div class="l1">${marca(r)}<span class="nome">${esc(r.pagador || '(sem pagador)')}</span><span class="valor">${brl(valorRec(r))}</span></div>
       <div class="l2"><span class="meta">${fmtData(dataRec(r))}${r.descricao ? ' · ' + esc(r.descricao) : ''}</span>
         <span class="tag t-${esc(r.status)}">${esc(r.status)}</span></div></button>`;
-    return `<button class="item" data-abrir="adi:${r.id}">
-      <div class="l1"><span class="nome">${esc(r.contribuinte)}</span><span class="valor">${brl(r.valor)}</span></div>
+    return `<button class="item ${marcado(r) ? 'sel' : ''}" data-abrir="adi:${r.id}">
+      <div class="l1">${marca(r)}<span class="nome">${esc(r.contribuinte)}</span><span class="valor">${brl(r.valor)}</span></div>
       <div class="l2"><span class="meta">adiantar para ${fmtData(r.dataAdiantada)}${r.operacao ? ' · ' + esc(r.operacao) : ''}</span>
         <span class="tag t-${esc(r.status)}">${esc(r.status)}</span></div></button>`;
   };
@@ -537,6 +593,42 @@ function pintarLista(tipo){
   const valor = tipo === 'rec' ? soma(lista, valorRec) : soma(lista);
   $({lanc:'#rLancN', rec:'#rRecN', adi:'#rAdiN'}[tipo]).textContent = `${lista.length} registro${lista.length === 1 ? '' : 's'}`;
   $({lanc:'#rLancV', rec:'#rRecV', adi:'#rAdiV'}[tipo]).textContent = brl(valor);
+
+  const n = filtrosAtivos(tipo), bolha = $({lanc:'#nLanc', rec:'#nRec', adi:'#nAdi'}[tipo]);
+  bolha.textContent = n; bolha.classList.toggle('hide', !n);
+  $(`[data-filtros="${tipo}"]`).classList.toggle('on', !!n);
+  $(`[data-selecionar="${tipo}"]`).classList.toggle('on', S.selModo && S.selTipo === tipo);
+  pintarSelecao();
+}
+
+/* ---------- seleção múltipla ---------- */
+function selecionados(){
+  const fonte = S.selTipo === 'lanc' ? S.rows : S.selTipo === 'rec' ? S.rec : S.adi;
+  return fonte.filter(r => S.sel.has(r.id));
+}
+function pintarSelecao(){
+  const barra = $('#selbar');
+  if (!S.selModo || !S.sel.size || S.selTipo !== S.tela){ barra.classList.add('hide'); return; }
+  const lista = selecionados();
+  const total = S.selTipo === 'rec' ? soma(lista, valorRec) : soma(lista);
+  $('#selN').textContent = `${lista.length} selecionado${lista.length === 1 ? '' : 's'}`;
+  $('#selV').textContent = brl(total);
+  const acoes = S.selTipo === 'lanc'
+    ? `<button class="forte" data-acao="adiantar">Enviar para adiantamento</button>
+       <button class="ok" data-acao="pagarlote">Marcar como pago</button>
+       <button data-acao="todos">Selecionar todos</button><button data-acao="limpar">Limpar</button>`
+    : S.selTipo === 'rec'
+    ? `<button class="ok" data-acao="receberlote">Marcar como recebido</button>
+       <button data-acao="todos">Selecionar todos</button><button data-acao="limpar">Limpar</button>`
+    : `<button class="ok" data-acao="adipagolote">Marcar como pago</button>
+       <button data-acao="todos">Selecionar todos</button><button data-acao="limpar">Limpar</button>`;
+  $('#selAcoes').innerHTML = acoes;
+  barra.classList.remove('hide');
+}
+function alternarSelecao(tipo){
+  if (S.selModo && S.selTipo === tipo){ S.selModo = false; S.sel.clear(); }
+  else { S.selModo = true; S.selTipo = tipo; S.sel.clear(); recado('Toque nos registros para selecionar'); }
+  pintarLista(tipo);
 }
 
 /* =========================================================
@@ -717,6 +809,7 @@ function irPara(tela){
     rec:'Recebimentos', adi:'Adiantamentos', log:'Auditoria'}[tela] || 'MP Financeiro';
   window.scrollTo(0,0);
   pintar();
+  pintarSelecao();
 }
 $('#barra').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
@@ -738,10 +831,133 @@ function abrirMais(){
     <p style="color:var(--muted-2);font-size:12.5px;margin:16px 0 0">Importar, exportar, gerar lote de pagamento e o assistente com IA continuam na versão completa, no computador.</p>`);
 }
 
+/* ---------- folha de filtros ---------- */
+function abrirFiltros(tipo){
+  const f = S.f[tipo];
+  const campoData = (id, rot, val) => `<div class="campo"><label for="${id}">${rot}</label><input id="${id}" type="date" value="${val || ''}"></div>`;
+  const ops = [...new Set(S.rows.map(r => r.operacao))].filter(Boolean).sort();
+  const pgs = [...new Set(S.rec.map(r => r.pagador))].filter(Boolean).sort();
+  const sel = (id, rot, lista, atual) => `<div class="campo"><label for="${id}">${rot}</label><select id="${id}">
+    <option value="">Todas</option>${lista.map(o => `<option ${o === atual ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select></div>`;
+  const statusLista = tipo === 'lanc' ? ['Todos','Pendente','Aberto','Agendado','Pago','Cancelado']
+    : tipo === 'rec' ? ['Todos','Previsto','Recebido','Atrasado','Cancelado'] : ['Todos','Aguardando','Pago','Cancelado'];
+  abrirFolha(`<h3>Filtros</h3><div class="sub">${tipo === 'lanc' ? 'pagamentos' : tipo === 'rec' ? 'recebimentos' : 'adiantamentos'}</div>
+    <div class="campo"><label for="fSt">Status</label><select id="fSt">
+      ${statusLista.map(o => `<option ${o === f.st ? 'selected' : ''}>${o}</option>`).join('')}</select></div>
+    ${tipo === 'lanc' ? sel('fOp','Operação', ops, f.op) : ''}
+    ${tipo === 'rec' ? sel('fPg','Pagador', pgs, f.pg) : ''}
+    <div class="duplo">${campoData('fD1', tipo === 'rec' ? 'Recebimento de' : 'Pagamento de', f.d1)}${campoData('fD2','até', f.d2)}</div>
+    ${tipo === 'lanc' ? `<div class="duplo">
+      <div class="campo"><label for="fV1">Valor de</label><input id="fV1" inputmode="decimal" value="${f.v1 || ''}" placeholder="0,00"></div>
+      <div class="campo"><label for="fV2">Valor até</label><input id="fV2" inputmode="decimal" value="${f.v2 || ''}" placeholder="sem limite"></div></div>` : ''}
+    <div class="acoes duas">
+      <button class="bt forte" data-aplicar="${tipo}">Aplicar filtros</button>
+      <button class="bt leve" data-limpar="${tipo}">Limpar</button>
+    </div>`);
+}
+
+/* ---------- ações em lote ---------- */
+async function emLote(tarefa){
+  const lista = selecionados();
+  if (!lista.length) return;
+  if (!podeEditar()) return recado('Seu acesso é somente leitura');
+  const hoje = hojeSP();
+  const total = S.selTipo === 'rec' ? soma(lista, valorRec) : soma(lista);
+  let rotulo = '', resumo = [];
+  try {
+    if (tarefa === 'adiantar'){
+      const quando = prompt('Adiantar para qual data? (aaaa-mm-dd)', hoje);
+      const dt = parseDate(quando); if (!dt) return;
+      const jaNaFila = new Set(S.adi.filter(a => a.status !== 'Cancelado').map(a => a.origemId));
+      const novos = lista.filter(r => !jaNaFila.has(r.id));
+      if (!novos.length) return recado('Todos já estão na fila de adiantamento');
+      const lote = fdb.batch();
+      novos.forEach(r => lote.set(fdb.collection('adiantamentos').doc(), {origemId:r.id, contribuinte:r.contribuinte,
+        operacao:r.operacao, valor:r.valor, dataOriginal:r.dataPagamento, dataAdiantada:dt, status:'Aguardando',
+        pix:r.pix, tipoChave:r.tipoChave, base:r.base, porQuem:APP.nome, em:Date.now()}));
+      await lote.commit();
+      rotulo = `adiantamento de ${novos.length} pagamento(s) pelo celular`;
+      resumo = novos.slice(0,8).map(r => `${r.contribuinte} · ${brl(r.valor)} para ${fmtData(dt)}`);
+      recado(`${novos.length} enviado(s) para adiantamento`);
+    } else if (tarefa === 'pagarlote'){
+      if (!confirm(`Marcar ${lista.length} pagamento(s), somando ${brl(total)}, como pagos?`)) return;
+      const lote = fdb.batch();
+      lista.forEach(r => lote.set(fdb.collection('lancamentos').doc(r.id), {status:'Pago', porQuem:APP.nome, em:Date.now()}, {merge:true}));
+      await lote.commit();
+      rotulo = `baixa de ${lista.length} pagamento(s) pelo celular`;
+      resumo = lista.slice(0,8).map(r => `${r.contribuinte} · ${brl(r.valor)}: ${r.status} → Pago`);
+      recado(`${lista.length} pagamento(s) baixado(s)`);
+    } else if (tarefa === 'receberlote'){
+      if (!confirm(`Marcar ${lista.length} recebimento(s), somando ${brl(total)}, como recebidos hoje?`)) return;
+      const lote = fdb.batch();
+      lista.forEach(r => lote.set(fdb.collection('recebimentos').doc(r.id),
+        {status:'Recebido', dataRecebida:hoje, valorRecebido:r.valorRecebido || r.valor, porQuem:APP.nome, em:Date.now()}, {merge:true}));
+      await lote.commit();
+      rotulo = `${lista.length} recebimento(s) confirmado(s) pelo celular`;
+      resumo = lista.slice(0,8).map(r => `${r.pagador} · ${brl(r.valor)} em ${fmtData(hoje)}`);
+      recado(`${lista.length} recebimento(s) confirmado(s)`);
+    } else if (tarefa === 'adipagolote'){
+      if (!confirm(`Marcar ${lista.length} adiantamento(s), somando ${brl(total)}, como pagos hoje?`)) return;
+      const lote = fdb.batch();
+      lista.forEach(a => {
+        lote.set(fdb.collection('adiantamentos').doc(a.id), {status:'Pago', dataAdiantada:hoje, porQuem:APP.nome, em:Date.now()}, {merge:true});
+        if (a.origemId && S.rows.some(r => r.id === a.origemId))
+          lote.set(fdb.collection('lancamentos').doc(a.origemId), {status:'Pago', dataPagamento:hoje, porQuem:APP.nome, em:Date.now()}, {merge:true});
+      });
+      await lote.commit();
+      rotulo = `${lista.length} adiantamento(s) pago(s) pelo celular`;
+      resumo = lista.slice(0,8).map(a => `${a.contribuinte} · ${brl(a.valor)} pago em ${fmtData(hoje)}`);
+      recado(`${lista.length} pago(s) e baixado(s)`);
+    }
+    await fdb.collection('auditoria').add({ts:Date.now(), uid:APP.uid, nome:APP.nome, origem:'celular',
+      label:rotulo, resumo, total:lista.length});
+  } catch(err){ return recado('Não consegui concluir: ' + (err.code || err.message)); }
+  S.sel.clear(); S.selModo = false;
+  pintarLista(S.selTipo);
+}
+
 /* cliques dentro das listas e da folha */
 document.addEventListener('click', async e => {
+  const filtros = e.target.closest('[data-filtros]');
+  if (filtros) return abrirFiltros(filtros.dataset.filtros);
+
+  const aplicar = e.target.closest('[data-aplicar]');
+  if (aplicar){
+    const tipo = aplicar.dataset.aplicar, f = S.f[tipo], v = id => { const el = $('#'+id); return el ? el.value : ''; };
+    f.st = v('fSt'); f.d1 = v('fD1'); f.d2 = v('fD2');
+    if (tipo === 'lanc'){ f.op = v('fOp'); f.v1 = v('fV1'); f.v2 = v('fV2'); }
+    if (tipo === 'rec') f.pg = v('fPg');
+    S.limite[tipo] = 40; fechar(); montarChips(); return pintarLista(tipo);
+  }
+  const limpar = e.target.closest('[data-limpar]');
+  if (limpar){
+    const tipo = limpar.dataset.limpar;
+    S.f[tipo] = tipo === 'lanc' ? {q:S.f.lanc.q, st:'Pendente', op:'', d1:'', d2:'', v1:'', v2:''}
+      : tipo === 'rec' ? {q:S.f.rec.q, st:'Previsto', pg:'', d1:'', d2:''}
+      : {q:S.f.adi.q, st:'Aguardando', d1:'', d2:''};
+    fechar(); montarChips(); return pintarLista(tipo);
+  }
+  const selecionar = e.target.closest('[data-selecionar]');
+  if (selecionar) return alternarSelecao(selecionar.dataset.selecionar);
+
+  const acao = e.target.closest('[data-acao]');
+  if (acao){
+    const tarefa = acao.dataset.acao;
+    if (tarefa === 'limpar'){ S.sel.clear(); S.selModo = false; return pintarLista(S.selTipo); }
+    if (tarefa === 'todos'){ filtrar(S.selTipo).forEach(r => S.sel.add(r.id)); return pintarLista(S.selTipo); }
+    acao.disabled = true;
+    return emLote(tarefa);
+  }
+
   const abrir = e.target.closest('[data-abrir]');
-  if (abrir){ const [t, id] = abrir.dataset.abrir.split(':'); return abrirRegistro(t, id); }
+  if (abrir){
+    const [t, id] = abrir.dataset.abrir.split(':');
+    if (S.selModo && S.selTipo === t){
+      S.sel.has(id) ? S.sel.delete(id) : S.sel.add(id);
+      return pintarLista(t);
+    }
+    return abrirRegistro(t, id);
+  }
 
   const mais = e.target.closest('[data-mais]');
   if (mais){ S.limite[mais.dataset.mais] += 40; return pintarLista(mais.dataset.mais); }
