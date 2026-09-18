@@ -683,17 +683,9 @@ html[data-tema="claro"] .comp-TAM{color:#A31F18} html[data-tema="claro"] .comp-L
 #view-mensal .rs-Cancelado{background:var(--surface-3);color:var(--muted)}
 
 #view-mensal .mn-anowrap{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;align-items:start}
-#view-mensal .mn-graf svg,#view-bal .mn-graf svg{width:100%;height:auto;display:block}
-#view-bal .mn-anowrap{display:grid;grid-template-columns:minmax(320px,.95fr) 1fr;gap:16px;align-items:start}
-#view-bal .mn-graf{max-width:480px}
-#view-bal .mn-graf svg{max-height:185px}
-#view-bal .mn-leg{font-size:10.5px;gap:8px 12px}
-#view-bal #mn-tabAno{font-size:11.5px}
-#view-bal #mn-tabAno td,#view-bal #mn-tabAno th{padding:3px 7px}
-#view-bal .mn-ph h3{font-size:13px}
+#view-mensal .mn-graf svg{width:100%;height:auto;display:block}
 #view-bal .mn-leg{font-size:11px}
 #view-bal .mn-t{font-size:12px}
-@media (max-width:1100px){#view-bal .mn-anowrap{grid-template-columns:1fr}#view-bal .mn-graf{max-width:none}}
 #view-mensal .mn-graf .mcol{cursor:pointer}
 #view-mensal .mn-graf .mcol:hover .hl{fill:var(--hover)}
 #view-mensal .mn-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}
@@ -910,22 +902,7 @@ try { document.documentElement.dataset.tema =
         <h3>Projeção mês a mês</h3>
         <div id="balProj"></div>
       </div>
-      <div class="panel">
-        <div class="mn-ph"><h3 id="mn-anoTitulo">Visão do ano</h3><small>clique em um mês para abrir o relatório</small></div>
-        <div class="mn-anowrap">
-          <div class="mn-graf">
-            <div id="mn-graf"></div>
-            <div class="mn-leg">
-              <span><i style="background:var(--ok)"></i>Entradas</span>
-              <span><i style="background:var(--accent)"></i>Saídas</span>
-              <span><i style="background:repeating-linear-gradient(135deg,var(--muted) 0 2px,transparent 2px 4px)"></i>Previsto, ainda não realizado</span>
-              <span><i style="background:var(--info);height:3px;vertical-align:3px"></i>Resultado acumulado (tendência)</span>
-            </div>
-          </div>
-          <div class="mn-scroll"><table class="mn-t" id="mn-tabAno"></table></div>
-        </div>
-      </div>
-    </section>
+      </section>
 
     <!-- RECEBIMENTOS -->
     <section class="view flush hide" id="view-rec">
@@ -1093,7 +1070,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "18/09/2026 14:24";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "18/09/2026 14:29";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -5239,6 +5216,7 @@ const Mensal = (() => {
   }
 
   function renderAno(){
+    if (!el('graf')) return;   // a visão do ano foi removida do sistema
     const {ano, mes} = M, h = getTodaySP();
     const ms = Array.from({length:12}, (_,i) => resumo(ym(ano, i+1)));
     const acs = []; ms.reduce((a,R) => { a += R.resultado; acs.push(a); return a; }, 0);
@@ -5342,17 +5320,6 @@ const Mensal = (() => {
   el('anoMenos').addEventListener('click', () => irPara(M.ano - 1, M.mes));
   el('anoMais').addEventListener('click', () => irPara(M.ano + 1, M.mes));
   const topo = () => $('#view-mensal').scrollTo({top:0, behavior:'smooth'});
-  el('graf').addEventListener('click', e => { const g = e.target.closest('[data-m]'); if (g){ irPara(M.ano, +g.dataset.m); topo(); } });
-  el('tabAno').addEventListener('click', e => { const t = e.target.closest('[data-m]'); if (t){ irPara(M.ano, +t.dataset.m); topo(); } });
-  el('fluxo').addEventListener('click', e => { const d = e.target.closest('[data-dia]'); if (d) abrirDia(d.dataset.dia); });
-
-  el('xlsx').addEventListener('click', exportar);
-  el('print').addEventListener('click', imprimir);
-  document.addEventListener('keydown', e => {
-    if (S.view !== 'mensal' || e.target.closest('input,select,textarea,[contenteditable]') || $('.scrim')) return;
-    if (e.key === 'ArrowLeft') irPara(M.ano, M.mes - 1);
-    if (e.key === 'ArrowRight') irPara(M.ano, M.mes + 1);
-  });
 
   return { render, irPara };
 })();
