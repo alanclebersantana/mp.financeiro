@@ -1,0 +1,22 @@
+# Netlify — controle de cache do MP Planejamento Financeiro
+# O service worker e as páginas nunca podem ficar presos em cache:
+# é isso que faz "publiquei mas não mudou nada".
+
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/mobile.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/instalar.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/manifest.webmanifest
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Ícones podem ficar guardados: só mudam quando trocarmos a marca.
+/*.png
+  Cache-Control: public, max-age=604800

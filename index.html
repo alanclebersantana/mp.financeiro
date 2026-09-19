@@ -347,7 +347,8 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .src{color:var(--info);text-decoration:none;border-bottom:1px dotted currentColor;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .src:hover{color:var(--accent-2);border-bottom-style:solid}
 .src .seta{font-size:10px;opacity:.75;margin-left:2px}
-.rowmenu{width:30px;text-align:center;color:var(--muted-2)}
+.rowmenu{width:54px;text-align:center;color:var(--muted-2);white-space:nowrap}
+.rowmenu button[data-hist]:hover{background:var(--surface-3);color:var(--accent-2)}
 .rowmenu button{padding:4px 6px;border-radius:4px}
 .rowmenu button:hover{background:var(--surface-3);color:var(--bad)}
 .tfoot{display:flex;align-items:center;gap:18px;padding:10px 20px;border-top:1px solid var(--line);background:var(--bg-2);font-size:13px;flex-wrap:wrap}
@@ -991,9 +992,11 @@ try { document.documentElement.dataset.tema =
         <button class="btn sm" data-bulk="data">Alterar data de pagamento</button>
         <button class="btn sm" data-bulk="op">Alterar operação</button>
         <button class="btn sm primary" data-bulk="adiantar">Adiantamento de pagamento</button>
+        <button class="btn sm" data-bulk="colar">Colar da planilha</button>
         <button class="btn sm" data-bulk="dup">Duplicar</button>
         <button class="btn sm" data-bulk="del">Excluir</button>
         <div class="spacer"></div>
+        <button class="btn sm ghost" data-bulk="todos">Selecionar todos os filtrados</button>
         <button class="btn sm ghost" data-bulk="none">Limpar seleção</button>
       </div>
       <div class="tablewrap">
@@ -1240,7 +1243,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "19/09/2026 00:06";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "19/09/2026 01:28";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -1361,6 +1364,38 @@ function detectKey(pix){
   if (d.length === 11) return {tipo:'CPF', ok:false, msg:'CPF com dígito verificador inválido'};
   return {tipo:'INDEFINIDO', ok:false, msg:'Formato de chave não reconhecido'};
 }
+/** guarda a última chave conhecida de cada beneficiário, para detectar troca */
+function chavesConhecidas(){
+  const mapa = new Map();
+  S.rows.forEach(r => {
+    const nome = normalizarTextoBusca(r.contribuinte);
+    if (!nome || !r.pix) return;
+    const atual = mapa.get(nome);
+    if (!atual || (r.em || 0) > atual.em) mapa.set(nome, {pix:r.pix, em:r.em || 0, quando:r.dataPagamento});
+  });
+  return mapa;
+}
+/** lançamentos cuja chave difere da usada nos outros do mesmo beneficiário */
+function chavesDivergentes(){
+  const porNome = {};
+  S.rows.forEach(r => {
+    const nome = normalizarTextoBusca(r.contribuinte);
+    if (!nome || !r.pix) return;
+    (porNome[nome] = porNome[nome] || []).push(r);
+  });
+  const saida = [];
+  Object.values(porNome).forEach(lista => {
+    const chaves = {};
+    lista.forEach(r => { const k = digits(r.pix) || r.pix.toLowerCase(); chaves[k] = (chaves[k] || 0) + 1; });
+    const distintas = Object.keys(chaves);
+    if (distintas.length < 2) return;
+    const principal = distintas.sort((a,b) => chaves[b] - chaves[a])[0];
+    lista.filter(r => (digits(r.pix) || r.pix.toLowerCase()) !== principal && ABERTO(r))
+      .forEach(r => saida.push({r, principal, usadaEm: chaves[principal]}));
+  });
+  return saida;
+}
+
 function rowIssues(r){
   const out = []; const k = detectKey(r.pix);
   if (!k.ok) out.push(k.msg);
@@ -1369,6 +1404,7 @@ function rowIssues(r){
   if (!r.dataPagamento) out.push('Sem data de pagamento');
   if (!r.contribuinte) out.push('Sem beneficiário');
   if (/\|/.test(String(r.pix||'')) || /para\s+\d/i.test(String(r.pix||''))) out.push('Rateio descrito na chave — separe em lançamentos');
+  if (S.__divergentes && S.__divergentes.has(r.id)) out.push('Chave diferente da usada nos outros pagamentos deste beneficiário');
   return out;
 }
 function normalize(o){
@@ -1719,6 +1755,8 @@ function renderDash(){
   const total = pend.reduce((s,r)=>s+r.valor,0);
   const pago = rows.filter(r=>r.status==='Pago').reduce((s,r)=>s+r.valor,0);
   const benef = new Set(pend.map(r=>r.contribuinte.toLowerCase())).size;
+  const div = chavesDivergentes();
+  S.__divergentes = new Set(div.map(x => x.r.id));
   const prob = rows.filter(r => rowIssues(r).length);
   const prox = [...new Set(pend.map(r=>r.dataPagamento).filter(Boolean))].sort()[0];
 
@@ -1792,12 +1830,15 @@ function renderDash(){
 
   if (existe('painelCaixa')) $('#painelCaixa').classList.toggle('alerta', negativos.length > 0);
 
+  const avisoChave = div.length ? [`
+    <div class="alert" data-chave="1"><div><b>${div.length} pagamento(s) com chave Pix diferente da habitual</b>
+      <span>${div.slice(0,3).map(x => `${x.r.contribuinte}: ${x.r.pix} (os outros usam ${x.principal})`).join(' · ')}</span></div></div>`] : [];
   const avisoCaixa = negativos.length ? [`
     <div class="alert" data-caixa="1">
       <div><b>${negativos.length} dia(s) com pagamento maior que o recebimento</b>
       <span>${negativos.slice(0,4).map(x => `${fmtDate(x.data)}: faltam ${brl(Math.abs(x.saldo))}`).join(' · ')}</span></div>
     </div>`] : [];
-  $('#alerts').innerHTML = (avisoCaixa.join('') + (prob.length ? prob.slice(0,40).map(r => `
+  $('#alerts').innerHTML = (avisoChave.join('') + avisoCaixa.join('') + (prob.length ? prob.slice(0,40).map(r => `
     <div class="alert ${r.valor ? 'w':''}" data-goto="${r.id}">
       <div><b>${esc(r.contribuinte || '(sem nome)')} · ${brl(r.valor)}</b>
       <span>${esc(rowIssues(r).join(' · '))}</span></div>
@@ -1834,7 +1875,8 @@ function renderTable(){
         }
         return `<td data-rot="${esc(c.t)}">${inner}</td>`;
       }).join('') +
-      `<td class="rowmenu"><button data-del="${r.id}" title="Excluir">✕</button></td></tr>`;
+      `<td class="rowmenu"><button data-hist="${r.id}" title="Histórico deste lançamento">⟲</button>
+        <button data-del="${r.id}" title="Excluir">✕</button></td></tr>`;
   }).join('') || `<tr><td colspan="12"><div class="empty">Nenhum lançamento com esses filtros. <button class="btn sm ghost" onclick="clearFilters()">Limpar filtros</button></div></td></tr>`;
 
   const tot = rows.reduce((s,r)=>s+r.valor,0);
@@ -1941,6 +1983,12 @@ function startEdit(cell){
       if (nv && k === 'operacao' && !S.ops.includes(val)) S.ops.push(val);
     }
     editing = null;
+    if (alvo === 'lanc' && k === 'pix' && val){
+      const conhecida = chavesConhecidas().get(normalizarTextoBusca(row.contribuinte));
+      if (conhecida && digits(conhecida.pix) !== digits(val) && conhecida.pix !== val){
+        if (!confirm(`Atenção: ${row.contribuinte} vinha recebendo em ${conhecida.pix}.\n\nGravar a chave nova ${val}?`)){ renderAll(); return; }
+      }
+    }
     await aplicar([{acao:'atualizar', id, campos:{[k]: val}}], 'manual', 'edição de célula', false, alvo);
     if (move) setTimeout(() => {
       const cells = [...$(alvo === 'rec' ? '#tbodyRec' : '#tbody').querySelectorAll('.cell')];
@@ -1960,6 +2008,8 @@ function startEdit(cell){
 /* ---------- eventos da tabela ---------- */
 $('#tbody').addEventListener('click', e => {
   if (e.target.closest('a.src')) return;
+  const hist = e.target.closest('[data-hist]');
+  if (hist) return historicoDoLancamento(hist.dataset.hist);
   const del = e.target.closest('[data-del]');
   if (del){ const r = S.rows.find(x=>x.id===del.dataset.del); if (!r) return;
     if (!podeEditar()) return toast('Seu acesso é somente leitura.');
@@ -2060,6 +2110,13 @@ if (document.getElementById('caixaDias')) $('#caixaDias').addEventListener('clic
   go('lanc');
 });
 $('#alerts').addEventListener('click', e => {
+  if (e.target.closest('[data-chave]')){
+    const ids = new Set((S.__divergentes || []));
+    S.f = {...FILTROS_PADRAO, q:''};
+    go('lanc');
+    S.sel = new Set(ids); renderTable();
+    return toast(`${ids.size} lançamento(s) com chave divergente selecionados`);
+  }
   if (e.target.closest('[data-caixa]')) return go('rec');
   const a = e.target.closest('[data-goto]'); if (!a) return;
   go('lanc'); setTimeout(()=>scrollTo(a.dataset.goto), 60);
@@ -2083,8 +2140,11 @@ $('#bulkbar').addEventListener('click', async e => {
   const ids = [...S.sel], rows = S.rows.filter(r => ids.includes(r.id));
   const act = b.dataset.bulk;
   if (act === 'none'){ S.sel.clear(); renderTable(); return; }
+  if (act === 'todos'){ filtered().forEach(r => S.sel.add(r.id)); renderTable();
+    return toast(`${S.sel.size} lançamentos selecionados`); }
   if (!rows.length) return;
   if (act === 'adiantar') return enviarParaAdiantamento();
+  if (act === 'colar') return colarNaGrade(rows);
   if (!podeEditar()) return toast('Seu acesso é somente leitura.');
   let ops = [];
   if (act === 'status'){ const v = prompt('Novo status ('+STATUS.join(', ')+'):','Pago'); if (!v || !STATUS.includes(v)) return;
@@ -2098,6 +2158,68 @@ $('#bulkbar').addEventListener('click', async e => {
     ops = rows.map(r => ({acao:'excluir', id:r.id})); S.sel.clear(); }
   await aplicar(ops, 'lote', `${act} em ${rows.length} lançamentos`);
 });
+
+/** tudo que a auditoria registrou sobre um lançamento específico */
+function historicoDoLancamento(id){
+  const r = S.rows.find(x => x.id === id); if (!r) return;
+  const alvo = [r.codigo, r.contribuinte].filter(Boolean).map(semAcento);
+  const eventos = S.log.filter(l => {
+    const txt = semAcento((l.resumo || []).join(' ') + ' ' + (l.label || ''));
+    return alvo.some(a => a && txt.includes(a));
+  });
+  modal(`Histórico · ${esc(r.contribuinte)}`, `
+    <p style="color:var(--muted);margin-top:0">${r.codigo ? r.codigo + ' · ' : ''}${brl(r.valor)} em ${fmtDate(r.dataPagamento)} · ${esc(r.status)}
+      ${r.porQuem ? `<br><span style="color:var(--muted-2);font-size:12.5px">última alteração por ${esc(r.porQuem)}${r.em ? ' em ' + hora(r.em) : ''}</span>` : ''}</p>
+    ${eventos.length ? eventos.slice(0,40).map(l => `
+      <div class="logrow" style="grid-template-columns:130px 1fr">
+        <div class="tm">${hora(l.ts)}<br><span style="color:var(--muted-2)">${esc(l.nome || '')}</span></div>
+        <div class="dt"><b style="font-size:12.5px">${esc(l.label || '')}</b>
+          ${(l.resumo || []).filter(x => alvo.some(a => semAcento(x).includes(a))).map(x => `<div>${esc(x)}</div>`).join('')}</div>
+      </div>`).join('')
+      : '<div class="empty">Nada registrado sobre este lançamento ainda. A auditoria guarda as últimas 150 alterações do sistema.</div>'}`);
+}
+
+/** cola um bloco copiado do Sheets sobre os lançamentos selecionados, coluna por coluna */
+function colarNaGrade(alvos){
+  if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+  const colunas = COLS.filter(c => c.k !== 'codigo');
+  const m = modal('Colar da planilha', `
+    <p style="color:var(--muted);margin-top:0">${alvos.length} lançamento(s) selecionado(s), na ordem em que aparecem na grade.
+      Cole as células copiadas do Sheets ou do Excel: a primeira coluna colada vai para o campo escolhido abaixo, e as seguintes para os campos à direita dele.</p>
+    <div class="field"><label>Primeira coluna colada corresponde a</label>
+      <select class="inp" id="colDe">${colunas.map(c => `<option value="${c.k}">${c.t}</option>`).join('')}</select></div>
+    <div class="field" style="margin-top:10px"><label>Cole aqui</label>
+      <textarea class="inp" id="colTxt" rows="7" placeholder="Ctrl+V"></textarea></div>
+    <div id="colPrev" style="margin-top:12px"></div>`,
+    `<button class="btn" data-close>Cancelar</button><button class="btn primary" id="colOk" disabled>Aplicar</button>`);
+
+  const previa = () => {
+    const linhas = m.querySelector('#colTxt').value.replace(/\r/g,'').split('\n').filter(l => l.trim() !== '');
+    const inicio = colunas.findIndex(c => c.k === m.querySelector('#colDe').value);
+    const usadas = colunas.slice(inicio);
+    const ops = [];
+    linhas.slice(0, alvos.length).forEach((linha, i) => {
+      const celulas = linha.split('\t');
+      const campos = {};
+      celulas.forEach((v, j) => { const col = usadas[j]; if (col && String(v).trim() !== '') campos[col.k] = v.trim(); });
+      if (Object.keys(campos).length) ops.push({acao:'atualizar', id:alvos[i].id, campos});
+    });
+    const exame = conferir(normalizarOps(ops));
+    m.querySelector('#colPrev').innerHTML = !linhas.length ? ''
+      : `<p style="color:var(--muted-2);font-size:12.5px">${linhas.length} linha(s) colada(s) · ${exame.boas.length} alteração(ões) válida(s)${exame.ruins.length ? ` · ${exame.ruins.length} recusada(s)` : ''}${linhas.length > alvos.length ? ` · ${linhas.length - alvos.length} linha(s) além da seleção serão ignoradas` : ''}</p>
+        <div style="max-height:220px;overflow:auto">${exame.boas.slice(0,8).map(descreverOp).join('')}
+        ${exame.ruins.slice(0,4).map(x => `<div class="op bloq"><b>Não será aplicada</b>${esc(x.erro)}</div>`).join('')}</div>`;
+    m.querySelector('#colOk').disabled = !exame.boas.length;
+    m.__ops = exame.boas;
+  };
+  m.querySelector('#colTxt').addEventListener('input', previa);
+  m.querySelector('#colDe').addEventListener('change', previa);
+  m.querySelector('#colOk').addEventListener('click', async () => {
+    const ops = m.__ops || []; m.remove();
+    await aplicar(ops, 'manual', `colagem de planilha em ${ops.length} lançamentos`);
+    toast(`${ops.length} lançamento(s) atualizados`);
+  });
+}
 
 /* ---------- navegação ---------- */
 function go(v){
@@ -2439,7 +2561,8 @@ function showMap(aoa, m, fname){
     const novos = build(), mode = m.querySelector('#impMode').value;
     let ops = [];
     if (mode === 'replace'){
-      if (!confirm(`Isso apaga os ${S.rows.length} lançamentos atuais para todos os usuários. Continuar?`)) return;
+      const escrito = prompt(`Isso APAGA os ${S.rows.length} lançamentos atuais para todos os usuários e não tem volta fácil.\n\nPara confirmar, escreva: substituir`);
+      if (String(escrito || '').trim().toLowerCase() !== 'substituir') return toast('Importação cancelada');
       ops = S.rows.map(r => ({acao:'excluir', id:r.id})).concat(novos.map(r => ({acao:'criar', dados:r})));
     } else if (mode === 'dedupe'){
       const key = r => `${semAcento(r.contribuinte)}|${r.valor}|${r.dataPagamento}`;
@@ -2465,11 +2588,14 @@ $('#btnExport').addEventListener('click', () => {
       <button class="btn" data-x="csv">CSV</button>
       <button class="btn" data-x="pix">Lote de pagamento (.xlsx)</button>
       <button class="btn" data-x="json">Backup .json</button>
+      ${S.sel.size ? `<button class="btn" data-x="selxlsx">Somente os ${S.sel.size} selecionados</button>` : ''}
     </div>
     <p style="color:var(--muted-2);font-size:12.5px;margin-bottom:0">O lote Pix sai só com pendentes que têm chave válida — os problemas ficam de fora e aparecem no painel.</p>`, '<button class="btn" data-close>Fechar</button>');
   m.addEventListener('click', e => {
     const b = e.target.closest('[data-x]'); if (!b) return;
-    const t = b.dataset.x, stamp = new Date().toISOString().slice(0,10);
+    let t = b.dataset.x; const stamp = new Date().toISOString().slice(0,10);
+    let alvo = rows;
+    if (t === 'selxlsx'){ alvo = rows.filter(r => S.sel.has(r.id)); t = 'xlsx'; }
     if (t === 'json'){ dl(new Blob([JSON.stringify(S.rows,null,2)],{type:'application/json'}), `tesouraria-${stamp}.json`); return; }
     let data, name;
     if (t === 'pix'){
@@ -2478,7 +2604,7 @@ $('#btnExport').addEventListener('click', () => {
       escolherModeloLote(ok.map(r => ({pix:r.pix, valor:r.valor, nome:r.contribuinte, descricao:r.operacao})), 'lote-pix', fora);
       return;
     } else {
-      data = rows.map(r => ({'Código':r.codigo,'Categoria':r.categoria,'Centro de custo':r.centroCusto,
+      data = alvo.map(r => ({'Código':r.codigo,'Categoria':r.categoria,'Centro de custo':r.centroCusto,
         'Competência':r.competencia,'CNPJ':r.cnpj,'Forma de pagamento':r.formaPagamento,'Aprovador':r.aprovador,
         'Valor pago':r.valorPago,'Saldo remanescente':saldoAPagar(r),'Tributo':r.tributo,'Órgão':r.orgao,
         'Multa':r.multa,'Juros':r.juros,'Data Lançamento':fmtDate(r.dataLancamento),'Contribuinte':r.contribuinte,'Operação':r.operacao,

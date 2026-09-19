@@ -218,6 +218,10 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
 .aviso{margin-top:14px;font-size:13px;color:#FFC9A8;min-height:20px}
 .aviso.ok{color:#9FE3BE}
 
+.offline{position:fixed;left:0;right:0;top:0;z-index:70;background:var(--bad);color:#fff;
+  padding:calc(8px + env(safe-area-inset-top)) 14px 8px;display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:700}
+.offline svg{width:17px;height:17px;flex:0 0 auto}
+.offline.hide{display:none}
 .aviso-topo{position:fixed;left:12px;right:12px;bottom:calc(74px + env(safe-area-inset-bottom));z-index:60;
   background:var(--text);color:var(--bg);padding:12px 14px;border-radius:12px;font-size:13.5px;font-weight:700;
   box-shadow:var(--sombra);opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}
@@ -252,6 +256,7 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
   <img src="icon-192.png" alt="">
   <div class="tit"><b id="tTitulo">Balanço</b><span id="tSub">carregando…</span></div>
   <button id="btTema" aria-label="Tema"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></button>
+  <button id="btNovo" aria-label="Novo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
   <button id="btPerfil" aria-label="Conta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg></button>
 </header>
 
@@ -359,6 +364,10 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
   <div class="selinfo"><b id="selN">0 selecionados</b><span id="selV">R$ 0,00</span></div>
   <div class="selacoes" id="selAcoes"></div>
 </div>
+<div class="offline hide" id="offline">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1l22 22M16.7 11.2a6 6 0 0 1 3.3 1.8M5 12.5a9 9 0 0 1 4-2.3M2 8.8a14 14 0 0 1 5-3M12 20h.01"/></svg>
+  <span>Sem internet — os dados podem estar desatualizados e nada é gravado até voltar</span>
+</div>
 <div class="aviso-topo" id="recado"></div>
 <script>
 /* =========================================================
@@ -374,7 +383,7 @@ const FIREBASE = {
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
 const ADMINS = ["alanclebersantana@gmail.com"];
-const VERSAO = "19/09/2026 00:08";
+const VERSAO = "19/09/2026 01:31";
 
 const STATUS = ['Pendente','Agendado','Pago','Reinvestido','Cancelado'];
 const STATUS_REC = ['Previsto','Recebido','Atrasado','Cancelado'];
@@ -482,7 +491,14 @@ function escutar(){
   solto.push(fdb.collection('config').doc('estoque').onSnapshot(d => { S.estoque = d.exists ? d.data() : {itens:[]}; pintar(); }, () => {}));
   solto.push(fdb.collection('config').doc('saldo').onSnapshot(d => { S.saldo = d.exists ? d.data() : {valor:0, mesRef:''}; pintar(); }, () => {}));
 }
-function marcarOnline(ok){ APP.online = ok; $('#tSub').textContent = ok ? (APP.nome || 'conectado') : 'sem conexão'; }
+function marcarRede(){
+  const fora = !navigator.onLine;
+  const el = $('#offline'); if (el) el.classList.toggle('hide', !fora);
+  if (fora) $('#tSub').textContent = 'sem internet';
+}
+window.addEventListener('online', () => { marcarRede(); recado('Conexão de volta'); });
+window.addEventListener('offline', marcarRede);
+function marcarOnline(ok){ APP.online = ok; $('#tSub').textContent = ok ? (APP.nome || 'conectado') : 'sem conexão'; marcarRede(); }
 
 /** grava um registro e deixa o rastro na auditoria, no mesmo formato do sistema do computador */
 async function gravar(colecao, id, campos, rotulo, resumo){
@@ -865,6 +881,34 @@ $('#barra').addEventListener('click', e => {
 });
 $('#fundo').addEventListener('click', fechar);
 
+/** cadastro rápido de pagamento ou recebimento pelo celular */
+function abrirNovo(){
+  if (!podeEditar()) return recado('Seu acesso é somente leitura');
+  const rec = S.tela === 'rec';
+  const campo = (id, rot, extra) => `<div class="campo"><label for="${id}">${rot}</label><input id="${id}" ${extra || ''}></div>`;
+  const ops = [...new Set(S.rows.map(r => r.operacao))].filter(Boolean).slice(0,60);
+  const nomes = [...new Set(S.rows.map(r => r.contribuinte))].filter(Boolean).slice(0,80);
+  const pgs = [...new Set(S.rec.map(r => r.pagador))].filter(Boolean);
+  abrirFolha(rec
+    ? `<h3>Novo recebimento</h3><div class="sub">entra na fila de contas a receber</div>
+       ${campo('nPg','Pagador','list="pgList"')}<datalist id="pgList">${pgs.map(o => `<option>${esc(o)}</option>`).join('')}</datalist>
+       ${campo('nVal','Valor previsto','inputmode="decimal" placeholder="0,00"')}
+       ${campo('nData','Previsão de recebimento','type="date" value="' + hojeSP() + '"')}
+       ${campo('nDesc','Referência')}
+       <div class="acoes duas"><button class="bt forte" data-criar="rec">Adicionar</button>
+         <button class="bt leve" data-fechar="1">Cancelar</button></div>`
+    : `<h3>Novo pagamento</h3><div class="sub">entra na fila de contas a pagar</div>
+       ${campo('nNome','Contribuinte','list="nomeList"')}<datalist id="nomeList">${nomes.map(o => `<option>${esc(o)}</option>`).join('')}</datalist>
+       ${campo('nVal','Valor','inputmode="decimal" placeholder="0,00"')}
+       ${campo('nData','Data de pagamento','type="date" value="' + hojeSP() + '"')}
+       ${campo('nOp','Operação','list="opList"')}<datalist id="opList">${ops.map(o => `<option>${esc(o)}</option>`).join('')}</datalist>
+       ${campo('nPix','Chave Pix')}
+       ${campo('nObs','Observação')}
+       <div class="acoes duas"><button class="bt forte" data-criar="lanc">Adicionar</button>
+         <button class="bt leve" data-fechar="1">Cancelar</button></div>`);
+}
+$('#btNovo').addEventListener('click', abrirNovo);
+
 function abrirMais(){
   abrirFolha(`<h3>Mais</h3><div class="sub">versão ${VERSAO} · ${esc(APP.nome || '')} (${esc(APP.papel)})</div>
     <div class="opcoes">
@@ -986,6 +1030,38 @@ document.addEventListener('click', async e => {
   }
   const selecionar = e.target.closest('[data-selecionar]');
   if (selecionar) return alternarSelecao(selecionar.dataset.selecionar);
+
+  if (e.target.closest('[data-fechar]')) return fechar();
+  const criar = e.target.closest('[data-criar]');
+  if (criar){
+    if (!podeEditar()) return recado('Seu acesso é somente leitura');
+    const v = id => { const el = $('#'+id); return el ? el.value.trim() : ''; };
+    criar.disabled = true;
+    try {
+      if (criar.dataset.criar === 'rec'){
+        if (!v('nPg')){ criar.disabled = false; return recado('Informe o pagador'); }
+        const dados = {pagador:v('nPg'), valor:real(cent(parseNum(v('nVal')))), dataPrevista:v('nData'),
+          descricao:v('nDesc'), status:'Previsto', base:'celular', porQuem:APP.nome, em:Date.now()};
+        await fdb.collection('recebimentos').add(dados);
+        await fdb.collection('auditoria').add({ts:Date.now(), uid:APP.uid, nome:APP.nome, origem:'celular',
+          label:'novo recebimento pelo celular',
+          resumo:[`${dados.pagador} · ${brl(dados.valor)} para ${fmtData(dados.dataPrevista)}`], total:1});
+        fechar(); recado('Recebimento criado');
+      } else {
+        if (!v('nNome')){ criar.disabled = false; return recado('Informe o contribuinte'); }
+        const maior = Math.max(0, ...S.rows.map(r => { const m = String(r.codigo||'').match(/(\d+)\s*$/); return m ? +m[1] : 0; }));
+        const dados = {codigo:'MP-' + String(maior+1).padStart(4,'0'), contribuinte:v('nNome'),
+          valor:real(cent(parseNum(v('nVal')))), dataPagamento:v('nData'), operacao:v('nOp'), pix:v('nPix'),
+          acordo:v('nObs'), status:'Pendente', dataLancamento:hojeSP(), base:'celular', porQuem:APP.nome, em:Date.now()};
+        await fdb.collection('lancamentos').add(dados);
+        await fdb.collection('auditoria').add({ts:Date.now(), uid:APP.uid, nome:APP.nome, origem:'celular',
+          label:'novo pagamento pelo celular',
+          resumo:[`${dados.codigo} · ${dados.contribuinte} · ${brl(dados.valor)} em ${fmtData(dados.dataPagamento)}`], total:1});
+        fechar(); recado('Pagamento criado');
+      }
+    } catch(err){ criar.disabled = false; recado('Não consegui gravar: ' + (err.code || err.message)); }
+    return;
+  }
 
   const acao = e.target.closest('[data-acao]');
   if (acao){
@@ -1213,6 +1289,7 @@ function liberar(){
 (function inicio(){
   try { aplicarTema(localStorage.getItem('mp:tema') || 'claro'); } catch(e){ aplicarTema('claro'); }
   montarChips();
+  marcarRede();
   if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
   firebase.initializeApp(FIREBASE);
   fauth = firebase.auth(); fdb = firebase.firestore();
