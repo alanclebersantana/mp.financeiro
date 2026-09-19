@@ -238,6 +238,31 @@ html[data-tema="claro"] .fab{box-shadow:0 10px 26px rgba(193,86,26,.28)}
 .tl-card .n{color:var(--muted-2);font-size:11.5px}
 .tl-card.near{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent-dim) inset}
 .alert-list{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow:auto;padding-right:2px}
+.hz{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.hz-bloco{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--rs);padding:13px 14px}
+.hz-bloco.ruim{border-color:var(--bad);background:var(--bad-dim)}
+.hz-tit{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;color:var(--muted-2)}
+.hz-val{font-size:21px;font-weight:800;letter-spacing:-.4px;margin:3px 0 8px;font-variant-numeric:tabular-nums}
+.hz-lin{display:flex;justify-content:space-between;font-size:12.5px;padding:2px 0;font-variant-numeric:tabular-nums}
+.hz-lin span{color:var(--muted)}
+.hz-nota{font-size:11px;color:var(--muted-2);margin-top:6px}
+.rk-cab,.rk{display:grid;grid-template-columns:minmax(120px,1.4fr) minmax(110px,1.1fr) 130px 120px 100px 150px;gap:10px;align-items:center}
+.rk-cab{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.2px;color:var(--muted-2);padding:0 6px 8px}
+.rk-cab span:nth-child(n+3){text-align:right}
+.rk{padding:9px 6px;border-bottom:1px solid var(--line-soft)}
+.rk:last-of-type{border-bottom:none}
+.rk-nome b{display:block;font-size:13.5px}
+.rk-nome span{font-size:11.5px;color:var(--muted-2)}
+.rk-barra{display:flex;align-items:center;height:10px;background:var(--surface-2);border-radius:5px;position:relative}
+.rk-barra i{display:block;height:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:5px}
+.rk-barra b{position:absolute;right:-48px;font-size:12px;font-variant-numeric:tabular-nums}
+.rk-v{text-align:right;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.rk-v small{display:block;font-size:10.5px;color:var(--muted-2);font-weight:700;margin-top:2px}
+.rk-v .inp.mini{text-align:right}
+.rk-zero{color:var(--muted-2);font-weight:400}
+.rk-rodape{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;
+  padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+@media (max-width:1100px){.rk-cab{display:none}.rk{grid-template-columns:1fr 1fr;gap:6px}.rk-barra b{position:static}}
 .caixa{display:flex;flex-direction:column;gap:7px}
 .cx{display:grid;grid-template-columns:96px minmax(120px,1fr) 148px 148px 158px;gap:12px;align-items:center;
   font-size:13px;padding:6px 8px;border-radius:var(--rs);font-variant-numeric:tabular-nums}
@@ -339,6 +364,8 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .modal footer{display:flex;gap:9px;justify-content:flex-end;padding:14px 18px;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--surface)}
 .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .formgrid .full{grid-column:1/-1}
+.maiscampos{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.maiscampos summary{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--accent-2)}
 .pctbox{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--rs);padding:9px 11px}
 .pctlab{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text);font-weight:700;cursor:pointer}
 .pctlab input{accent-color:var(--accent);width:15px;height:15px}
@@ -614,7 +641,8 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .pl-lin b{white-space:nowrap}
 .pl-e{color:var(--ok)} .pl-s{color:var(--accent-2)}
 .pl-big{font-size:26px;font-weight:800;letter-spacing:-.5px;color:var(--accent-2);font-variant-numeric:tabular-nums}
-.pl-nota{color:var(--muted-2);font-size:11.5px;margin-top:4px}
+.pl-nota{color:var(--muted-2);font-size:11.5px;margin-top:4px;line-height:1.5}
+.pl-exp{color:var(--muted-2);font-size:11px;margin-top:8px;line-height:1.45;border-top:1px dashed var(--line);padding-top:7px}
 .pl-tab{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
 .pl-tab th{text-align:left;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.2px;color:var(--muted-2);
   padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
@@ -623,6 +651,14 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .pl-tab .forte{font-weight:800}
 .pl-tab tfoot td{border-top:1px solid var(--line);border-bottom:none;font-weight:800;background:var(--surface-2)}
 .pl-tab tbody tr:hover td{background:var(--hover)}
+.restricao{background:var(--bad-dim);border:1px solid var(--bad);border-radius:var(--rs);padding:12px;margin:14px 0}
+.rest-item{background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:11px 12px;margin-top:9px}
+.rest-cab{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.rest-cab span{color:var(--muted-2);font-size:12px;font-weight:700;flex:1}
+.rest-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}
+.rest-grade label{display:block;font-size:11px;font-weight:700;color:var(--muted-2)}
+.rest-grade .inp.mini{margin-top:3px;text-align:left;height:32px}
+.rest-resumo{margin-top:10px;font-size:12px;color:var(--muted)}
 .pl-tab.estoque{margin-bottom:12px;table-layout:fixed}
 .pl-tab.estoque thead tr{background:var(--surface-3)}
 .pl-tab.estoque thead th{padding:8px;border-bottom:1px solid var(--line)}
@@ -847,11 +883,11 @@ try { document.documentElement.dataset.tema =
   <aside class="rail">
     <div class="brand"><img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAABYCAMAAABGS8AGAAAAYFBMVEX03VgDJSqVnVNWaTopSTQAAABnrqxic0r3lB0qXVr57l/13lh3hEbHvE/8/Ab03ld1wL55xMKhcCP/vz//fwD/f3//qlV/f38AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABuDXH5AAAAGHRSTlP+/////wD/////EaX//wFf////BAICAwJQRH6XAAADxUlEQVR42u2Za3ekIAyGJQnFu9tO2/3//3S5qRCCtR09+6U5p6fjDDy+hhCINLofmmdtGJZea+3+Nmsu4Ab4Mus5QTcXcZ0tqejmSht63c93gJ3o+e8t4GaY9cctYOuO+f0WcDM8PudbwM2gHwyMqmKY90zbEcJUjmCfgUnVLe1X/EjAyL2dKfsVWGUgGmaaMW03IgnoQX/qtAPVvJb9RMwzk3HokTvjFNgU4BHz3/k4nASXipXKHn4iRu5/6ApgYD/ymHn5EAzRdwUY8ziJ5PRegisAEq5SkwTmAxij8BDswicEvefK4KAOgT1ecreFg2GbUWafdAxswN+PmD8wqIhO5uBJmswc7K9XheMqdFKCg/beICSJUvG4CbYPRsdxtX09AbLkI828GHEmGbMyCIveeAhWftQIGdf54gvwqpgqYGumCf7NBpBEJ68+TvNtHezFAUuoB2DXNPTEOhjbNwyOIsqmFNbBo9r0RFUiuG3fNk8BJe3qrqDtOekQ3LYYyJiNRR08TRATFW1DJINbv7CASkLhAEwqrD1RCh6BHRkazFYtGezSoRsKtWWN8RDc7k5owN2gqthxbdvoAsCxOQa/BTfYJTUse7VwU4HrY/lwBWkzybRN05rilfvl0tQmkkPoh9RcBUNl2SM289pEMuzzA+S86fMlSaay5AJps6yLkpNQnokPNm9YbzfKq/xkUDamAyrNDDS/9mu/9gObTn45ne58nARo4nXBqXrw6TovUVBJbt+v83i78atl4ht13tm927k6ryYA71H8n8CA94BBCJorwMDC0a/tF4DjxjstGuAKsN8Iwl5hYdgrPwvGwIWNbIHGfobxSbCK3JXsuY5MT4HHnRvIkevIT4Eh4Xqy3SablczBgJS8YbLVhd9vymCbDrskVXmdEUzCi5AkLLcNMtaqdAUymYMdtzPdXkV2Xef3nTLYtjAymYrKtHuxZtb8btxVx6bWkL/WEckF2HNf/gRYZz+sZBLfsUDu5Z3MwJ5kn/7l1QPtP3fh70PiWyHnZSOROfg1SI3Ct4vXKtitkxK5UOzHayV365XJwHpgsSyQy8FTGdHz+TKtez5LSj8refCiD9Kr1BWZ5JCPi6jjrtis88O2GuXgRUhGZPbZ3R2Ac8v2Hzr3cnyzkW1v6nVebCDWebqf+2IOIv2szkvrMXc+tAhbR1vS1+o3qNSDY7Z31Fo/9IUnWSl47ufhFrCe328g+xOneb7eG3olL7eAtZ0o/XAH2J9KLtehlx2se4u+7Gj20aRHvu7As+8v0L18zP8AmtYi63DWszMAAAAASUVORK5CYII=" alt="Milhas Plus"><div class="brand-txt"><b>MP Planejamento Financeiro</b></div></div>
     <nav class="nav" id="nav">
-      <button data-view="bal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M6 8h8.5a2.5 2.5 0 0 1 0 5H6M6 18h9"/></svg>Balanço geral</button>
-      <button data-view="mensal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M7.5 14h3M13.5 14h3M7.5 17h3"/></svg>Controle mensal</button>
-      <button data-view="lanc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M3 12h18M3 19h18"/></svg>Lançamentos</button>
+      <button data-view="bal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M6 8h8.5a2.5 2.5 0 0 1 0 5H6M6 18h9"/></svg>Visão geral</button>
+      <button data-view="mensal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M7.5 14h3M13.5 14h3M7.5 17h3"/></svg>Fluxo de caixa</button>
+      <button data-view="lanc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M3 12h18M3 19h18"/></svg>Pagamentos</button>
       <button data-view="rec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Recebimentos</button>
-      <button data-view="adi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg>Pagamentos e Adiantamentos</button>
+      <button data-view="adi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg>Adiantamentos</button>
       <button data-view="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>Auditoria</button>
       <button data-view="users" id="navUsers" class="hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 11.2a3 3 0 1 0-1.6-5.5M18 20a5.6 5.6 0 0 0-2.2-4.4"/></svg>Usuários</button>
       <button data-view="bkp" id="navBkp" class="hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.7-6.4L3 8"/><path d="M3 3v5h5"/><path d="M12 7.5V12l3 2"/></svg>Backups</button>
@@ -994,9 +1030,20 @@ try { document.documentElement.dataset.tema =
         <div class="panel"><h3>A pagar — Milhas Plus</h3><div id="balPagar"></div></div>
       </div>
       <div class="panel"><h3>Futuros pagamentos</h3><div id="balFuturos" class="pl-conts"></div></div>
-      <div class="panel"><h3>Controle médio de estoques</h3><div id="balEstoque"></div></div>
+      <div class="panel"><h3>Concentração de recebíveis por pagador</h3>
+        <div id="balRisco"></div>
+        <div class="pl-exp">Quanto do total a receber depende de cada pagador. Concentração alta é risco de crédito: se um atrasa, o caixa inteiro atrasa junto.</div>
+      </div>
+      <div class="panel"><h3>Posições</h3><div id="balPosicoes" class="hz"></div>
+        <div class="pl-exp">Recebíveis líquidos de obrigações mais estoque de milhas disponível. Não representa saldo bancário.</div></div>
+      <div class="panel"><h3>Estoque de milhas</h3><div id="balEstoque"></div></div>
 
       <div id="balAlerta" class="alert-list" style="margin-bottom:14px"></div>
+      <div class="panel">
+        <h3>Horizonte de 30, 60 e 90 dias</h3>
+        <div id="balHorizonte" class="hz"></div>
+        <div class="pl-exp">Mostra se os recebimentos previstos chegam antes das obrigações do mesmo período. Janela negativa indica descasamento de prazo.</div>
+      </div>
       <div class="panel">
         <h3>Projeção mês a mês</h3>
         <div id="balProj"></div>
@@ -1193,7 +1240,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "18/09/2026 20:09";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "19/09/2026 00:06";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -1250,7 +1297,7 @@ const S = {
   rows: [], rec: [], adi: [], pagadores: [], ops: OPS_BASE.slice(), sel: new Set(), hist: [], log: [], users: [],
   sort: {k:'dataPagamento', dir:1}, sortRec: {k:'dataPrevista', dir:1}, sortAdi: {k:'dataAdiantada', dir:1},
   f: {...FILTROS_PADRAO}, fr: {q:'', pg:'', st:'Previsto', d1:'', d2:''},
-  fa: {q:'', st:'Aguardando', d1:'', d2:''}, recModo: 'simples', saldoInicial: null, estoque: null,
+  fa: {q:'', st:'Aguardando', d1:'', d2:''}, recModo: 'simples', saldoInicial: null, estoque: null, limites: null,
   cfg: {autoAplicar: true}, chat: [], alias: {}, avisado: false,
   view: 'bal'
 };
@@ -1338,6 +1385,17 @@ function normalize(o){
     pix: String(o.pix??'').trim(),
     tipoChave: String(o.tipoChave??'').trim().toUpperCase(),
     base: String(o.base??'').trim(),
+    categoria: String(o.categoria??'').trim(),
+    centroCusto: String(o.centroCusto??'').trim(),
+    competencia: String(o.competencia??'').trim(),
+    cnpj: String(o.cnpj??'').trim(),
+    formaPagamento: String(o.formaPagamento??'').trim(),
+    aprovador: String(o.aprovador??'').trim(),
+    valorPago: Math.round(parseNum(o.valorPago)*100)/100,
+    tributo: String(o.tributo??'').trim(),
+    orgao: String(o.orgao??'').trim(),
+    multa: Math.round(parseNum(o.multa)*100)/100,
+    juros: Math.round(parseNum(o.juros)*100)/100,
     porQuem: o.porQuem || APP.nome || '', em: o.em || Date.now()
   };
   if (!TIPOS.includes(r.tipoChave)) r.tipoChave = detectKey(r.pix).tipo;
@@ -1376,6 +1434,12 @@ function statusRecDe(v){
 function normalizeRec(o){
   const r = {
     id: o.id || uid(),
+    codigo: String(o.codigo??'').trim(),
+    programa: String(o.programa??'').trim(),
+    milhas: Math.round(parseNum(o.milhas)),
+    contrato: String(o.contrato??'').trim(),
+    dataEntrega: parseDate(o.dataEntrega) || '',
+    dataVencimento: parseDate(o.dataVencimento) || '',
     dataPrevista: parseDate(o.dataPrevista) || '',
     pagador: String(o.pagador??'').replace(/\s+/g,' ').trim(),
     descricao: String(o.descricao??'').trim(),
@@ -1395,6 +1459,7 @@ function normalizeRec(o){
   return r;
 }
 /** valor que fica para a empresa: o recebido menos o repasse a parceiros */
+const saldoAPagar = r => Math.round(toCents(r.valor) - toCents(r.valorPago || 0))/100;
 const liquidoRec = r => fromCents(toCents(valorRec(r)) + toCents(r.valorParceiros || 0));
 /** valor que conta no caixa: o recebido, quando houver; senão a previsão */
 const valorRec = r => r.status === 'Recebido' ? (r.valorRecebido || r.valor) : r.valor;
@@ -1433,7 +1498,7 @@ const Local = {
   get(k){ try { const v = localStorage.getItem(k); if (v != null) return v; } catch(e){} return MEM[k] ?? null; },
   set(k,v){ MEM[k] = v; try { localStorage.setItem(k,v); } catch(e){} }
 };
-let fdb = null, fauth = null, unsubRows = null, unsubRec = null, unsubSaldo = null, unsubEstoque = null, unsubAdi = null, unsubLog = null, unsubUsers = null;
+let fdb = null, fauth = null, unsubRows = null, unsubRec = null, unsubSaldo = null, unsubEstoque = null, unsubLim = null, unsubAdi = null, unsubLog = null, unsubUsers = null;
 
 const Repo = {
   async escutar(){
@@ -1464,6 +1529,8 @@ const Repo = {
         if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
         renderAll();
       }, () => {});
+      unsubLim && unsubLim();
+      unsubLim = fdb.collection('config').doc('limites').onSnapshot(d => { S.limites = d.exists ? d.data() : {itens:{}}; renderAll(); }, () => {});
       unsubEstoque && unsubEstoque();
       unsubEstoque = fdb.collection('config').doc('estoque').onSnapshot(d => {
         S.estoque = d.exists ? {...ESTOQUE_PADRAO, ...d.data()} : {...ESTOQUE_PADRAO};
@@ -1489,6 +1556,8 @@ const Repo = {
       catch(e){ S.saldoInicial = {...SALDO_PADRAO}; }
       try { S.estoque = JSON.parse(Local.get('tesouraria:estoque') || 'null') || {...ESTOQUE_PADRAO}; }
       catch(e){ S.estoque = {...ESTOQUE_PADRAO}; }
+      try { S.limites = JSON.parse(Local.get('tesouraria:limites') || 'null') || {itens:{}}; }
+      catch(e){ S.limites = {itens:{}}; }
       const rawAdi = Local.get('tesouraria:adi');
       S.adi = rawAdi ? JSON.parse(rawAdi).map(normalizeAdi) : [];
       S.log = JSON.parse(Local.get('tesouraria:log') || '[]');
@@ -1621,7 +1690,7 @@ function filtered(){
   const f = S.f, q = f.q.trim().toLowerCase();
   let out = S.rows.filter(r => {
     if (q){
-      const hay = `${r.codigo} ${r.contribuinte} ${r.operacao} ${r.acordo} ${r.pix} ${r.base} ${r.status}`.toLowerCase();
+      const hay = `${r.codigo} ${r.contribuinte} ${r.operacao} ${r.acordo} ${r.pix} ${r.base} ${r.status} ${r.categoria} ${r.centroCusto} ${r.tributo} ${r.cnpj}`.toLowerCase();
       if (!hay.includes(q)) return false;
     }
     if (f.op && r.operacao !== f.op) return false;
@@ -1659,7 +1728,7 @@ function renderDash(){
   const negativos = MotorFinanceiroMP.diasNegativos();
 
   $('#kpis').innerHTML = `
-    <div class="kpi lead"><div class="lab">A pagar (pendente + agendado)</div><div class="val">${brl(total)}</div>
+    <div class="kpi lead"><div class="lab">Pagamentos previstos</div><div class="val">${brl(total)}</div>
       <div class="note">${pend.length} lançamentos · ${benef} beneficiários</div></div>
     <div class="kpi"><div class="lab">Próximo desembolso</div><div class="val">${prox ? fmtDate(prox) : '—'}</div>
       <div class="note">${brl(pend.filter(r=>r.dataPagamento===prox).reduce((s,r)=>s+r.valor,0))}</div></div>
@@ -1667,14 +1736,14 @@ function renderDash(){
       <div class="note">${rows.filter(r=>r.status==='Pago').length} lançamentos</div></div>
     <div class="kpi"><div class="lab">Ticket médio</div><div class="val">${brlShort(pend.length ? total/pend.length : 0)}</div>
       <div class="note">maior: ${brlShort(Math.max(0,...pend.map(r=>r.valor)))}</div></div>
-    <div class="kpi"><div class="lab">Entra hoje</div><div class="val" style="color:var(--ok)">${brlShort(entraHoje)}</div>
+    <div class="kpi"><div class="lab">Recebimentos previstos hoje</div><div class="val" style="color:var(--ok)">${brlShort(entraHoje)}</div>
       <div class="note">${fmtDate(hojeSP)}</div></div>
-    <div class="kpi"><div class="lab">Sai hoje</div><div class="val" style="color:var(--accent-2)">${brlShort(saiHoje)}</div>
+    <div class="kpi"><div class="lab">Pagamentos previstos hoje</div><div class="val" style="color:var(--accent-2)">${brlShort(saiHoje)}</div>
       <div class="note">${S.rows.filter(r => r.dataPagamento === hojeSP && ABERTO(r)).length} pagamentos</div></div>
-    <div class="kpi"><div class="lab">Saldo do dia</div>
+    <div class="kpi"><div class="lab">Fluxo líquido projetado do dia</div>
       <div class="val" style="color:${saldoHoje < 0 ? 'var(--bad)' : 'var(--ok)'}">${brlShort(saldoHoje)}</div>
       <div class="note">${saldoHoje < 0 ? 'falta caixa hoje' : 'entradas cobrem o dia'}</div></div>
-    <div class="kpi"><div class="lab">A receber (previsto)</div><div class="val">${brlShort(MotorFinanceiroMP.totalAReceber())}</div>
+    <div class="kpi"><div class="lab">Recebimentos previstos</div><div class="val">${brlShort(MotorFinanceiroMP.totalAReceber())}</div>
       <div class="note">${MotorFinanceiroMP.recAberto().length} recebimentos</div></div>
     <div class="kpi"><div class="lab">Chaves com pendência</div><div class="val" style="color:${prob.length?'var(--bad)':'var(--ok)'}">${prob.length}</div>
       <div class="note">${prob.length ? 'revisar antes do lote' : 'tudo validado'}</div></div>`;
@@ -1709,7 +1778,7 @@ function renderDash(){
   const dias = MotorFinanceiroMP.caixaPorDia().filter(x => x.data >= hojeSP).slice(0,12);
   const maxDia = Math.max(1, ...dias.map(x => Math.max(x.receber, x.pagar)));
   if (existe('caixaDias')) $('#caixaDias').innerHTML = dias.length
-    ? `<div class="cx cxh"><span>Dia</span><span></span><span>Entra</span><span>Sai</span><span>Saldo</span></div>`
+    ? `<div class="cx cxh"><span>Dia</span><span></span><span>Recebimentos</span><span>Pagamentos</span><span>Fluxo do dia</span><span>Acumulado</span></div>`
       + `<div class="caixa">` + dias.map(x => `
       <div class="cx ${x.saldo < 0 && x.pagar > 0 ? 'neg' : ''}" data-dia="${x.data}" title="Ver os lançamentos de ${fmtDate(x.data)}">
         <div class="cxd">${fmtDate(x.data)}</div>
@@ -1922,12 +1991,29 @@ $('#balSalvar').addEventListener('click', async () => {
   if (await gravarSaldoInicial(valor, mes)) toast('Saldo inicial salvo — projeção recalculada');
 });
 function lerEstoqueDaTela(){
-  return [...document.querySelectorAll('#balEstoque tr[data-est]')].map(tr => {
+  const linhas = [...document.querySelectorAll('#balEstoque tr[data-est]'), ...document.querySelectorAll('#balEstoque .rest-item[data-est]')];
+  return linhas.map(tr => {
     const base = (estoqueBase().itens || []).find(i => i.id === tr.dataset.est) || {};
     const v = c => { const el = tr.querySelector(`[data-campo="${c}"]`); return el ? el.value : ''; };
-    return {...base, saldo: Math.round(parseNum(v('saldo'))), media: dinheiro(v('media')), data: v('data')};
+    const extra = {};
+    CAMPOS_RESTRICAO.forEach(c => { const el = tr.querySelector(`[data-campo="${c}"]`); if (el) extra[c] = c === 'recuperavel' ? dinheiro(el.value) : el.value.trim(); });
+    return {...base, ...extra, saldo: Math.round(parseNum(v('saldo'))), media: dinheiro(v('media')), data: v('data') || base.data || ''};
   });
 }
+$('#balRisco').addEventListener('click', async e => {
+  if (!e.target.closest('#salvarLimites')) return;
+  if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+  const itens = {};
+  $$('#balRisco [data-limite]').forEach(el => { const v = parseNum(el.value); if (v > 0) itens[el.dataset.limite] = dinheiro(v); });
+  S.limites = {itens, em: Date.now(), porQuem: APP.nome || 'Local'};
+  if (APP.modo === 'nuvem'){ try { await fdb.collection('config').doc('limites').set(S.limites); }
+    catch(err){ return toast('Não consegui gravar: ' + (err.code || err.message)); } }
+  else Local.set('tesouraria:limites', JSON.stringify(S.limites));
+  await Repo.registrar({ts:Date.now(), uid:APP.uid || 'local', nome:APP.nome || 'Local', origem:'manual',
+    label:'limites de exposição por pagador',
+    resumo:Object.entries(itens).map(([k,v]) => `${k}: ${brl(v)}`).slice(0,8), total:Object.keys(itens).length});
+  renderAll(); toast('Limites salvos');
+});
 $('#balEstoque').addEventListener('click', async e => {
   if (e.target.closest('#salvarEstoque')){
     if (!podeEditar()) return toast('Seu acesso é somente leitura.');
@@ -2020,11 +2106,11 @@ function go(v){
   // o Painel deixou de ser uma tela própria: ele é a segunda metade do Controle mensal
   ['bal','mensal','lanc','rec','adi','log','users','bkp'].forEach(x => $('#view-'+x).classList.toggle('hide', x !== v));
   const t = {dash:['Controle mensal','Entradas e saídas do mês, com o painel consolidado'],
-             mensal:['Controle mensal','Entradas e saídas do mês, com o painel consolidado'],
-             lanc:['Lançamentos','Edite direto na grade, filtre e trabalhe em lote'],
-             adi:['Pagamentos e Adiantamentos','Fila de pagamentos antecipados — exporte o lote e dê baixa'],
-             bal:['Balanço geral','Caixa disponível hoje e projeção dos próximos meses'],
-             rec:['Recebimentos','Previsões e entradas confirmadas, por pagador'],
+             mensal:['Fluxo de caixa','Movimento do mês e projeção diária — valores previstos, não realizados'],
+             lanc:['Pagamentos','Contas a pagar — edite na grade, filtre e trabalhe em lote'],
+             adi:['Adiantamentos','Fila de pagamentos antecipados — exporte o lote e dê baixa'],
+             bal:['Visão geral','Posição contratual, estoque e projeção — não representa saldo bancário'],
+             rec:['Recebimentos','Contas a receber — previsões e entradas confirmadas, por pagador'],
              log:['Auditoria','Quem alterou o quê, e quando'],
              users:['Usuários','Controle de acesso da equipe'],
              bkp:['Backups','Cópias automáticas a cada 20 minutos — compare e recupere']}[v];
@@ -2105,7 +2191,22 @@ $('#btnNew').addEventListener('click', () => {
       <div class="field"><label>Status</label><select class="inp" id="n_st">${STATUS.map(s=>`<option>${s}</option>`).join('')}</select></div>
       <div class="field full"><label>Chave Pix</label><input class="inp" id="n_pix" placeholder="CPF, CNPJ, e-mail, telefone ou chave aleatória"></div>
       <div class="field full"><label>Origem</label><input class="inp" id="n_base" placeholder="planilha / lote de origem"></div>
-    </div>`,
+    </div>
+    <details class="maiscampos"><summary>Mais campos — categoria, centro de custo, tributo</summary>
+      <div class="formgrid" style="margin-top:12px">
+        <div class="field"><label>Categoria</label><input class="inp" id="n_cat" placeholder="milhas, tributo, administrativa"></div>
+        <div class="field"><label>Centro de custo</label><input class="inp" id="n_cc"></div>
+        <div class="field"><label>Competência</label><input class="inp" id="n_comp" placeholder="09/2026"></div>
+        <div class="field"><label>CNPJ responsável</label><input class="inp" id="n_cnpj"></div>
+        <div class="field"><label>Forma de pagamento</label><input class="inp" id="n_forma" placeholder="Pix, boleto, TED"></div>
+        <div class="field"><label>Responsável pela aprovação</label><input class="inp" id="n_aprov"></div>
+        <div class="field"><label>Valor já pago</label><input class="inp" id="n_pago" placeholder="0,00"></div>
+        <div class="field"><label>Tributo</label><input class="inp" id="n_trib" placeholder="DAS, IRPJ, ISS"></div>
+        <div class="field"><label>Órgão arrecadador</label><input class="inp" id="n_orgao" placeholder="Receita Federal"></div>
+        <div class="field"><label>Multa</label><input class="inp" id="n_multa" placeholder="0,00"></div>
+        <div class="field"><label>Juros</label><input class="inp" id="n_juros" placeholder="0,00"></div>
+      </div>
+    </details>`,
     `<button class="btn" data-close>Cancelar</button><button class="btn primary" id="n_ok">Adicionar lançamento</button>`);
   ligarAutocomplete(m);
   ligarAcrescimo(m);
@@ -2118,7 +2219,12 @@ $('#btnNew').addEventListener('click', () => {
       acordo: comAcrescimo ? (obs ? obs + ' · ' : '') + `${brl(conta.base)} + ${conta.taxa}% = ${brl(conta.total)}` : obs,
       valor: comAcrescimo ? conta.total : m.querySelector('#n_val').value,
       dataPagamento:m.querySelector('#n_dp').value, dataLancamento:m.querySelector('#n_dl').value,
-      status:m.querySelector('#n_st').value, pix:m.querySelector('#n_pix').value, base:m.querySelector('#n_base').value };
+      status:m.querySelector('#n_st').value, pix:m.querySelector('#n_pix').value, base:m.querySelector('#n_base').value,
+      categoria:m.querySelector('#n_cat').value, centroCusto:m.querySelector('#n_cc').value,
+      competencia:m.querySelector('#n_comp').value, cnpj:m.querySelector('#n_cnpj').value,
+      formaPagamento:m.querySelector('#n_forma').value, aprovador:m.querySelector('#n_aprov').value,
+      valorPago:m.querySelector('#n_pago').value, tributo:m.querySelector('#n_trib').value,
+      orgao:m.querySelector('#n_orgao').value, multa:m.querySelector('#n_multa').value, juros:m.querySelector('#n_juros').value };
     if (!String(dados.contribuinte).trim()) return alert('Informe o beneficiário.');
     m.remove(); await aplicar([{acao:'criar', dados}], 'manual', 'novo lançamento'); go('lanc');
   });
@@ -2372,7 +2478,10 @@ $('#btnExport').addEventListener('click', () => {
       escolherModeloLote(ok.map(r => ({pix:r.pix, valor:r.valor, nome:r.contribuinte, descricao:r.operacao})), 'lote-pix', fora);
       return;
     } else {
-      data = rows.map(r => ({'Código':r.codigo,'Data Lançamento':fmtDate(r.dataLancamento),'Contribuinte':r.contribuinte,'Operação':r.operacao,
+      data = rows.map(r => ({'Código':r.codigo,'Categoria':r.categoria,'Centro de custo':r.centroCusto,
+        'Competência':r.competencia,'CNPJ':r.cnpj,'Forma de pagamento':r.formaPagamento,'Aprovador':r.aprovador,
+        'Valor pago':r.valorPago,'Saldo remanescente':saldoAPagar(r),'Tributo':r.tributo,'Órgão':r.orgao,
+        'Multa':r.multa,'Juros':r.juros,'Data Lançamento':fmtDate(r.dataLancamento),'Contribuinte':r.contribuinte,'Operação':r.operacao,
         'Acordo':r.acordo,'Valor a Pagar':r.valor,'Data de Pagamento':fmtDate(r.dataPagamento),'Status':r.status,
         'Pix':r.pix,'TIPO DE CHAVE':r.tipoChave,'Base':r.base}));
       name = `tesouraria-${stamp}.${t}`;
@@ -3844,6 +3953,41 @@ function renderRec(){
 
 /* ---------- caixa do dia: entra x sai ---------- */
 Object.assign(MotorFinanceiroMP, {
+  /** recebimentos, pagamentos e posição líquida numa janela de dias a partir de hoje */
+  horizonte(dias){
+    const h = getTodaySP();
+    const limite = new Date(Date.parse(h + 'T12:00:00') + dias * 864e5).toISOString().slice(0,10);
+    const rec = S.rec.filter(r => ABERTO_REC(r) && r.dataPrevista && r.dataPrevista >= h && r.dataPrevista <= limite);
+    const pag = S.rows.filter(r => ABERTO(r) && r.dataPagamento && r.dataPagamento >= h && r.dataPagamento <= limite);
+    const receber = fromCents(rec.reduce((s,r) => s + toCents(r.valor), 0));
+    const pagar = fromCents(pag.reduce((s,r) => s + toCents(r.valor), 0));
+    return {dias, ate:limite, receber, pagar, liquido: subtractMoney(receber, pagar), nRec:rec.length, nPag:pag.length};
+  },
+  /** concentração, atraso e exposição por pagador */
+  riscoPagadores(){
+    const h = getTodaySP();
+    const limites = (S.limites && S.limites.itens) || {};
+    const porNome = {};
+    S.rec.filter(r => r.status !== 'Cancelado').forEach(r => {
+      const k = r.pagador || '(sem pagador)';
+      const x = porNome[k] = porNome[k] || {chave:k, aberto:0, nAberto:0, vencido:0, nVencido:0, recebido:0, nRecebido:0, dias:[], limite: limites[k] || 0};
+      if (ABERTO_REC(r)){
+        x.aberto += toCents(r.valor); x.nAberto++;
+        if (r.dataPrevista && r.dataPrevista < h){ x.vencido += toCents(r.valor); x.nVencido++; }
+      } else if (r.status === 'Recebido'){
+        x.recebido += toCents(valorRec(r)); x.nRecebido++;
+        if (r.dataVenda && r.dataRecebida) x.dias.push(Math.round((Date.parse(r.dataRecebida) - Date.parse(r.dataVenda)) / 864e5));
+        else if (r.dataPrevista && r.dataRecebida) x.dias.push(Math.round((Date.parse(r.dataRecebida) - Date.parse(r.dataPrevista)) / 864e5));
+      }
+    });
+    const lista = Object.values(porNome).map(x => ({...x,
+      aberto: fromCents(x.aberto), vencido: fromCents(x.vencido), recebido: fromCents(x.recebido),
+      prazo: x.dias.length ? Math.round(x.dias.reduce((s,d) => s + d, 0) / x.dias.length) : null
+    })).sort((a,b) => b.aberto - a.aberto);
+    const total = fromCents(lista.reduce((s,x) => s + toCents(x.aberto), 0));
+    lista.forEach(x => x.parte = total ? x.aberto / total : 0);
+    return {lista, total, top5: lista.slice(0,5).reduce((s,x) => s + x.parte, 0)};
+  },
   recAberto(){ return S.rec.filter(ABERTO_REC); },
   totalAReceber(){ return fromCents(this.recAberto().reduce((s,r) => s + toCents(r.valor), 0)); },
   totalRecebido(){ return fromCents(S.rec.filter(r => r.status === 'Recebido').reduce((s,r) => s + toCents(valorRec(r)), 0)); },
@@ -4505,6 +4649,52 @@ function renderBalanco(){
          <span>faltam ${brl(Math.abs(neg.acumulado))} para cobrir o que está previsto até lá — clique para abrir o mês</span></div></div>`
     : (projecao.length ? '<div class="empty">O caixa se mantém positivo em todos os meses projetados.</div>' : '');
 
+  const e = Balanco.estoque();
+  const risco = MotorFinanceiroMP.riscoPagadores();
+  $('#balRisco').innerHTML = risco.lista.length ? `
+    <div class="rk-cab"><span>Pagador</span><span>Participação</span><span>A receber</span><span>Vencido</span><span>Prazo médio</span><span>Limite</span></div>
+    ${risco.lista.map(x => {
+      const uso = x.limite ? x.aberto / x.limite : 0;
+      return `<div class="rk">
+        <div class="rk-nome"><b>${esc(x.chave)}</b><span>${x.nAberto} em aberto${x.nRecebido ? ` · ${x.nRecebido} recebido(s)` : ''}</span></div>
+        <div class="rk-barra"><i style="width:${(x.parte*100).toFixed(1)}%"></i><b>${(x.parte*100).toFixed(1)}%</b></div>
+        <div class="rk-v">${brl(x.aberto)}</div>
+        <div class="rk-v ${x.vencido ? 'bl-neg' : 'rk-zero'}">${x.vencido ? brl(x.vencido) : '—'}</div>
+        <div class="rk-v">${x.prazo === null ? '—' : x.prazo + ' dias'}</div>
+        <div class="rk-v"><input class="inp mini" data-limite="${esc(x.chave)}" value="${x.limite ? x.limite.toFixed(2).replace('.',',') : ''}" placeholder="sem limite">
+          ${x.limite ? `<small class="${uso > 1 ? 'bl-neg' : ''}">${(uso*100).toFixed(0)}% usado</small>` : ''}</div>
+      </div>`; }).join('')}
+    <div class="rk-rodape"><span>Top 5 concentra <b>${(risco.top5*100).toFixed(1)}%</b> do total a receber (${brl(risco.total)})</span>
+      <button class="btn sm" id="salvarLimites">Salvar limites</button></div>` : '<div class="empty">Nenhum recebimento cadastrado.</div>';
+
+  const rec = fromCents(e.itens.filter(bloqueada).reduce((s,i) => s + toCents(i.recuperavel || 0), 0));
+  $('#balPosicoes').innerHTML = `
+    <div class="hz-bloco"><div class="hz-tit">Posição operacional líquida (estimada)</div>
+      <div class="hz-val ${e.disponivel < 0 ? 'bl-neg' : 'bl-pos'}">${brl(e.disponivel)}</div>
+      <div class="hz-nota">posição contratual + estoque disponível</div></div>
+    <div class="hz-bloco"><div class="hz-tit">Posição sem milhas bloqueadas</div>
+      <div class="hz-val">${brl(e.disponivel)}</div>
+      <div class="hz-nota">é a mesma acima: o bloqueado nunca entra</div></div>
+    <div class="hz-bloco ${e.bloqueados ? 'ruim' : ''}"><div class="hz-tit">Exposição bloqueada</div>
+      <div class="hz-val bl-neg">${brl(e.bloqueados)}</div>
+      <div class="hz-nota">valor nominal sob restrição judicial</div></div>
+    <div class="hz-bloco"><div class="hz-tit">Posição potencial com recuperação</div>
+      <div class="hz-val">${brl(addMoney(e.disponivel, rec))}</div>
+      <div class="hz-nota">${rec ? 'cenário otimista, com ' + brl(rec) + ' recuperável' : 'informe o valor recuperável no estoque'}</div></div>
+    <div class="hz-bloco"><div class="hz-tit">Caixa bancário informado</div>
+      <div class="hz-val">${brl(saldoBase().valor)}</div>
+      <div class="hz-nota">${saldoBase().mesRef ? 'apurado no fim de ' + saldoBase().mesRef : 'informe no Ponto de partida'}</div></div>`;
+
+  $('#balHorizonte').innerHTML = [30,60,90].map(n => {
+    const x = MotorFinanceiroMP.horizonte(n);
+    return `<div class="hz-bloco ${x.liquido < 0 ? 'ruim' : ''}">
+      <div class="hz-tit">Próximos ${n} dias</div>
+      <div class="hz-val ${x.liquido < 0 ? 'bl-neg' : 'bl-pos'}">${brl(x.liquido)}</div>
+      <div class="hz-lin"><span>Recebimentos</span><b class="pl-e">${brl(x.receber)}</b></div>
+      <div class="hz-lin"><span>Pagamentos</span><b class="pl-s">${brl(x.pagar)}</b></div>
+      <div class="hz-nota">${x.nRec} a receber · ${x.nPag} a pagar · até ${fmtDate(x.ate)}</div></div>`;
+  }).join('');
+
   const maior = Math.max(1, ...projecao.map(x => Math.max(toCents(x.entradas), toCents(x.saidas))));
   $('#balProj').innerHTML = projecao.length ? `
     <div class="bl-linha bl-cab"><span>Mês</span><span></span><span>Entradas</span><span>Saídas</span><span>Resultado</span><span>Saldo acumulado</span></div>`
@@ -4525,6 +4715,7 @@ const mesLongo = ym => { const [a,m] = String(ym).split('-'); return `${MESES[+m
 /* =========================================================
    PAINEL DA PLANILHA — controle de caixa, estoque e pivôs
    ========================================================= */
+const CAMPOS_RESTRICAO = ['programa','processo','recuperavel','probabilidade','dataJuridica','situacao'];
 const ESTOQUE_PADRAO = {itens: [
   {id:'e1', companhia:'AZUL', tipo:'MILHAS PLUS',            saldo:0, media:0, data:''},
   {id:'e2', companhia:'AZUL', tipo:'MILHAS PLUS BLOQUEADAS', saldo:0, media:0, data:''},
@@ -4603,21 +4794,23 @@ function renderPainelPlanilha(){
 
   $('#balCaixa').innerHTML = `
     <div class="pl-bloco">
-      <div class="pl-tit">Controle de caixa</div>
-      <div class="pl-lin"><span>Entradas futuras</span><b class="pl-e">${brl(entradas)}</b></div>
-      <div class="pl-lin"><span>Saídas futuras</span><b class="pl-s">${brl(saidas)}</b></div>
-      <div class="pl-lin destaque"><span>Saúde financeira</span><b class="${lucro < 0 ? 'bl-neg' : 'bl-pos'}">${brl(lucro)}</b></div>
+      <div class="pl-tit">Posição contratual</div>
+      <div class="pl-lin"><span>Recebimentos previstos</span><b class="pl-e">${brl(entradas)}</b></div>
+      <div class="pl-lin"><span>Pagamentos previstos</span><b class="pl-s">${brl(saidas)}</b></div>
+      <div class="pl-lin destaque"><span>Posição contratual líquida</span><b class="${lucro < 0 ? 'bl-neg' : 'bl-pos'}">${brl(lucro)}</b></div>
+      <div class="pl-exp">Contas a receber previstas menos contas a pagar previstas. Não é caixa, lucro nem patrimônio.</div>
     </div>
     <div class="pl-bloco">
-      <div class="pl-tit">Controle de estoque</div>
-      <div class="pl-lin"><span>Total R$ bloqueados</span><b>${brl(e.bloqueados)}</b></div>
-      <div class="pl-lin"><span>Total R$ em pontos disp. p/ uso</span><b>${brl(e.livres)}</b></div>
-      <div class="pl-lin"><span>Total indisponível</span><b class="pl-s">${brl(e.indisponivel)}</b></div>
+      <div class="pl-tit">Estoque de milhas</div>
+      <div class="pl-lin"><span>Estoque de milhas disponível</span><b class="pl-e">${brl(e.livres)}</b></div>
+      <div class="pl-lin"><span>Milhas sob restrição</span><b class="pl-s">${brl(e.bloqueados)}</b></div>
+      <div class="pl-lin"><span>Valor considerado na posição</span><b>${brl(0)}</b></div>
+      <div class="pl-exp">Milhas sob restrição judicial não entram na posição disponível.</div>
     </div>
     <div class="pl-bloco total">
-      <div class="pl-tit">Total disponível</div>
+      <div class="pl-tit">Posição operacional líquida (estimada)</div>
       <div class="pl-big ${e.disponivel < 0 ? 'bl-neg' : ''}">${brl(e.disponivel)}</div>
-      <div class="pl-nota">lucro previsto ${brl(lucro)} + pontos disponíveis ${brl(e.livres)}</div>
+      <div class="pl-nota">Recebíveis líquidos de obrigações (${brl(lucro)}) + estoque de milhas disponível (${brl(e.livres)}).<br>Não representa saldo bancário.</div>
     </div>`;
 
   const pv = Balanco.pivoReceber();
@@ -4646,8 +4839,10 @@ function renderPainelPlanilha(){
     <div class="pl-cont"><span>Suspensos</span><b>${fp.suspensos}</b></div>
     <div class="pl-cont"><span>Pagos</span><b>${fp.pagos}</b></div>`;
 
+  const operacionais = e.itens.filter(i => !bloqueada(i));
+  const restritos = e.itens.filter(bloqueada);
   const porCompanhia = {};
-  e.itens.forEach(i => { (porCompanhia[i.companhia] = porCompanhia[i.companhia] || []).push(i); });
+  operacionais.forEach(i => { (porCompanhia[i.companhia] = porCompanhia[i.companhia] || []).push(i); });
   $('#balEstoque').innerHTML = Object.entries(porCompanhia).map(([comp, itens]) => `
     <table class="pl-tab estoque">
       <colgroup><col style="width:26%"><col style="width:21%"><col style="width:21%"><col style="width:14%"><col style="width:14%"><col style="width:4%"></colgroup>
@@ -4661,6 +4856,25 @@ function renderPainelPlanilha(){
         <td><input class="inp mini" data-campo="data" type="date" value="${i.data || ''}"></td>
         <td><button class="lixo" data-remest="${i.id}" title="Remover linha">✕</button></td></tr>`).join('')}</tbody>
     </table>`).join('')
+    + (restritos.length ? `<div class="restricao">
+        <div class="pl-tit" style="color:var(--bad)">Ativos sob restrição — não compõem o estoque disponível</div>
+        ${restritos.map(i => `<div class="rest-item" data-est="${i.id}">
+          <div class="rest-cab"><b class="comp comp-${esc(String(i.companhia).replace(/[^A-Za-z]/g,'').toUpperCase())}">${esc(i.companhia)}</b>
+            <span>${esc(i.tipo)}</span><button class="lixo" data-remest="${i.id}" title="Remover">✕</button></div>
+          <div class="rest-grade">
+            <label>Milhas<input class="inp mini" data-campo="saldo" value="${i.saldo ? Number(i.saldo).toLocaleString('pt-BR') : ''}" placeholder="0"></label>
+            <label>Valor nominal por milheiro<input class="inp mini" data-campo="media" value="${i.media ? i.media.toFixed(2).replace('.',',') : ''}" placeholder="0,00"></label>
+            <label>Valor nominal<input class="inp mini" value="${brl(totalItem(i))}" disabled></label>
+            <label>Valor recuperável estimado<input class="inp mini" data-campo="recuperavel" value="${i.recuperavel ? Number(i.recuperavel).toFixed(2).replace('.',',') : ''}" placeholder="0,00"></label>
+            <label>Programa<input class="inp mini" data-campo="programa" value="${esc(i.programa || '')}" placeholder="LATAM Pass"></label>
+            <label>Processo judicial<input class="inp mini" data-campo="processo" value="${esc(i.processo || '')}" placeholder="nº do processo"></label>
+            <label>Probabilidade de recuperação<input class="inp mini" data-campo="probabilidade" value="${esc(i.probabilidade || '')}" placeholder="ex.: provável"></label>
+            <label>Situação<input class="inp mini" data-campo="situacao" value="${esc(i.situacao || '')}" placeholder="em recuperação judicial"></label>
+            <label>Última atualização jurídica<input class="inp mini" data-campo="dataJuridica" type="date" value="${i.dataJuridica || ''}"></label>
+          </div>
+          <div class="rest-resumo">Valor considerado na posição disponível: <b>R$ 0,00</b>${i.recuperavel ? ` · potencial com recuperação: <b>${brl(i.recuperavel)}</b>` : ''}</div>
+        </div>`).join('')}
+      </div>` : '')
     + `<div class="pl-acoes">
         <button class="btn sm" id="addEstoque">Adicionar linha</button>
         <button class="btn sm primary" id="salvarEstoque">Salvar estoque</button>
@@ -5208,7 +5422,8 @@ const Mensal = (() => {
     const d = k => dias[k] = dias[k] || {data:k, e:0, s:0, eReal:0, sReal:0};
     R.ent.filter(r => r.status !== 'Cancelado').forEach(r => { const x = d(dataRec(r)), c = toC(valorRec(r)); x.e += c; if (r.status === 'Recebido') x.eReal += c; });
     R.sai.filter(NO_CAIXA).forEach(r => { const x = d(r.dataPagamento), c = toC(r.valor); x.s += c; if (r.status === 'Pago') x.sReal += c; });
-    let acum = 0;
+    // parte do saldo projetado que vem dos meses anteriores, não de zero
+    let acum = acumuladoAte(M.mes === 1 ? M.ano - 1 : M.ano, M.mes === 1 ? 12 : M.mes - 1);
     return Object.values(dias).sort((a,b) => a.data < b.data ? -1 : 1).map(x => { x.saldo = x.e - x.s; acum += x.saldo; x.acum = acum; return x; });
   }
   function agrupar(lista, chaveFn, valFn, realFn){
@@ -5281,7 +5496,7 @@ const Mensal = (() => {
         <div class="mn-lin"><span>vs ${antCurto}</span><b>${compara(R.saidas, P.saidas, true)}</b></div>
       </div>
       <div class="mn-bl res">
-        <div class="lab">Resultado do mês (entradas − saídas)</div>
+        <div class="lab">Fluxo líquido do mês (entradas − saídas)</div>
         <div class="big ${R.resultado < 0 ? 'mn-neg' : 'mn-pos'}">${sinal(R.resultado)}</div>
         <div class="mn-lin"><span>Realizado até agora</span><b class="${R.resultadoReal < 0 ? 'mn-neg' : 'mn-pos'}">${sinal(R.resultadoReal)}</b></div>
         <div class="mn-lin"><span>Caixa acumulado até ${MES_CURTO[mes-1]}</span><b class="${acum < 0 ? 'mn-neg' : 'mn-pos'}">${sinal(acum)}</b></div>
@@ -5296,7 +5511,7 @@ const Mensal = (() => {
     el('pnlFluxo').classList.toggle('alerta', negs.length > 0);
     el('fluxoNota').textContent = fx.length ? `${fx.length} dias com movimento` + (negs.length ? ` · ${negs.length} com saída maior que a entrada` : '') : '';
     el('fluxo').innerHTML = fx.length ? `
-      <div class="mn-fx mn-fxh"><span>Dia</span><span></span><span>Entra</span><span>Sai</span><span>Saldo do dia</span><span>Acumulado no mês</span></div>
+      <div class="mn-fx mn-fxh"><span>Dia</span><span></span><span>Entra</span><span>Sai</span><span>Fluxo do dia</span><span>Saldo acumulado projetado</span></div>
       <div class="mn-fxs">${fx.map(x => `
         <div class="mn-fx ${x.saldo < 0 && x.s > 0 ? 'neg' : ''} ${x.data === h ? 'hoje' : ''} ${x.data > h ? 'fut' : ''}" data-dia="${x.data}" title="Ver os lançamentos de ${fmtDate(x.data)}" style="cursor:pointer">
           <div class="d"><b>${x.data.slice(8)}/${x.data.slice(5,7)}</b><small>${diaSemana(x.data)}</small></div>
@@ -5306,7 +5521,7 @@ const Mensal = (() => {
           <div class="v saldo ${x.saldo < 0 ? 'mn-neg' : 'mn-pos'}"><b>${sinal(x.saldo)}</b></div>
           <div class="v acum ${x.acum < 0 ? 'mn-neg' : ''}">${brlC(x.acum)}</div>
         </div>`).join('')}</div>
-      <div class="mn-nota">Valores em itálico ainda incluem previsões não confirmadas. Clique no dia para ver os lançamentos.</div>`
+      <div class="mn-nota">Valores em itálico ainda incluem previsões não confirmadas. O saldo acumulado parte do caixa informado e dos meses anteriores — um dia negativo só preocupa quando o acumulado fica negativo. Clique no dia para ver os lançamentos.</div>`
       : '<div class="empty">Nenhuma entrada ou saída com data neste mês.</div>';
 
     el('porOp').innerHTML = rank(agrupar(R.sai.filter(NO_CAIXA), r => r.operacao || '(sem operação)', r => toC(r.valor), r => r.status === 'Pago'), 's', 10);
@@ -5454,7 +5669,7 @@ const Mensal = (() => {
       ['Cancelado', v(R.canc), R.nCanc + ' itens']]);
     ws1['!cols'] = [{wch:32},{wch:18},{wch:18},{wch:18}];
     XLSX.utils.book_append_sheet(wb, ws1, 'Resumo');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['Dia','Entra','Sai','Saldo do dia','Acumulado no mês'],
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['Dia','Recebimentos','Pagamentos','Fluxo do dia','Saldo acumulado projetado'],
       ...fluxoDiario(R).map(x => [fmtDate(x.data), v(x.e), v(x.s), v(x.saldo), v(x.acum)])]), 'Fluxo diário');
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['Pagamento','Beneficiário','Operação','Acordo','Status','Valor','Chave Pix'],
       ...R.sai.slice().sort((a,b) => a.dataPagamento < b.dataPagamento ? -1 : 1).map(r => [fmtDate(r.dataPagamento), r.contribuinte, r.operacao, r.acordo, r.status, r.valor, r.pix])]), 'Saídas');
@@ -5482,6 +5697,11 @@ const Mensal = (() => {
     M.ano = a; M.mes = m; render();
   }
   window.__mensalIr = irPara;
+  /** deixa o mês aberto sempre visível na barra, sem o operador procurar */
+  function centralizarMes(){
+    const alvo = el('bar') ? el('bar').querySelector('.mn-mes.on, [data-mes].on, button.on') : null;
+    if (alvo && alvo.scrollIntoView) alvo.scrollIntoView({block:'nearest', inline:'center'});
+  }
   function abrirDia(dia){
     S.f = {...FILTROS_PADRAO, st:'', d1:dia, d2:dia};
     ['fQ','fOp','fSt','fTp','fV1','fV2'].forEach(id => { const x = $('#'+id); if (x) x.value = ''; });

@@ -99,6 +99,19 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
 .linha .esq b{display:block;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .linha .esq span{font-size:12px;color:var(--muted-2)}
 .linha .dir{text-align:right;white-space:nowrap;font-weight:800}
+.dia{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px 10px;padding:10px 0;border-bottom:1px solid var(--line-soft)}
+.dia:last-child{border-bottom:none}
+.dia .cab{grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.dia .data{font-size:14.5px;font-weight:800}
+.dia .qtd{font-size:11.5px;color:var(--muted-2)}
+.dia .col{min-width:0}
+.dia .col span{display:block;font-size:10.5px;font-weight:700;color:var(--muted-2);text-transform:uppercase;letter-spacing:.2px}
+.dia .col b{display:block;font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dia .col.saldo{text-align:right}
+.dia .col.acum b{color:var(--text)}
+@media (max-width:390px){.dia{grid-template-columns:1fr 1fr}}
+.dia .e b{color:var(--ok)} .dia .s b{color:var(--accent-2)}
+.dia .saldo b.neg{color:var(--bad)} .dia .saldo b.pos{color:var(--ok)}
 .vazio{text-align:center;color:var(--muted-2);font-size:13.5px;padding:24px 10px}
 
 /* ---------- registros ---------- */
@@ -246,17 +259,18 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
   <!-- BALANÇO -->
   <section class="tela on" id="tela-bal">
     <div class="card destaque">
-      <div class="rot">Saúde financeira</div>
+      <div class="rot">Posição contratual líquida</div>
       <div class="val" id="bSaude">—</div>
       <div class="nota" id="bSaudeNota">entradas futuras menos saídas futuras</div>
     </div>
     <div class="duplo">
-      <div class="mini"><div class="rot">Entradas futuras</div><div class="val pos" id="bEnt">—</div></div>
-      <div class="mini"><div class="rot">Saídas futuras</div><div class="val sai" id="bSai">—</div></div>
+      <div class="mini"><div class="rot">Recebimentos previstos</div><div class="val pos" id="bEnt">—</div></div>
+      <div class="mini"><div class="rot">Pagamentos previstos</div><div class="val sai" id="bSai">—</div></div>
     </div>
     <div class="card"><h2>Hoje</h2><div id="bHoje"></div></div>
     <div class="card"><h2>Próximos dias</h2><div id="bDias"></div></div>
-    <div class="card"><h2>A receber por pagador</h2><div id="bPagadores"></div></div>
+    <div class="card"><h2>Concentração por pagador</h2><div id="bPagadores"></div></div>
+    <div class="card"><h2>Horizonte</h2><div id="bHz"></div></div>
     <div class="card"><h2>Estoque de milhas</h2><div id="bEstoque"></div></div>
   </section>
 
@@ -264,11 +278,11 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
   <section class="tela" id="tela-mes">
     <div class="chips" id="mesChips"></div>
     <div class="duplo">
-      <div class="mini"><div class="rot">Entradas do mês</div><div class="val pos" id="mEnt">—</div></div>
-      <div class="mini"><div class="rot">Saídas do mês</div><div class="val sai" id="mSai">—</div></div>
+      <div class="mini"><div class="rot">Recebimentos do mês</div><div class="val pos" id="mEnt">—</div></div>
+      <div class="mini"><div class="rot">Pagamentos do mês</div><div class="val sai" id="mSai">—</div></div>
     </div>
     <div class="card destaque" style="margin-top:10px">
-      <div class="rot">Resultado do mês</div>
+      <div class="rot">Fluxo líquido do mês</div>
       <div class="val" id="mRes">—</div>
       <div class="nota" id="mNota"></div>
     </div>
@@ -360,7 +374,7 @@ const FIREBASE = {
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
 const ADMINS = ["alanclebersantana@gmail.com"];
-const VERSAO = "18/09/2026 20:58";
+const VERSAO = "19/09/2026 00:08";
 
 const STATUS = ['Pendente','Agendado','Pago','Reinvestido','Cancelado'];
 const STATUS_REC = ['Previsto','Recebido','Atrasado','Cancelado'];
@@ -499,6 +513,20 @@ const Calc = {
       saldo: real(cent(this.aReceberEm(d)) - cent(this.aPagarEm(d)))}));
   },
   atrasados(){ const h = hojeSP(); return S.rows.filter(r => ABERTO(r) && r.dataPagamento && r.dataPagamento < h); },
+  horizonte(dias){
+    const h = hojeSP();
+    const ate = new Date(Date.parse(h+'T12:00:00') + dias*864e5).toISOString().slice(0,10);
+    const rec = S.rec.filter(r => ABERTO_REC(r) && r.dataPrevista >= h && r.dataPrevista <= ate);
+    const pag = S.rows.filter(r => ABERTO(r) && r.dataPagamento >= h && r.dataPagamento <= ate);
+    const receber = soma(rec), pagar = soma(pag);
+    return {dias, receber, pagar, liquido: real(cent(receber) - cent(pagar))};
+  },
+  /** saldo projetado que entra no mês, partindo do caixa informado */
+  acumuladoAte(ym){
+    let a = cent((S.saldo && S.saldo.valor) || 0);
+    this.meses().filter(m => m < ym).forEach(m => { a += cent(this.doMes(m).resultado); });
+    return real(a);
+  },
   porPagador(){
     const o = {};
     S.rec.filter(ABERTO_REC).forEach(r => { const k = r.pagador || '(sem pagador)'; o[k] = (o[k]||0) + cent(r.valor); });
@@ -648,35 +676,40 @@ function pintarBalanco(){
   const saude = Calc.saude(), est = Calc.estoque(), h = hojeSP();
   $('#bSaude').textContent = brl(saude);
   $('#bSaude').style.color = saude < 0 ? '#FF9F97' : '#fff';
-  $('#bSaudeNota').textContent = `${curto(Calc.entradasFuturas())} a receber, ${curto(Calc.saidasFuturas())} a pagar`;
+  $('#bSaudeNota').textContent = `${curto(Calc.entradasFuturas())} a receber − ${curto(Calc.saidasFuturas())} a pagar · não é saldo bancário`;
   $('#bEnt').textContent = curto(Calc.entradasFuturas());
   $('#bSai').textContent = curto(Calc.saidasFuturas());
 
   const entraHoje = Calc.aReceberEm(h), saiHoje = Calc.aPagarEm(h), atras = Calc.atrasados();
   $('#bHoje').innerHTML =
-    `<div class="linha"><div class="esq"><b>Entra hoje</b><span>${fmtData(h)}</span></div><div class="dir" style="color:var(--ok)">${brl(entraHoje)}</div></div>
-     <div class="linha"><div class="esq"><b>Sai hoje</b><span>${S.rows.filter(r => r.dataPagamento === h && ABERTO(r)).length} pagamento(s)</span></div><div class="dir" style="color:var(--accent-2)">${brl(saiHoje)}</div></div>
-     <div class="linha"><div class="esq"><b>Saldo do dia</b><span>${entraHoje - saiHoje < 0 ? 'falta caixa hoje' : 'entradas cobrem o dia'}</span></div>
+    `<div class="linha"><div class="esq"><b>Recebimentos hoje</b><span>${fmtData(h)}</span></div><div class="dir" style="color:var(--ok)">${brl(entraHoje)}</div></div>
+     <div class="linha"><div class="esq"><b>Pagamentos hoje</b><span>${S.rows.filter(r => r.dataPagamento === h && ABERTO(r)).length} pagamento(s)</span></div><div class="dir" style="color:var(--accent-2)">${brl(saiHoje)}</div></div>
+     <div class="linha"><div class="esq"><b>Fluxo líquido do dia</b><span>${entraHoje - saiHoje < 0 ? 'falta caixa hoje' : 'entradas cobrem o dia'}</span></div>
        <div class="dir" style="color:${entraHoje - saiHoje < 0 ? 'var(--bad)' : 'var(--ok)'}">${brl(real(cent(entraHoje) - cent(saiHoje)))}</div></div>
      ${atras.length ? `<button class="item" style="margin-top:10px;border-color:var(--bad)" data-atrasados="1">
         <div class="l1"><span class="nome" style="color:var(--bad)">${atras.length} pagamento(s) vencido(s)</span><span class="valor">${curto(soma(atras))}</span></div>
         <div class="l2"><span class="meta">toque para ver a lista</span></div></button>` : ''}`;
 
   const dias = Calc.dias(7);
-  $('#bDias').innerHTML = dias.length ? dias.map(d => `
-    <div class="linha"><div class="esq"><b>${fmtData(d.data)}</b><span>${curto(d.receber)} entra · ${curto(d.pagar)} sai</span></div>
-      <div class="dir" style="color:${d.saldo < 0 ? 'var(--bad)' : 'var(--ok)'}">${curto(d.saldo)}</div></div>`).join('')
+  $('#bDias').innerHTML = dias.length ? dias.map(d => linhaDia(d.data, d.receber, d.pagar,
+      S.rows.filter(r => r.dataPagamento === d.data && ABERTO(r)).length)).join('')
     : '<div class="vazio">Sem movimento previsto.</div>';
 
+  $('#bHz').innerHTML = [30,60,90].map(n => { const x = Calc.horizonte(n);
+    return `<div class="linha"><div class="esq"><b>Próximos ${n} dias</b><span>${curto(x.receber)} entra · ${curto(x.pagar)} sai</span></div>
+      <div class="dir" style="color:${x.liquido < 0 ? 'var(--bad)' : 'var(--ok)'}">${curto(x.liquido)}</div></div>`; }).join('');
+
   const pg = Calc.porPagador();
+  const totalPg = pg.reduce((s,x) => s + cent(x.valor), 0);
   $('#bPagadores').innerHTML = pg.length ? pg.slice(0,6).map(x => `
-    <div class="linha"><div class="esq"><b>${esc(x.chave)}</b></div><div class="dir">${brl(x.valor)}</div></div>`).join('')
+    <div class="linha"><div class="esq"><b>${esc(x.chave)}</b><span>${totalPg ? (cent(x.valor)/totalPg*100).toFixed(1) : 0}% do total a receber</span></div>
+      <div class="dir">${brl(x.valor)}</div></div>`).join('')
     : '<div class="vazio">Nenhum recebimento em aberto.</div>';
 
   $('#bEstoque').innerHTML = `
-    <div class="linha"><div class="esq"><b>Disponível para uso</b><span>entra na conta do disponível</span></div><div class="dir" style="color:var(--ok)">${brl(est.livres)}</div></div>
-    <div class="linha"><div class="esq"><b>Bloqueado</b><span>não entra na conta</span></div><div class="dir" style="color:var(--bad)">${brl(est.bloqueados)}</div></div>
-    <div class="linha"><div class="esq"><b>Total disponível</b><span>saúde financeira + pontos livres</span></div>
+    <div class="linha"><div class="esq"><b>Estoque de milhas disponível</b><span>entra na posição</span></div><div class="dir" style="color:var(--ok)">${brl(est.livres)}</div></div>
+    <div class="linha"><div class="esq"><b>Milhas sob restrição</b><span>não entra na posição</span></div><div class="dir" style="color:var(--bad)">${brl(est.bloqueados)}</div></div>
+    <div class="linha"><div class="esq"><b>Posição operacional líquida</b><span>posição contratual + estoque disponível</span></div>
       <div class="dir">${brl(real(cent(saude) + cent(est.livres)))}</div></div>
     ${est.itens.filter(i => i.saldo).map(i => `<div class="linha"><div class="esq"><b>${esc(i.companhia)} · ${esc(i.tipo)}</b>
       <span>${Number(i.saldo).toLocaleString('pt-BR')} milhas a ${brl(i.media)} o milheiro</span></div>
@@ -696,12 +729,13 @@ function pintarMes(){
   $('#mNota').textContent = `${mesNome(S.mesSel)} · ${dado.ent.length} entrada(s) e ${dado.sai.length} saída(s)`;
 
   const porDia = {};
-  dado.ent.forEach(r => { const d = dataRec(r); (porDia[d] = porDia[d] || {e:0,s:0}).e += cent(valorRec(r)); });
-  dado.sai.forEach(r => { const d = r.dataPagamento; (porDia[d] = porDia[d] || {e:0,s:0}).s += cent(r.valor); });
+  dado.ent.forEach(r => { const d = dataRec(r); const x = (porDia[d] = porDia[d] || {e:0,s:0,n:0}); x.e += cent(valorRec(r)); });
+  dado.sai.forEach(r => { const d = r.dataPagamento; const x = (porDia[d] = porDia[d] || {e:0,s:0,n:0}); x.s += cent(r.valor); x.n++; });
   const dias = Object.keys(porDia).sort();
-  $('#mDias').innerHTML = dias.length ? dias.map(d => `
-    <div class="linha"><div class="esq"><b>${fmtData(d)}</b><span>${porDia[d].e ? curto(real(porDia[d].e)) + ' entra' : ''}${porDia[d].e && porDia[d].s ? ' · ' : ''}${porDia[d].s ? curto(real(porDia[d].s)) + ' sai' : ''}</span></div>
-      <div class="dir" style="color:${porDia[d].e - porDia[d].s < 0 ? 'var(--bad)' : 'var(--ok)'}">${curto(real(porDia[d].e - porDia[d].s))}</div></div>`).join('')
+  let acum = cent(Calc.acumuladoAte(S.mesSel));
+  $('#mDias').innerHTML = dias.length
+    ? dias.map(d => { acum += porDia[d].e - porDia[d].s;
+        return linhaDia(d, real(porDia[d].e), real(porDia[d].s), porDia[d].n, real(acum)); }).join('')
     : '<div class="vazio">Sem movimento no mês.</div>';
 
   $('#mTop').innerHTML = dado.sai.slice().sort((a,b) => b.valor - a.valor).slice(0,8).map(r => `
@@ -710,6 +744,19 @@ function pintarMes(){
       <div class="l2"><span class="meta">${fmtData(r.dataPagamento)}${r.operacao ? ' · ' + esc(r.operacao) : ''}</span>
         <span class="tag t-${esc(r.status)}">${esc(r.status)}</span></div></button>`).join('')
     || '<div class="vazio">Sem saídas no mês.</div>';
+}
+
+/** um dia do caixa: entra, sai e saldo em colunas próprias, sem texto cortado */
+function linhaDia(data, entra, sai, qtdSaidas, acumulado){
+  const saldo = real(cent(entra) - cent(sai));
+  return `<div class="dia">
+    <div class="cab"><span class="data">${fmtData(data)}</span>
+      <span class="qtd">${qtdSaidas ? qtdSaidas + ' pagamento' + (qtdSaidas === 1 ? '' : 's') : ''}</span></div>
+    <div class="col e"><span>Entra</span><b>${entra ? brl(entra) : '—'}</b></div>
+    <div class="col s"><span>Sai</span><b>${sai ? brl(sai) : '—'}</b></div>
+    <div class="col saldo"><span>${acumulado === undefined ? 'Saldo' : 'Fluxo'}</span><b class="${saldo < 0 ? 'neg' : 'pos'}">${brl(saldo)}</b></div>
+    ${acumulado === undefined ? '' : `<div class="col saldo acum"><span>Acumulado</span><b class="${acumulado < 0 ? 'neg' : ''}">${brl(acumulado)}</b></div>`}
+  </div>`;
 }
 
 function pintarLog(){
