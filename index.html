@@ -246,23 +246,24 @@ html[data-tema="claro"] .fab{box-shadow:0 10px 26px rgba(193,86,26,.28)}
 .hz-lin{display:flex;justify-content:space-between;font-size:12.5px;padding:2px 0;font-variant-numeric:tabular-nums}
 .hz-lin span{color:var(--muted)}
 .hz-nota{font-size:11px;color:var(--muted-2);margin-top:6px}
-.rk-cab,.rk{display:grid;grid-template-columns:minmax(120px,1.4fr) minmax(110px,1.1fr) 130px 120px 100px 150px;gap:10px;align-items:center}
+.rk-cab,.rk{display:grid;grid-template-columns:minmax(120px,1.3fr) minmax(150px,1fr) 150px 130px 105px 150px;gap:14px;align-items:center}
 .rk-cab{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.2px;color:var(--muted-2);padding:0 6px 8px}
 .rk-cab span:nth-child(n+3){text-align:right}
 .rk{padding:9px 6px;border-bottom:1px solid var(--line-soft)}
 .rk:last-of-type{border-bottom:none}
 .rk-nome b{display:block;font-size:13.5px}
 .rk-nome span{font-size:11.5px;color:var(--muted-2)}
-.rk-barra{display:flex;align-items:center;height:10px;background:var(--surface-2);border-radius:5px;position:relative}
+.rk-barra{display:flex;align-items:center;gap:9px}
+.rk-barra .trilho{flex:1;min-width:40px;height:10px;background:var(--surface-2);border-radius:5px;overflow:hidden}
 .rk-barra i{display:block;height:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:5px}
-.rk-barra b{position:absolute;right:-48px;font-size:12px;font-variant-numeric:tabular-nums}
+.rk-barra b{flex:0 0 auto;width:48px;text-align:right;font-size:12px;font-variant-numeric:tabular-nums}
 .rk-v{text-align:right;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
 .rk-v small{display:block;font-size:10.5px;color:var(--muted-2);font-weight:700;margin-top:2px}
 .rk-v .inp.mini{text-align:right}
 .rk-zero{color:var(--muted-2);font-weight:400}
 .rk-rodape{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;
   padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
-@media (max-width:1100px){.rk-cab{display:none}.rk{grid-template-columns:1fr 1fr;gap:6px}.rk-barra b{position:static}}
+@media (max-width:1100px){.rk-cab{display:none}.rk{grid-template-columns:1fr 1fr;gap:6px}}
 .caixa{display:flex;flex-direction:column;gap:7px}
 .cx{display:grid;grid-template-columns:96px minmax(120px,1fr) 148px 148px 158px;gap:12px;align-items:center;
   font-size:13px;padding:6px 8px;border-radius:var(--rs);font-variant-numeric:tabular-nums}
@@ -1243,7 +1244,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "19/09/2026 01:28";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "19/09/2026 08:25";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -4783,7 +4784,7 @@ function renderBalanco(){
       const uso = x.limite ? x.aberto / x.limite : 0;
       return `<div class="rk">
         <div class="rk-nome"><b>${esc(x.chave)}</b><span>${x.nAberto} em aberto${x.nRecebido ? ` · ${x.nRecebido} recebido(s)` : ''}</span></div>
-        <div class="rk-barra"><i style="width:${(x.parte*100).toFixed(1)}%"></i><b>${(x.parte*100).toFixed(1)}%</b></div>
+        <div class="rk-barra"><span class="trilho"><i style="width:${(x.parte*100).toFixed(1)}%"></i></span><b>${(x.parte*100).toFixed(1)}%</b></div>
         <div class="rk-v">${brl(x.aberto)}</div>
         <div class="rk-v ${x.vencido ? 'bl-neg' : 'rk-zero'}">${x.vencido ? brl(x.vencido) : '—'}</div>
         <div class="rk-v">${x.prazo === null ? '—' : x.prazo + ' dias'}</div>
@@ -4804,9 +4805,6 @@ function renderBalanco(){
     <div class="hz-bloco ${e.bloqueados ? 'ruim' : ''}"><div class="hz-tit">Exposição bloqueada</div>
       <div class="hz-val bl-neg">${brl(e.bloqueados)}</div>
       <div class="hz-nota">valor nominal sob restrição judicial</div></div>
-    <div class="hz-bloco"><div class="hz-tit">Posição potencial com recuperação</div>
-      <div class="hz-val">${brl(addMoney(e.disponivel, rec))}</div>
-      <div class="hz-nota">${rec ? 'cenário otimista, com ' + brl(rec) + ' recuperável' : 'informe o valor recuperável no estoque'}</div></div>
     <div class="hz-bloco"><div class="hz-tit">Caixa bancário informado</div>
       <div class="hz-val">${brl(saldoBase().valor)}</div>
       <div class="hz-nota">${saldoBase().mesRef ? 'apurado no fim de ' + saldoBase().mesRef : 'informe no Ponto de partida'}</div></div>`;
@@ -4841,7 +4839,7 @@ const mesLongo = ym => { const [a,m] = String(ym).split('-'); return `${MESES[+m
 /* =========================================================
    PAINEL DA PLANILHA — controle de caixa, estoque e pivôs
    ========================================================= */
-const CAMPOS_RESTRICAO = ['programa','processo','recuperavel','probabilidade','dataJuridica','situacao'];
+const CAMPOS_RESTRICAO = [];   // os ativos sob restrição guardam só milhas, valor e data
 const ESTOQUE_PADRAO = {itens: [
   {id:'e1', companhia:'AZUL', tipo:'MILHAS PLUS',            saldo:0, media:0, data:''},
   {id:'e2', companhia:'AZUL', tipo:'MILHAS PLUS BLOQUEADAS', saldo:0, media:0, data:''},
@@ -4991,14 +4989,9 @@ function renderPainelPlanilha(){
             <label>Milhas<input class="inp mini" data-campo="saldo" value="${i.saldo ? Number(i.saldo).toLocaleString('pt-BR') : ''}" placeholder="0"></label>
             <label>Valor nominal por milheiro<input class="inp mini" data-campo="media" value="${i.media ? i.media.toFixed(2).replace('.',',') : ''}" placeholder="0,00"></label>
             <label>Valor nominal<input class="inp mini" value="${brl(totalItem(i))}" disabled></label>
-            <label>Valor recuperável estimado<input class="inp mini" data-campo="recuperavel" value="${i.recuperavel ? Number(i.recuperavel).toFixed(2).replace('.',',') : ''}" placeholder="0,00"></label>
-            <label>Programa<input class="inp mini" data-campo="programa" value="${esc(i.programa || '')}" placeholder="LATAM Pass"></label>
-            <label>Processo judicial<input class="inp mini" data-campo="processo" value="${esc(i.processo || '')}" placeholder="nº do processo"></label>
-            <label>Probabilidade de recuperação<input class="inp mini" data-campo="probabilidade" value="${esc(i.probabilidade || '')}" placeholder="ex.: provável"></label>
-            <label>Situação<input class="inp mini" data-campo="situacao" value="${esc(i.situacao || '')}" placeholder="em recuperação judicial"></label>
-            <label>Última atualização jurídica<input class="inp mini" data-campo="dataJuridica" type="date" value="${i.dataJuridica || ''}"></label>
+            <label>Data da atualização<input class="inp mini" data-campo="data" type="date" value="${i.data || ''}"></label>
           </div>
-          <div class="rest-resumo">Valor considerado na posição disponível: <b>R$ 0,00</b>${i.recuperavel ? ` · potencial com recuperação: <b>${brl(i.recuperavel)}</b>` : ''}</div>
+          <div class="rest-resumo">Valor considerado na posição disponível: <b>R$ 0,00</b></div>
         </div>`).join('')}
       </div>` : '')
     + `<div class="pl-acoes">
