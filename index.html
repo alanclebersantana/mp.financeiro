@@ -706,6 +706,22 @@ html[data-tema="claro"] .comp-TAM{color:#A31F18} html[data-tema="claro"] .comp-L
 .pl-tab .inp.mini[type=date]{text-align:left}
 .lixo{color:var(--muted-2);padding:2px 6px;border-radius:4px}
 .lixo:hover{background:var(--bad);color:#fff}
+.lotes-bar{position:relative}
+.lotes-abre{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:var(--rs);
+  border:1px solid var(--line);background:var(--surface-2);color:var(--text);text-align:left}
+.lotes-abre:hover{border-color:var(--accent)}
+.lotes-abre b{font-size:13.5px}
+.lotes-abre .bl-info{flex:1;padding:0}
+.lotes-abre .seta{color:var(--muted-2);transition:transform .15s}
+.lotes-bar.aberta .seta{transform:rotate(180deg)}
+.lotes-drop{position:absolute;left:0;right:0;top:calc(100% + 5px);z-index:25;max-height:320px;overflow:auto;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);box-shadow:var(--sombra);padding:5px}
+.lotes-drop button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:9px 11px;border-radius:6px;color:var(--text)}
+.lotes-drop button:hover{background:var(--accent-dim)}
+.lotes-drop button.sel{background:var(--surface-3)}
+.lotes-drop .nm{flex:1;font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lotes-drop .vl{font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.lotes-drop .vazio{padding:12px;color:var(--muted-2);font-size:12.5px;text-align:center}
 .lote{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;margin-bottom:9px;
   display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}
 .lote.pago{opacity:.75;border-style:dashed}
@@ -973,8 +989,6 @@ try { document.documentElement.dataset.tema =
         </div>
         <div class="mn-meses" id="mn-meses"></div>
         <div class="mn-acoes">
-          <button class="btn sm" id="mn-xlsx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Baixar Excel</button>
-          <button class="btn sm primary" id="mn-print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z"/></svg>Imprimir / PDF</button>
         </div>
       </div>
       <div class="mn-printhead" id="mn-printhead"></div>
@@ -1062,7 +1076,6 @@ try { document.documentElement.dataset.tema =
     <section class="view" id="view-bal">
       <div class="bal-topo">
         <span id="balAtualizado"></span>
-        <button class="btn sm" id="balImprimir">Imprimir resumo</button>
       </div>
       <div class="panel"><div id="balCaixa" class="pl-painel"></div></div>
       <div class="grid2 pl-pivos">
@@ -1164,9 +1177,16 @@ try { document.documentElement.dataset.tema =
         <button class="btn sm primary" id="btnLoteAdi">Exportar lote de pagamento</button>
       </div>
       <div class="panel" style="margin:0 20px 14px">
-        <div class="mn-ph"><h3>Lotes de pagamento</h3><span class="bl-info" id="lotesResumo"></span></div>
+        <div class="lotes-bar" id="lotesBar">
+          <button class="lotes-abre" id="lotesAbre">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+            <b>Lotes de pagamento</b>
+            <span class="bl-info" id="lotesResumo"></span>
+            <svg class="seta" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="lotes-drop hide" id="lotesDrop"></div>
+        </div>
         <div id="listaLotes"></div>
-        <div class="pl-exp">Todo lote exportado fica guardado aqui com a planilha. Dá para baixar de novo, renomear e marcar como pago — a baixa dos pagamentos do lote acontece junto.</div>
       </div>
       <div class="chips-active" id="aChips"></div>
       <div class="bulkbar hide" id="bulkAdi">
@@ -1311,7 +1331,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "20/09/2026 09:52";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "20/09/2026 10:15";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -1368,7 +1388,7 @@ const S = {
   rows: [], rec: [], adi: [], pagadores: [], ops: OPS_BASE.slice(), sel: new Set(), hist: [], log: [], users: [],
   sort: {k:'dataPagamento', dir:1}, sortRec: {k:'dataPrevista', dir:1}, sortAdi: {k:'dataAdiantada', dir:1},
   f: {...FILTROS_PADRAO}, fr: {q:'', pg:'', st:'Previsto', d1:'', d2:''},
-  fa: {q:'', st:'Aguardando', d1:'', d2:''}, recModo: 'simples', saldoInicial: null, estoque: null, limites: null, lotes: [],
+  fa: {q:'', st:'Aguardando', d1:'', d2:''}, recModo: 'simples', saldoInicial: null, estoque: null, limites: null, lotes: [], errolotes: '', loteSel: '',
   cfg: {autoAplicar: true}, chat: [], alias: {}, avisado: false,
   view: 'bal'
 };
@@ -1602,7 +1622,7 @@ const Local = {
   get(k){ try { const v = localStorage.getItem(k); if (v != null) return v; } catch(e){} return MEM[k] ?? null; },
   set(k,v){ MEM[k] = v; try { localStorage.setItem(k,v); } catch(e){} }
 };
-let fdb = null, fauth = null, unsubRows = null, unsubRec = null, unsubSaldo = null, unsubEstoque = null, unsubLim = null, unsubAdi = null, unsubLog = null, unsubUsers = null;
+let fdb = null, fauth = null, unsubRows = null, unsubRec = null, unsubSaldo = null, unsubEstoque = null, unsubLim = null, unsubLotes = null, unsubAdi = null, unsubLog = null, unsubUsers = null;
 
 const Repo = {
   async escutar(){
@@ -1633,6 +1653,11 @@ const Repo = {
         if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
         renderAll();
       }, () => {});
+      unsubLotes && unsubLotes();
+      unsubLotes = fdb.collection('lotes').orderBy('ts','desc').limit(200).onSnapshot(s => {
+        S.lotes = s.docs.map(d => normalizeLote({id:d.id, ...d.data()}));
+        renderAll();
+      }, err => { S.errolotes = err.code; renderAll(); });
       unsubLim && unsubLim();
       unsubLim = fdb.collection('config').doc('limites').onSnapshot(d => { S.limites = d.exists ? d.data() : {itens:{}}; renderAll(); }, () => {});
       unsubEstoque && unsubEstoque();
@@ -2134,15 +2159,6 @@ function irParaLanc(filtro){
   go('lanc');
 }
 
-$('#balImprimir').addEventListener('click', () => {
-  const titulo = document.title;
-  document.title = `Resumo financeiro — ${fmtDate(getTodaySP())} — MP Planejamento Financeiro`;
-  document.body.classList.add('print-visao');
-  const fim = () => { document.body.classList.remove('print-visao'); document.title = titulo; window.removeEventListener('afterprint', fim); };
-  window.addEventListener('afterprint', fim);
-  window.print();
-  setTimeout(fim, 1500);
-});
 $('#balMes').addEventListener('click', e => {
   const b = e.target.closest('[data-abrir]'); if (!b) return;
   const mes = getTodaySP().slice(0,7);
@@ -4621,7 +4637,11 @@ async function guardarLote(lote){
   const doc = normalizeLote(lote);
   if (APP.modo === 'nuvem'){
     try { await fdb.collection('lotes').doc(doc.id).set(doc); }
-    catch(e){ toast('Lote gerado, mas não consegui guardar: ' + (e.code || e.message)); return doc; }
+    catch(e){
+      S.errolotes = e.code || e.message;
+      alert(`A planilha foi baixada, mas o lote não ficou guardado no sistema.\n\nMotivo: ${e.code || e.message}\n\nSe for permission-denied, publique as regras do Firestore incluindo a coleção "lotes".`);
+      renderAll(); return doc;
+    }
   } else {
     S.lotes = [doc, ...S.lotes.filter(x => x.id !== doc.id)];
     Local.set('tesouraria:lotes', JSON.stringify(S.lotes));
@@ -4629,6 +4649,7 @@ async function guardarLote(lote){
   await Repo.registrar({ts:Date.now(), uid:APP.uid || 'local', nome:APP.nome || 'Local', origem:'manual',
     label:`lote de pagamento gerado · ${doc.nome}`,
     resumo:[`${doc.itens.length} pagamento(s) · ${brl(doc.total)} · modelo ${doc.modelo === 'clara' ? 'Clara' : 'Conta Simples'}`], total:doc.itens.length});
+  S.loteSel = doc.id;
   renderAll();
   return doc;
 }
@@ -4655,8 +4676,24 @@ function baixarLoteGuardado(l, modelo){
 function renderLotes(){
   if (!$('#listaLotes')) return;
   const lotes = S.lotes.slice().sort((a,b) => b.ts - a.ts);
-  $('#listaLotes').innerHTML = lotes.length ? lotes.map(l => `
-    <div class="lote ${l.pago ? 'pago' : ''}" data-lote="${l.id}">
+  const aberto = lotes.filter(l => !l.pago);
+  $('#lotesResumo').textContent = lotes.length
+    ? `${lotes.length} lote(s) · ${aberto.length} em aberto somando ${brl(fromCents(aberto.reduce((s,l) => s + toCents(totalDoLote(l)), 0)))}`
+    : 'nenhum lote guardado ainda';
+
+  $('#lotesDrop').innerHTML = lotes.length ? lotes.map(l => `
+    <button data-pegar="${l.id}" class="${l.id === S.loteSel ? 'sel' : ''}">
+      <span class="tag ${l.pago ? 'st-Pago' : 'st-Pendente'}">${l.pago ? 'Pago' : 'Aberto'}</span>
+      <span class="nm">${esc(l.nome)}</span>
+      <span class="vl">${brl(totalDoLote(l))} · ${l.itens.length} item(ns)</span>
+    </button>`).join('')
+    : (S.errolotes
+        ? `<div class="vazio">Não consegui ler os lotes (${esc(S.errolotes)}). Publique as regras do Firestore com a coleção <b>lotes</b>.</div>`
+        : '<div class="vazio">Nenhum lote gerado ainda. Exporte um lote e ele fica guardado aqui.</div>');
+
+  const l = lotes.find(x => x.id === S.loteSel);
+  $('#listaLotes').innerHTML = l ? `
+    <div class="lote ${l.pago ? 'pago' : ''}">
       <div class="lote-cab">
         <b class="lote-nome" data-renomear="${l.id}" title="Clique para renomear">${esc(l.nome)}</b>
         <span class="tag ${l.pago ? 'st-Pago' : 'st-Pendente'}">${l.pago ? 'Pago' : 'Em aberto'}</span>
@@ -4670,14 +4707,11 @@ function renderLotes(){
         ${l.pago ? `<button class="btn sm ghost" data-reabrir="${l.id}">Reabrir</button>`
                  : `<button class="btn sm primary" data-marcarlote="${l.id}">Marcar como pago</button>`}
         <button class="btn sm ghost" data-excluirlote="${l.id}">Excluir</button>
+        <button class="btn sm ghost" data-fecharlote="1">Fechar</button>
       </div>
-    </div>`).join('')
-    : '<div class="empty">Nenhum lote gerado ainda. Exporte um lote em Pagamentos ou aqui nos adiantamentos e ele fica guardado.</div>';
-  const aberto = lotes.filter(l => !l.pago);
-  $('#lotesResumo').textContent = lotes.length
-    ? `${lotes.length} lote(s) · ${aberto.length} em aberto somando ${brl(fromCents(aberto.reduce((s,l) => s + toCents(totalDoLote(l)), 0)))}`
-    : '';
+    </div>` : '';
 }
+const fecharLotes = () => { $('#lotesDrop').classList.add('hide'); $('#lotesBar').classList.remove('aberta'); };
 
 /** pergunta em qual modelo exportar e gera o arquivo */
 function escolherModeloLote(linhas, prefixo, fora){
@@ -4879,7 +4913,25 @@ $('#bulkAdi').addEventListener('click', async e => {
     S.sel.clear();
     return aplicarAdi(alvos.map(r => ({acao:'excluir', id:r.id})), 'lote', `${alvos.length} itens fora da fila`); }
 });
+$('#lotesAbre').addEventListener('click', e => {
+  e.stopPropagation();
+  const drop = $('#lotesDrop');
+  drop.classList.toggle('hide');
+  $('#lotesBar').classList.toggle('aberta', !drop.classList.contains('hide'));
+});
+$('#lotesDrop').addEventListener('click', e => {
+  const b = e.target.closest('[data-pegar]'); if (!b) return;
+  S.loteSel = b.dataset.pegar;
+  fecharLotes();            // a lista some assim que você escolhe
+  renderLotes();
+});
+document.addEventListener('click', e => {
+  const drop = $('#lotesDrop');
+  if (!drop || drop.classList.contains('hide')) return;
+  if (!e.target.closest('#lotesBar')) fecharLotes();
+});
 $('#listaLotes').addEventListener('click', async e => {
+  if (e.target.closest('[data-fecharlote]')){ S.loteSel = ''; return renderLotes(); }
   const b = e.target.closest('[data-verlote],[data-baixar],[data-renomear],[data-marcarlote],[data-reabrir],[data-excluirlote]');
   if (!b) return;
   const d = b.dataset;
