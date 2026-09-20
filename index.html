@@ -526,6 +526,11 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .logrow .qm{font-weight:700;overflow:hidden;text-overflow:ellipsis}
 .logrow .dt span{color:var(--muted-2)}
 .logrow .dt b{color:var(--accent-2);font-weight:700}
+.tagtela{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;font-size:10.5px;font-weight:800;
+  background:var(--accent-dim);color:var(--accent-2);white-space:nowrap}
+.tagtela.tela-rec{background:var(--ok-dim);color:var(--ok)}
+.tagtela.tela-adi,.tagtela.tela-lote{background:var(--warn-dim);color:var(--warn)}
+.tagtela.tela-users,.tagtela.tela-backup{background:var(--info-dim);color:var(--info)}
 .tagorigem{font-size:10.5px;color:var(--muted-2);border:1px solid var(--line);border-radius:999px;padding:0 6px;margin-left:6px}
 .users{width:100%;border-collapse:collapse}
 .users th{text-align:left;font-size:12px;color:var(--muted-2);padding:8px 10px;border-bottom:1px solid var(--line)}
@@ -1212,7 +1217,7 @@ try { document.documentElement.dataset.tema =
       <div class="panel" style="padding:0">
         <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)">
           <h3 style="margin:0">Últimas alterações</h3><div class="spacer"></div>
-          <input class="inp" id="logQ" placeholder="filtrar por pessoa ou beneficiário" style="width:260px">
+          <input class="inp" id="logQ" placeholder="filtrar por pessoa, beneficiário ou tela" style="width:260px">
         </div>
         <div id="logList"></div>
       </div>
@@ -1331,7 +1336,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "20/09/2026 10:15";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "20/09/2026 10:26";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -1594,6 +1599,12 @@ const numeroDoCodigo = c => { const m = String(c || '').match(/(\d+)\s*$/); retu
 const formataCodigo = n => 'MP-' + String(n).padStart(4, '0');
 function proximoCodigo(){ return Math.max(0, ...S.rows.map(r => numeroDoCodigo(r.codigo))) + 1; }
 
+/** nome da tela onde a alteração aconteceu, para a auditoria não ficar ambígua */
+const TELAS = {lanc:'Pagamentos', rec:'Recebimentos', adi:'Lotes e adiantamentos', lote:'Lotes e adiantamentos',
+  bal:'Visão geral', estoque:'Estoque de milhas', saldo:'Visão geral', limites:'Visão geral',
+  users:'Usuários', import:'Importar', backup:'Backups'};
+const nomeDaTela = k => TELAS[k] || '';
+
 const opColor = op => 'c-op' + (Math.abs([...String(op)].reduce((a,c)=>a+c.charCodeAt(0),0)) % 8);
 const podeEditar = () => APP.papel === 'admin' || APP.papel === 'operador';
 /** mostra a falha na tela em vez de deixar a página em branco */
@@ -1785,7 +1796,8 @@ async function aplicar(ops, origem, label, semHistorico, alvo, semBackup){
   if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
   if (!semHistorico){ S.hist.push({label, inversas, alvo}); if (S.hist.length > 30) S.hist.shift();
     $('#btnUndo').textContent = 'Desfazer: ' + label; }
-  await Repo.registrar({ts: Date.now(), uid: APP.uid || 'local', nome: APP.nome || 'Local', origem, label, resumo: resumo.slice(0,12), total: resumo.length});
+  await Repo.registrar({ts: Date.now(), uid: APP.uid || 'local', nome: APP.nome || 'Local', origem, label,
+    tela: alvo || 'lanc', resumo: resumo.slice(0,12), total: resumo.length});
   return true;
 }
 const semId = r => { const o = {...r}; delete o.id; return o; };
@@ -2011,11 +2023,12 @@ function renderAll(){
 /* ---------- atividade ---------- */
 function renderLog(){
   const q = semAcento(($('#logQ')||{}).value || '');
-  const itens = S.log.filter(l => !q || semAcento(l.nome + ' ' + (l.resumo||[]).join(' ') + ' ' + l.label).includes(q));
+  const itens = S.log.filter(l => !q || semAcento(l.nome + ' ' + (l.resumo||[]).join(' ') + ' ' + l.label + ' ' + nomeDaTela(l.tela)).includes(q));
   $('#logList').innerHTML = itens.length ? itens.map(l => `
     <div class="logrow">
       <div class="tm">${hora(l.ts)}</div>
-      <div class="qm">${esc(l.nome)}<span class="tagorigem">${esc(l.origem)}</span></div>
+      <div class="qm">${esc(l.nome)}<span class="tagorigem">${esc(l.origem)}</span>
+        ${nomeDaTela(l.tela) ? `<span class="tagtela tela-${esc(l.tela)}">${esc(nomeDaTela(l.tela))}</span>` : ''}</div>
       <div class="dt">${(l.resumo||[]).map(r=>`<div>${esc(r)}</div>`).join('')}
         ${l.total > (l.resumo||[]).length ? `<span>e mais ${l.total - l.resumo.length} alteração(ões)</span>` : ''}</div>
     </div>`).join('') : '<div class="empty">Nenhuma alteração registrada ainda.</div>';
@@ -2192,7 +2205,7 @@ $('#balRisco').addEventListener('click', async e => {
     catch(err){ return toast('Não consegui gravar: ' + (err.code || err.message)); } }
   else Local.set('tesouraria:limites', JSON.stringify(S.limites));
   await Repo.registrar({ts:Date.now(), uid:APP.uid || 'local', nome:APP.nome || 'Local', origem:'manual',
-    label:'limites de exposição por pagador',
+    label:'limites de exposição por pagador', tela:'limites',
     resumo:Object.entries(itens).map(([k,v]) => `${k}: ${brl(v)}`).slice(0,8), total:Object.keys(itens).length});
   renderAll(); toast('Limites salvos');
 });
@@ -2261,7 +2274,7 @@ $('#logQ').addEventListener('input', renderLog);
 $('#userList').addEventListener('change', async e => {
   const s = e.target.closest('[data-papel]'); if (!s || APP.papel !== 'admin') return;
   await fdb.collection('usuarios').doc(s.dataset.papel).set({papel:s.value}, {merge:true});
-  await Repo.registrar({ts:Date.now(), uid:APP.uid, nome:APP.nome, origem:'acesso', label:'papel alterado',
+  await Repo.registrar({ts:Date.now(), uid:APP.uid, nome:APP.nome, origem:'acesso', label:'papel alterado', tela:'users',
     resumo:[`${(S.users.find(u=>u.uid===s.dataset.papel)||{}).email} agora é ${s.value}`], total:1});
   toast('Papel atualizado');
 });
@@ -4647,7 +4660,7 @@ async function guardarLote(lote){
     Local.set('tesouraria:lotes', JSON.stringify(S.lotes));
   }
   await Repo.registrar({ts:Date.now(), uid:APP.uid || 'local', nome:APP.nome || 'Local', origem:'manual',
-    label:`lote de pagamento gerado · ${doc.nome}`,
+    label:`lote de pagamento gerado · ${doc.nome}`, tela:'lote',
     resumo:[`${doc.itens.length} pagamento(s) · ${brl(doc.total)} · modelo ${doc.modelo === 'clara' ? 'Clara' : 'Conta Simples'}`], total:doc.itens.length});
   S.loteSel = doc.id;
   renderAll();
@@ -4663,7 +4676,7 @@ async function atualizarLote(id, campos, rotulo){
     Local.set('tesouraria:lotes', JSON.stringify(S.lotes));
   }
   if (rotulo) await Repo.registrar({ts:Date.now(), uid:APP.uid || 'local', nome:APP.nome || 'Local', origem:'manual',
-    label:rotulo, resumo:[`${atual.nome} → ${novo.nome}`], total:1});
+    label:rotulo, tela:'lote', resumo:[`${atual.nome} → ${novo.nome}`], total:1});
   renderAll();
 }
 /** baixa de novo a planilha exatamente como foi gerada */
@@ -4970,7 +4983,7 @@ $('#listaLotes').addEventListener('click', async e => {
     if (APP.modo === 'nuvem'){ try { await fdb.collection('lotes').doc(l.id).delete(); } catch(err){ return toast('Não consegui excluir: ' + (err.code || err.message)); } }
     else { S.lotes = S.lotes.filter(x => x.id !== l.id); Local.set('tesouraria:lotes', JSON.stringify(S.lotes)); }
     await Repo.registrar({ts:Date.now(), uid:APP.uid || 'local', nome:APP.nome || 'Local', origem:'manual',
-      label:'lote excluído', resumo:[`${l.nome} · ${l.itens.length} pagamento(s)`], total:1});
+      label:'lote excluído', tela:'lote', resumo:[`${l.nome} · ${l.itens.length} pagamento(s)`], total:1});
     renderAll(); return toast('Lote excluído');
   }
   if (d.marcarlote){
@@ -5045,7 +5058,7 @@ async function gravarSaldoInicial(valor, mesRef){
     catch(e){ toast('Não consegui gravar o saldo: ' + (e.code || e.message)); return false; } }
   else Local.set('tesouraria:saldo', JSON.stringify(dados));
   await Repo.registrar({ts: Date.now(), uid: APP.uid || 'local', nome: APP.nome || 'Local', origem: 'manual',
-    label: 'saldo inicial de caixa',
+    label: 'saldo inicial de caixa', tela: 'saldo',
     resumo: [`saldo no fim de ${mesRef || '—'}: ${brl(antes.valor)} → ${brl(dados.valor)}`], total: 1});
   if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
   renderAll();
@@ -5254,7 +5267,7 @@ async function gravarEstoque(itens){
     catch(e){ toast('Não consegui gravar o estoque: ' + (e.code || e.message)); return false; } }
   else Local.set('tesouraria:estoque', JSON.stringify(dados));
   await Repo.registrar({ts: Date.now(), uid: APP.uid || 'local', nome: APP.nome || 'Local', origem: 'manual',
-    label: 'controle médio de estoques',
+    label: 'controle médio de estoques', tela: 'estoque',
     resumo: itens.filter(i => i.saldo).map(i => `${i.companhia} ${i.tipo}: ${(Number(i.saldo)||0).toLocaleString('pt-BR')} × ${brl(i.media)} = ${brl(totalItem(i))}`).slice(0,8),
     total: itens.length});
   if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
