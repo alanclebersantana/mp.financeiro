@@ -238,6 +238,20 @@ html[data-tema="claro"] .fab{box-shadow:0 10px 26px rgba(193,86,26,.28)}
 .tl-card .n{color:var(--muted-2);font-size:11.5px}
 .tl-card.near{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent-dim) inset}
 .alert-list{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow:auto;padding-right:2px}
+.bal-topo{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.bal-topo span{color:var(--muted-2);font-size:12px}
+.hz-bloco[data-abrir],.hz-bloco[data-hz]{cursor:pointer}
+.hz-bloco[data-abrir]:hover,.hz-bloco[data-hz]:hover{border-color:var(--accent)}
+@media print{
+  body.print-visao{background:#fff}
+  body.print-visao .rail,body.print-visao .topbar,body.print-visao .fab,body.print-visao .chat,
+  body.print-visao .bal-topo,body.print-visao .bl-saldo,body.print-visao .pl-acoes,
+  body.print-visao .rk-rodape button{display:none !important}
+  body.print-visao .view{overflow:visible;padding:0}
+  body.print-visao .panel{break-inside:avoid;box-shadow:none;border-color:#ccc;margin-bottom:10px}
+  body.print-visao .hz-bloco,body.print-visao .pl-bloco{break-inside:avoid}
+  body.print-visao input{border:none;padding:0}
+}
 .hz{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
 .hz-bloco{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--rs);padding:13px 14px}
 .hz-bloco.ruim{border-color:var(--bad);background:var(--bad-dim)}
@@ -246,11 +260,26 @@ html[data-tema="claro"] .fab{box-shadow:0 10px 26px rgba(193,86,26,.28)}
 .hz-lin{display:flex;justify-content:space-between;font-size:12.5px;padding:2px 0;font-variant-numeric:tabular-nums}
 .hz-lin span{color:var(--muted)}
 .hz-nota{font-size:11px;color:var(--muted-2);margin-top:6px}
+.barra-pct{height:7px;background:var(--surface-3);border-radius:4px;overflow:hidden;margin-top:7px}
+.barra-pct i{display:block;height:7px;background:var(--ok);border-radius:4px}
+.barra-pct.sai i{background:var(--accent)}
+.hz-bloco[data-abrir],.hz-bloco[data-hz]{cursor:pointer}
+.hz-bloco[data-abrir]:hover,.hz-bloco[data-hz]:hover{border-color:var(--accent)}
+.vc{display:grid;grid-template-columns:minmax(150px,1.2fr) minmax(150px,1fr) 160px;gap:14px;align-items:center;
+  padding:9px 6px;border-bottom:1px solid var(--line-soft);cursor:pointer;border-radius:var(--rs)}
+.vc:hover{background:var(--surface-2)}
+.vc .rk-v{text-align:right}
+.vc.atraso .rk-v{color:var(--bad);font-weight:800}
+.vc-nome b{display:block;font-size:13.5px}
+.vc-nome span{font-size:11.5px;color:var(--muted-2)}
+@media (max-width:1100px){.vc{grid-template-columns:1fr 1fr}}
 .rk-cab,.rk{display:grid;grid-template-columns:minmax(120px,1.3fr) minmax(150px,1fr) 150px 130px 105px 150px;gap:14px;align-items:center}
 .rk-cab{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.2px;color:var(--muted-2);padding:0 6px 8px}
 .rk-cab span:nth-child(n+3){text-align:right}
 .rk{padding:9px 6px;border-bottom:1px solid var(--line-soft)}
 .rk:last-of-type{border-bottom:none}
+.rk-nome{cursor:pointer}
+.rk-nome:hover b{color:var(--accent-2);text-decoration:underline}
 .rk-nome b{display:block;font-size:13.5px}
 .rk-nome span{font-size:11.5px;color:var(--muted-2)}
 .rk-barra{display:flex;align-items:center;gap:9px}
@@ -677,6 +706,15 @@ html[data-tema="claro"] .comp-TAM{color:#A31F18} html[data-tema="claro"] .comp-L
 .pl-tab .inp.mini[type=date]{text-align:left}
 .lixo{color:var(--muted-2);padding:2px 6px;border-radius:4px}
 .lixo:hover{background:var(--bad);color:#fff}
+.lote{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;margin-bottom:9px;
+  display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}
+.lote.pago{opacity:.75;border-style:dashed}
+.lote-cab{min-width:220px;flex:1}
+.lote-nome{font-size:14.5px;cursor:pointer}
+.lote-nome:hover{color:var(--accent-2);text-decoration:underline}
+.lote-cab .tag{margin-left:8px}
+.lote-meta{display:block;font-size:11.5px;color:var(--muted-2);margin-top:3px}
+.lote-acoes{display:flex;gap:7px;flex-wrap:wrap}
 .pl-acoes{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:4px}
 .pl-conts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
 .pl-cont{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--rs);padding:10px 12px}
@@ -684,7 +722,11 @@ html[data-tema="claro"] .comp-TAM{color:#A31F18} html[data-tema="claro"] .comp-L
 .pl-cont b{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
 .pl-pivos{align-items:start}
 @media (max-width:1100px){.pl-painel{grid-template-columns:1fr}.pl-pivos{grid-template-columns:1fr}}
-.bl-saldo .bl-form{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+.bl-saldo.faixa{padding:12px 14px}
+.faixa-topo{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.faixa-topo b{font-size:13px}
+.faixa-topo span{flex:1;color:var(--muted-2);font-size:12.5px}
+.bl-saldo .bl-form{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-top:12px}
 .bl-saldo .field{width:190px}
 .bl-info{color:var(--muted-2);font-size:12px;padding-bottom:9px}
 .bl-nota{color:var(--muted-2);font-size:12.5px;margin:12px 0 0}
@@ -889,7 +931,7 @@ try { document.documentElement.dataset.tema =
       <button data-view="mensal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M7.5 14h3M13.5 14h3M7.5 17h3"/></svg>Fluxo de caixa</button>
       <button data-view="lanc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M3 12h18M3 19h18"/></svg>Pagamentos</button>
       <button data-view="rec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Recebimentos</button>
-      <button data-view="adi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg>Adiantamentos</button>
+      <button data-view="adi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg>Lotes e adiantamentos</button>
       <button data-view="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>Auditoria</button>
       <button data-view="users" id="navUsers" class="hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 11.2a3 3 0 1 0-1.6-5.5M18 20a5.6 5.6 0 0 0-2.2-4.4"/></svg>Usuários</button>
       <button data-view="bkp" id="navBkp" class="hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.7-6.4L3 8"/><path d="M3 3v5h5"/><path d="M12 7.5V12l3 2"/></svg>Backups</button>
@@ -1018,21 +1060,16 @@ try { document.documentElement.dataset.tema =
 
     <!-- BALANÇO GERAL -->
     <section class="view" id="view-bal">
-      <div class="panel bl-saldo">
-        <h3>Ponto de partida</h3>
-        <div class="bl-form">
-          <div class="field"><label for="balSaldoMes">Saldo apurado no fim de</label><input class="inp" id="balSaldoMes" type="month"></div>
-          <div class="field"><label for="balSaldoVal">O que sobrou em caixa</label><input class="inp" id="balSaldoVal" placeholder="0,00"></div>
-          <button class="btn primary" id="balSalvar">Salvar saldo</button>
-          <span class="bl-info" id="balSaldoInfo"></span>
-        </div>
-        <p class="bl-nota">Tudo que foi pago ou recebido depois desse mês entra na conta do caixa de hoje, e a projeção dos próximos meses parte desse valor.</p>
+      <div class="bal-topo">
+        <span id="balAtualizado"></span>
+        <button class="btn sm" id="balImprimir">Imprimir resumo</button>
       </div>
       <div class="panel"><div id="balCaixa" class="pl-painel"></div></div>
       <div class="grid2 pl-pivos">
         <div class="panel"><h3>A receber</h3><div id="balReceber"></div></div>
         <div class="panel"><h3>A pagar — Milhas Plus</h3><div id="balPagar"></div></div>
       </div>
+
       <div class="panel"><h3>Futuros pagamentos</h3><div id="balFuturos" class="pl-conts"></div></div>
       <div class="panel"><h3>Concentração de recebíveis por pagador</h3>
         <div id="balRisco"></div>
@@ -1042,7 +1079,21 @@ try { document.documentElement.dataset.tema =
         <div class="pl-exp">Recebíveis líquidos de obrigações mais estoque de milhas disponível. Não representa saldo bancário.</div></div>
       <div class="panel"><h3>Estoque de milhas</h3><div id="balEstoque"></div></div>
 
+
+
       <div id="balAlerta" class="alert-list" style="margin-bottom:14px"></div>
+      <div class="panel"><h3>Mês corrente — previsto e realizado</h3>
+        <div id="balMes" class="hz"></div>
+        <div class="pl-exp">Compara o que já entrou e saiu de fato com o previsto do mês, e com o mês anterior.</div>
+      </div>
+      <div class="panel"><h3>Curva de vencimentos dos recebíveis</h3>
+        <div id="balVenc"></div>
+        <div class="pl-exp">Recebível vencido há 90 dias não é a mesma coisa que vencido ontem. Clique numa faixa para ver os recebimentos dela.</div>
+      </div>
+      <div class="panel"><h3>Prazos e ciclo financeiro</h3>
+        <div id="balPrazos" class="hz"></div>
+        <div class="pl-exp">Se o prazo de recebimento é maior que o de pagamento, a diferença é o período que a operação financia com capital próprio.</div>
+      </div>
       <div class="panel">
         <h3>Horizonte de 30, 60 e 90 dias</h3>
         <div id="balHorizonte" class="hz"></div>
@@ -1052,7 +1103,18 @@ try { document.documentElement.dataset.tema =
         <h3>Projeção mês a mês</h3>
         <div id="balProj"></div>
       </div>
-      </section>
+            <div class="panel bl-saldo faixa">
+        <div class="faixa-topo"><b>Ponto de partida</b>
+          <span id="balSaldoInfo"></span>
+          <button class="btn sm ghost" id="balSaldoAbrir">Alterar</button></div>
+        <div class="bl-form hide" id="balSaldoForm">
+          <div class="field"><label for="balSaldoMes">Saldo apurado no fim de</label><input class="inp" id="balSaldoMes" type="month"></div>
+          <div class="field"><label for="balSaldoVal">O que sobrou em caixa</label><input class="inp" id="balSaldoVal" placeholder="0,00"></div>
+          <button class="btn primary" id="balSalvar">Salvar saldo</button>
+          <span class="bl-nota">Tudo que foi pago ou recebido depois desse mês entra na conta do caixa de hoje, e a projeção parte desse valor.</span>
+        </div>
+      </div>
+    </section>
 
     <!-- RECEBIMENTOS -->
     <section class="view flush hide" id="view-rec">
@@ -1100,6 +1162,11 @@ try { document.documentElement.dataset.tema =
         <div class="field"><label for="aD2">até</label><input class="inp" id="aD2" type="date"></div>
         <button class="btn sm ghost" id="aClear">Limpar filtros</button>
         <button class="btn sm primary" id="btnLoteAdi">Exportar lote de pagamento</button>
+      </div>
+      <div class="panel" style="margin:0 20px 14px">
+        <div class="mn-ph"><h3>Lotes de pagamento</h3><span class="bl-info" id="lotesResumo"></span></div>
+        <div id="listaLotes"></div>
+        <div class="pl-exp">Todo lote exportado fica guardado aqui com a planilha. Dá para baixar de novo, renomear e marcar como pago — a baixa dos pagamentos do lote acontece junto.</div>
       </div>
       <div class="chips-active" id="aChips"></div>
       <div class="bulkbar hide" id="bulkAdi">
@@ -1244,7 +1311,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "19/09/2026 08:25";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "20/09/2026 09:52";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -1301,7 +1368,7 @@ const S = {
   rows: [], rec: [], adi: [], pagadores: [], ops: OPS_BASE.slice(), sel: new Set(), hist: [], log: [], users: [],
   sort: {k:'dataPagamento', dir:1}, sortRec: {k:'dataPrevista', dir:1}, sortAdi: {k:'dataAdiantada', dir:1},
   f: {...FILTROS_PADRAO}, fr: {q:'', pg:'', st:'Previsto', d1:'', d2:''},
-  fa: {q:'', st:'Aguardando', d1:'', d2:''}, recModo: 'simples', saldoInicial: null, estoque: null, limites: null,
+  fa: {q:'', st:'Aguardando', d1:'', d2:''}, recModo: 'simples', saldoInicial: null, estoque: null, limites: null, lotes: [],
   cfg: {autoAplicar: true}, chat: [], alias: {}, avisado: false,
   view: 'bal'
 };
@@ -1906,7 +1973,7 @@ function fillSelects(){
 }
 function renderAll(){
   [['filtros',fillSelects], ['painel',renderDash], ['lançamentos',renderTable], ['recebimentos',renderRec],
-   ['adiantamentos',renderAdi], ['balanço',renderBalanco]].forEach(([nome, fn]) => {
+   ['adiantamentos',renderAdi], ['lotes',renderLotes], ['balanço',renderBalanco]].forEach(([nome, fn]) => {
     try { fn(); } catch(e){ mostrarErro(`ao montar ${nome}`, e); }
   });
   if (S.view === 'mensal' || S.view === 'bal') Mensal.render();
@@ -2035,6 +2102,10 @@ $('#fChips').addEventListener('click', e => {
   const map = {q:'fQ',op:'fOp',st:'fSt',tp:'fTp',d1:'fD1',d2:'fD2',v1:'fV1',v2:'fV2'};
   $('#'+map[b.dataset.fclr]).value = ''; renderAll();
 });
+$('#balSaldoAbrir').addEventListener('click', () => {
+  const f = $('#balSaldoForm'); f.classList.toggle('hide');
+  $('#balSaldoAbrir').textContent = f.classList.contains('hide') ? 'Alterar' : 'Fechar';
+});
 $('#balSalvar').addEventListener('click', async () => {
   if (!podeEditar()) return toast('Seu acesso é somente leitura.');
   const mes = $('#balSaldoMes').value, valor = parseNum($('#balSaldoVal').value);
@@ -2051,7 +2122,51 @@ function lerEstoqueDaTela(){
     return {...base, ...extra, saldo: Math.round(parseNum(v('saldo'))), media: dinheiro(v('media')), data: v('data') || base.data || ''};
   });
 }
+/** abre as telas de detalhe a partir dos blocos da visão geral */
+function irParaRec(filtro){
+  S.fr = {q:'', pg:'', st:'', d1:'', d2:'', ...filtro};
+  [['rQ','q'],['rD1','d1'],['rD2','d2']].forEach(([id,k]) => { const el = $('#'+id); if (el) el.value = S.fr[k] || ''; });
+  go('rec');
+}
+function irParaLanc(filtro){
+  S.f = {...FILTROS_PADRAO, st:'', ...filtro};
+  [['fQ','q'],['fD1','d1'],['fD2','d2']].forEach(([id,k]) => { const el = $('#'+id); if (el) el.value = S.f[k] || ''; });
+  go('lanc');
+}
+
+$('#balImprimir').addEventListener('click', () => {
+  const titulo = document.title;
+  document.title = `Resumo financeiro — ${fmtDate(getTodaySP())} — MP Planejamento Financeiro`;
+  document.body.classList.add('print-visao');
+  const fim = () => { document.body.classList.remove('print-visao'); document.title = titulo; window.removeEventListener('afterprint', fim); };
+  window.addEventListener('afterprint', fim);
+  window.print();
+  setTimeout(fim, 1500);
+});
+$('#balMes').addEventListener('click', e => {
+  const b = e.target.closest('[data-abrir]'); if (!b) return;
+  const mes = getTodaySP().slice(0,7);
+  const [ano, mm] = mes.split('-').map(Number);
+  const ate = fimDoMes(ano, mm);
+  if (b.dataset.abrir === 'rec-mes') return irParaRec({d1: mes + '-01', d2: ate});
+  irParaLanc({d1: mes + '-01', d2: ate});
+});
+$('#balHorizonte').addEventListener('click', e => {
+  const b = e.target.closest('[data-hz]'); if (!b) return;
+  const hoje = getTodaySP(), ate = new Date(Date.parse(hoje + 'T12:00:00') + (+b.dataset.hz) * 864e5).toISOString().slice(0,10);
+  irParaLanc({st:'Pendente', d1:hoje, d2:ate});
+  toast(`Pagamentos previstos até ${fmtDate(ate)}`);
+});
+$('#balVenc').addEventListener('click', e => {
+  const f = e.target.closest('[data-venc]'); if (!f) return;
+  const hoje = getTodaySP(), atras = n => new Date(Date.parse(hoje + 'T12:00:00') - n * 864e5).toISOString().slice(0,10);
+  const filtros = {aVencer:{st:'Previsto', d1:hoje}, f30:{st:'Previsto', d1:atras(30), d2:hoje},
+                   f60:{st:'Previsto', d1:atras(60), d2:atras(31)}, f60mais:{st:'Previsto', d2:atras(61)}};
+  irParaRec(filtros[f.dataset.venc] || {});
+});
 $('#balRisco').addEventListener('click', async e => {
+  const nome = e.target.closest('.rk-nome');
+  if (nome) return irParaRec({q: nome.querySelector('b').textContent.trim()});
   if (!e.target.closest('#salvarLimites')) return;
   if (!podeEditar()) return toast('Seu acesso é somente leitura.');
   const itens = {};
@@ -2231,7 +2346,7 @@ function go(v){
   const t = {dash:['Controle mensal','Entradas e saídas do mês, com o painel consolidado'],
              mensal:['Fluxo de caixa','Movimento do mês e projeção diária — valores previstos, não realizados'],
              lanc:['Pagamentos','Contas a pagar — edite na grade, filtre e trabalhe em lote'],
-             adi:['Adiantamentos','Fila de pagamentos antecipados — exporte o lote e dê baixa'],
+             adi:['Lotes e adiantamentos','Lotes gerados e fila de pagamentos antecipados'],
              bal:['Visão geral','Posição contratual, estoque e projeção — não representa saldo bancário'],
              rec:['Recebimentos','Contas a receber — previsões e entradas confirmadas, por pagador'],
              log:['Auditoria','Quem alterou o quê, e quando'],
@@ -2602,7 +2717,7 @@ $('#btnExport').addEventListener('click', () => {
     if (t === 'pix'){
       const ok = rows.filter(r => r.status !== 'Pago' && r.status !== 'Cancelado' && prontoParaLote(r));
       const fora = rows.filter(r => r.status !== 'Pago' && r.status !== 'Cancelado').length - ok.length;
-      escolherModeloLote(ok.map(r => ({pix:r.pix, valor:r.valor, nome:r.contribuinte, descricao:r.operacao})), 'lote-pix', fora);
+      escolherModeloLote(ok.map(r => ({pix:r.pix, valor:r.valor, nome:r.contribuinte, descricao:r.operacao, codigo:r.codigo, origemId:r.id})), 'lote-pix', fora);
       return;
     } else {
       data = alvo.map(r => ({'Código':r.codigo,'Categoria':r.categoria,'Centro de custo':r.centroCusto,
@@ -4090,6 +4205,49 @@ Object.assign(MotorFinanceiroMP, {
     const pagar = fromCents(pag.reduce((s,r) => s + toCents(r.valor), 0));
     return {dias, ate:limite, receber, pagar, liquido: subtractMoney(receber, pagar), nRec:rec.length, nPag:pag.length};
   },
+  /** recebíveis por idade de vencimento */
+  curvaVencimentos(){
+    const h = getTodaySP();
+    const dif = d => Math.round((Date.parse(h) - Date.parse(d)) / 864e5);
+    const faixas = [{k:'aVencer', t:'A vencer'}, {k:'f30', t:'Vencido até 30 dias'},
+                    {k:'f60', t:'Vencido de 31 a 60'}, {k:'f60mais', t:'Vencido há mais de 60'}];
+    const acc = {aVencer:{v:0,n:0}, f30:{v:0,n:0}, f60:{v:0,n:0}, f60mais:{v:0,n:0}};
+    S.rec.filter(ABERTO_REC).forEach(r => {
+      const d = r.dataPrevista;
+      const idade = d ? dif(d) : 0;
+      const k = !d || idade <= 0 ? 'aVencer' : idade <= 30 ? 'f30' : idade <= 60 ? 'f60' : 'f60mais';
+      acc[k].v += toCents(r.valor); acc[k].n++;
+    });
+    const total = Object.values(acc).reduce((s,x) => s + x.v, 0);
+    return faixas.map(f => ({...f, valor: fromCents(acc[f.k].v), n: acc[f.k].n,
+      parte: total ? acc[f.k].v / total : 0}));
+  },
+  /** quanto tempo, em média, se leva para receber e para pagar */
+  prazos(){
+    const dias = (a,b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5);
+    const rec = S.rec.filter(r => r.status === 'Recebido' && r.dataRecebida && (r.dataVenda || r.dataPrevista))
+      .map(r => dias(r.dataVenda || r.dataPrevista, r.dataRecebida));
+    const pag = S.rows.filter(r => r.status === 'Pago' && r.dataPagamento && r.dataLancamento)
+      .map(r => dias(r.dataLancamento, r.dataPagamento)).filter(d => d >= 0 && d < 400);
+    const media = l => l.length ? Math.round(l.reduce((s,d) => s + d, 0) / l.length) : null;
+    const pmr = media(rec), pmp = media(pag);
+    return {pmr, pmp, nRec: rec.length, nPag: pag.length,
+            ciclo: (pmr === null || pmp === null) ? null : pmr - pmp};
+  },
+  /** o que já se realizou do mês, contra o que estava previsto */
+  realizadoDoMes(ym){
+    const mes = ym || getTodaySP().slice(0,7);
+    const rec = S.rec.filter(r => r.status !== 'Cancelado' && String(dataRec(r)).startsWith(mes));
+    const pag = S.rows.filter(r => (ABERTO(r) || r.status === 'Pago') && String(r.dataPagamento).startsWith(mes));
+    const c = (l,f) => fromCents(l.reduce((s,r) => s + toCents(f ? f(r) : r.valor), 0));
+    const recebido = c(rec.filter(r => r.status === 'Recebido'), valorRec);
+    const pago = c(pag.filter(r => r.status === 'Pago'));
+    const prevRec = c(rec, valorRec), prevPag = c(pag);
+    return {mes, recebido, pago, prevRec, prevPag,
+            pctRec: toCents(prevRec) ? toCents(recebido)/toCents(prevRec) : 0,
+            pctPag: toCents(prevPag) ? toCents(pago)/toCents(prevPag) : 0,
+            liquidoPrev: subtractMoney(prevRec, prevPag), liquidoReal: subtractMoney(recebido, pago)};
+  },
   /** concentração, atraso e exposição por pagador */
   riscoPagadores(){
     const h = getTodaySP();
@@ -4107,7 +4265,7 @@ Object.assign(MotorFinanceiroMP, {
         else if (r.dataPrevista && r.dataRecebida) x.dias.push(Math.round((Date.parse(r.dataRecebida) - Date.parse(r.dataPrevista)) / 864e5));
       }
     });
-    const lista = Object.values(porNome).map(x => ({...x,
+    const lista = Object.values(porNome).filter(x => x.aberto > 0).map(x => ({...x,
       aberto: fromCents(x.aberto), vencido: fromCents(x.vencido), recebido: fromCents(x.recebido),
       prazo: x.dias.length ? Math.round(x.dias.reduce((s,d) => s + d, 0) / x.dias.length) : null
     })).sort((a,b) => b.aberto - a.aberto);
@@ -4446,23 +4604,103 @@ function baixarLotePix(linhas, nomeArquivo, modelo){
   return linhas.length;
 }
 
+/* =========================================================
+   LOTES DE PAGAMENTO — ficam guardados, com nome, e podem ser baixados de novo
+   ========================================================= */
+function normalizeLote(o){
+  return {id:o.id || uid(), nome:String(o.nome ?? '').trim() || 'Lote sem nome',
+    modelo:o.modelo === 'conta' ? 'conta' : 'clara', origem:String(o.origem ?? 'lanc'),
+    ts:o.ts || Date.now(), porQuem:String(o.porQuem ?? ''),
+    itens:(o.itens || []).map(i => ({codigo:String(i.codigo ?? ''), nome:String(i.nome ?? ''),
+      pix:String(i.pix ?? ''), valor:Math.round(parseNum(i.valor)*100)/100, origemId:String(i.origemId ?? '')})),
+    total:Math.round(parseNum(o.total)*100)/100, pago:!!o.pago, dataPagamento:parseDate(o.dataPagamento) || ''};
+}
+const totalDoLote = l => fromCents((l.itens || []).reduce((s,i) => s + toCents(i.valor), 0));
+
+async function guardarLote(lote){
+  const doc = normalizeLote(lote);
+  if (APP.modo === 'nuvem'){
+    try { await fdb.collection('lotes').doc(doc.id).set(doc); }
+    catch(e){ toast('Lote gerado, mas não consegui guardar: ' + (e.code || e.message)); return doc; }
+  } else {
+    S.lotes = [doc, ...S.lotes.filter(x => x.id !== doc.id)];
+    Local.set('tesouraria:lotes', JSON.stringify(S.lotes));
+  }
+  await Repo.registrar({ts:Date.now(), uid:APP.uid || 'local', nome:APP.nome || 'Local', origem:'manual',
+    label:`lote de pagamento gerado · ${doc.nome}`,
+    resumo:[`${doc.itens.length} pagamento(s) · ${brl(doc.total)} · modelo ${doc.modelo === 'clara' ? 'Clara' : 'Conta Simples'}`], total:doc.itens.length});
+  renderAll();
+  return doc;
+}
+async function atualizarLote(id, campos, rotulo){
+  const atual = S.lotes.find(l => l.id === id); if (!atual) return;
+  const novo = normalizeLote({...atual, ...campos});
+  if (APP.modo === 'nuvem'){
+    try { await fdb.collection('lotes').doc(id).set(novo); } catch(e){ return toast('Não consegui gravar: ' + (e.code || e.message)); }
+  } else {
+    S.lotes = S.lotes.map(l => l.id === id ? novo : l);
+    Local.set('tesouraria:lotes', JSON.stringify(S.lotes));
+  }
+  if (rotulo) await Repo.registrar({ts:Date.now(), uid:APP.uid || 'local', nome:APP.nome || 'Local', origem:'manual',
+    label:rotulo, resumo:[`${atual.nome} → ${novo.nome}`], total:1});
+  renderAll();
+}
+/** baixa de novo a planilha exatamente como foi gerada */
+function baixarLoteGuardado(l, modelo){
+  const M = (modelo || l.modelo) === 'conta' ? CONTA_SIMPLES : CLARA;
+  baixarLotePix(l.itens, `${(l.nome || 'lote').replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-').toLowerCase()}.xlsx`, M);
+  toast(`${l.itens.length} pagamento(s) baixados`);
+}
+
+function renderLotes(){
+  if (!$('#listaLotes')) return;
+  const lotes = S.lotes.slice().sort((a,b) => b.ts - a.ts);
+  $('#listaLotes').innerHTML = lotes.length ? lotes.map(l => `
+    <div class="lote ${l.pago ? 'pago' : ''}" data-lote="${l.id}">
+      <div class="lote-cab">
+        <b class="lote-nome" data-renomear="${l.id}" title="Clique para renomear">${esc(l.nome)}</b>
+        <span class="tag ${l.pago ? 'st-Pago' : 'st-Pendente'}">${l.pago ? 'Pago' : 'Em aberto'}</span>
+        <span class="lote-meta">${l.itens.length} pagamento(s) · ${brl(totalDoLote(l))} · modelo ${l.modelo === 'clara' ? 'Clara' : 'Conta Simples'}</span>
+        <span class="lote-meta">gerado por ${esc(l.porQuem || '—')} em ${hora(l.ts)}${l.pago && l.dataPagamento ? ` · pago em ${fmtDate(l.dataPagamento)}` : ''}</span>
+      </div>
+      <div class="lote-acoes">
+        <button class="btn sm" data-verlote="${l.id}">Ver itens</button>
+        <button class="btn sm" data-baixar="${l.id}">Baixar planilha</button>
+        <button class="btn sm" data-renomear="${l.id}">Renomear</button>
+        ${l.pago ? `<button class="btn sm ghost" data-reabrir="${l.id}">Reabrir</button>`
+                 : `<button class="btn sm primary" data-marcarlote="${l.id}">Marcar como pago</button>`}
+        <button class="btn sm ghost" data-excluirlote="${l.id}">Excluir</button>
+      </div>
+    </div>`).join('')
+    : '<div class="empty">Nenhum lote gerado ainda. Exporte um lote em Pagamentos ou aqui nos adiantamentos e ele fica guardado.</div>';
+  const aberto = lotes.filter(l => !l.pago);
+  $('#lotesResumo').textContent = lotes.length
+    ? `${lotes.length} lote(s) · ${aberto.length} em aberto somando ${brl(fromCents(aberto.reduce((s,l) => s + toCents(totalDoLote(l)), 0)))}`
+    : '';
+}
+
 /** pergunta em qual modelo exportar e gera o arquivo */
 function escolherModeloLote(linhas, prefixo, fora){
   if (!linhas.length) return alert('Nenhum pagamento com chave válida para o lote.');
   const m = modal('Exportar lote de pagamento', `
     <p style="color:var(--muted);margin-top:0">${linhas.length} pagamento(s) · ${brl(linhas.reduce((s,l) => s + toCents(l.valor), 0)/100)}
       ${fora ? `<br><span style="color:var(--bad)">${fora} ficaram de fora por chave ausente ou inválida.</span>` : ''}</p>
-    <p style="color:var(--muted-2);font-size:12.5px">Escolha o modelo do banco:</p>
+    <div class="field"><label for="loteNome">Nome do lote</label>
+      <input class="inp" id="loteNome" value="Lote ${fmtDate(getTodaySP())}" placeholder="ex.: Pagamentos 21/09 manhã"></div>
+    <p style="color:var(--muted-2);font-size:12.5px;margin-top:12px">Escolha o modelo do banco:</p>
     <div style="display:flex;gap:9px;flex-wrap:wrap">
       <button class="btn primary" data-modelo="clara">Modelo Clara</button>
       <button class="btn primary" data-modelo="conta">Modelo Conta Simples</button>
     </div>`, '<button class="btn" data-close>Cancelar</button>');
-  m.addEventListener('click', e => {
+  m.addEventListener('click', async e => {
     const b = e.target.closest('[data-modelo]'); if (!b) return;
     const clara = b.dataset.modelo === 'clara';
-    baixarLotePix(linhas, `${prefixo}-${clara ? 'clara' : 'conta-simples'}-${getTodaySP()}.xlsx`, clara ? CLARA : CONTA_SIMPLES);
+    const nome = (m.querySelector('#loteNome').value || '').trim() || `Lote ${fmtDate(getTodaySP())}`;
+    baixarLotePix(linhas, `${nome.replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-').toLowerCase()}.xlsx`, clara ? CLARA : CONTA_SIMPLES);
     m.remove();
-    toast(`${linhas.length} pagamento(s) no lote ${clara ? 'Clara' : 'Conta Simples'}`);
+    await guardarLote({nome, modelo: clara ? 'clara' : 'conta', origem: prefixo.includes('adiant') ? 'adi' : 'lanc',
+      porQuem: APP.nome || 'Local', itens: linhas, total: fromCents(linhas.reduce((s,l) => s + toCents(l.valor), 0))});
+    toast(`Lote "${nome}" gerado e guardado`);
   });
 }
 
@@ -4641,6 +4879,62 @@ $('#bulkAdi').addEventListener('click', async e => {
     S.sel.clear();
     return aplicarAdi(alvos.map(r => ({acao:'excluir', id:r.id})), 'lote', `${alvos.length} itens fora da fila`); }
 });
+$('#listaLotes').addEventListener('click', async e => {
+  const b = e.target.closest('[data-verlote],[data-baixar],[data-renomear],[data-marcarlote],[data-reabrir],[data-excluirlote]');
+  if (!b) return;
+  const d = b.dataset;
+  const l = S.lotes.find(x => x.id === (d.verlote || d.baixar || d.renomear || d.marcarlote || d.reabrir || d.excluirlote));
+  if (!l) return;
+
+  if (d.verlote) return modal(`Lote · ${esc(l.nome)}`, `
+    <p style="color:var(--muted);margin-top:0">${l.itens.length} pagamento(s) · ${brl(totalDoLote(l))} · modelo ${l.modelo === 'clara' ? 'Clara' : 'Conta Simples'}<br>
+      <span style="color:var(--muted-2);font-size:12.5px">gerado por ${esc(l.porQuem)} em ${hora(l.ts)}</span></p>
+    <table class="pl-tab"><thead><tr><th>Favorecido</th><th>Chave</th><th class="num">Valor</th></tr></thead>
+    <tbody>${l.itens.map(i => `<tr><td>${esc(i.nome)}</td><td>${esc(chaveFormatada(i.pix))}</td><td class="num">${brl(i.valor)}</td></tr>`).join('')}</tbody>
+    <tfoot><tr><td colspan="2">Total</td><td class="num forte">${brl(totalDoLote(l))}</td></tr></tfoot></table>`,
+    `<button class="btn" data-close>Fechar</button>`);
+
+  if (d.baixar){
+    const m = modal(`Baixar "${esc(l.nome)}"`, `<p style="color:var(--muted);margin-top:0">A planilha sai igual à que foi gerada, com ${l.itens.length} pagamento(s).</p>
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
+        <button class="btn primary" data-md="clara">Modelo Clara</button>
+        <button class="btn primary" data-md="conta">Modelo Conta Simples</button></div>`,
+      `<button class="btn" data-close>Cancelar</button>`);
+    m.addEventListener('click', ev2 => { const x = ev2.target.closest('[data-md]'); if (!x) return;
+      baixarLoteGuardado(l, x.dataset.md); m.remove(); });
+    return;
+  }
+
+  if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+
+  if (d.renomear){
+    const nome = prompt('Nome do lote:', l.nome);
+    if (nome && nome.trim() && nome.trim() !== l.nome) await atualizarLote(l.id, {nome:nome.trim()}, 'lote renomeado');
+    return;
+  }
+  if (d.reabrir) return atualizarLote(l.id, {pago:false, dataPagamento:''}, 'lote reaberto');
+  if (d.excluirlote){
+    if (!confirm(`Excluir o lote "${l.nome}"? Os lançamentos não são afetados.`)) return;
+    if (APP.modo === 'nuvem'){ try { await fdb.collection('lotes').doc(l.id).delete(); } catch(err){ return toast('Não consegui excluir: ' + (err.code || err.message)); } }
+    else { S.lotes = S.lotes.filter(x => x.id !== l.id); Local.set('tesouraria:lotes', JSON.stringify(S.lotes)); }
+    await Repo.registrar({ts:Date.now(), uid:APP.uid || 'local', nome:APP.nome || 'Local', origem:'manual',
+      label:'lote excluído', resumo:[`${l.nome} · ${l.itens.length} pagamento(s)`], total:1});
+    renderAll(); return toast('Lote excluído');
+  }
+  if (d.marcarlote){
+    const dt = parseDate(prompt(`Data do pagamento do lote "${l.nome}":`, fmtDate(getTodaySP())));
+    if (!dt) return;
+    const ids = l.itens.map(i => i.origemId).filter(Boolean);
+    const ops = S.rows.filter(r => ids.includes(r.id) && r.status !== 'Pago')
+      .map(r => ({acao:'atualizar', id:r.id, campos:{status:'Pago', dataPagamento:dt}}));
+    await atualizarLote(l.id, {pago:true, dataPagamento:dt}, 'lote marcado como pago');
+    if (ops.length) await aplicar(ops, 'lote', `baixa de ${ops.length} pagamento(s) pelo lote ${l.nome}`);
+    const adis = S.adi.filter(a => ids.includes(a.origemId) && a.status !== 'Pago');
+    if (adis.length) await aplicarAdi(adis.map(a => ({acao:'atualizar', id:a.id, campos:{status:'Pago', dataAdiantada:dt}})),
+      'lote', `${adis.length} adiantamento(s) do lote ${l.nome}`);
+    toast(`Lote pago · ${ops.length} lançamento(s) baixado(s)`);
+  }
+});
 $('#btnLoteAdi').addEventListener('click', () => {
   const aguardando = filteredAdi().filter(r => r.status === 'Aguardando');
   const ok = aguardando.filter(prontoParaLote);
@@ -4776,6 +5070,9 @@ function renderBalanco(){
          <span>faltam ${brl(Math.abs(neg.acumulado))} para cobrir o que está previsto até lá — clique para abrir o mês</span></div></div>`
     : (projecao.length ? '<div class="empty">O caixa se mantém positivo em todos os meses projetados.</div>' : '');
 
+  const carimbo = $('#balAtualizado');
+  if (carimbo) carimbo.textContent = `Números de ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}` +
+    (APP.modo === 'nuvem' ? ' · atualiza sozinho a cada mudança' : ' · modo local');
   const e = Balanco.estoque();
   const risco = MotorFinanceiroMP.riscoPagadores();
   $('#balRisco').innerHTML = risco.lista.length ? `
@@ -4799,9 +5096,6 @@ function renderBalanco(){
     <div class="hz-bloco"><div class="hz-tit">Posição operacional líquida (estimada)</div>
       <div class="hz-val ${e.disponivel < 0 ? 'bl-neg' : 'bl-pos'}">${brl(e.disponivel)}</div>
       <div class="hz-nota">posição contratual + estoque disponível</div></div>
-    <div class="hz-bloco"><div class="hz-tit">Posição sem milhas bloqueadas</div>
-      <div class="hz-val">${brl(e.disponivel)}</div>
-      <div class="hz-nota">é a mesma acima: o bloqueado nunca entra</div></div>
     <div class="hz-bloco ${e.bloqueados ? 'ruim' : ''}"><div class="hz-tit">Exposição bloqueada</div>
       <div class="hz-val bl-neg">${brl(e.bloqueados)}</div>
       <div class="hz-nota">valor nominal sob restrição judicial</div></div>
@@ -4809,9 +5103,58 @@ function renderBalanco(){
       <div class="hz-val">${brl(saldoBase().valor)}</div>
       <div class="hz-nota">${saldoBase().mesRef ? 'apurado no fim de ' + saldoBase().mesRef : 'informe no Ponto de partida'}</div></div>`;
 
+  const mesAtual = MotorFinanceiroMP.realizadoDoMes();
+  const ymAnt = (() => { const [a,m] = mesAtual.mes.split('-').map(Number); return m === 1 ? `${a-1}-12` : `${a}-${String(m-1).padStart(2,'0')}`; })();
+  const mesAnt = MotorFinanceiroMP.realizadoDoMes(ymAnt);
+  const seta = (agora, antes) => {
+    if (!toCents(antes)) return '';
+    const dif = toCents(agora) - toCents(antes);
+    return `<div class="hz-nota ${dif < 0 ? 'bl-neg' : 'bl-pos'}">${dif >= 0 ? '▲' : '▼'} ${brl(Math.abs(fromCents(dif)))} ante ${mesLongo(ymAnt)}</div>`;
+  };
+  $('#balMes').innerHTML = `
+    <div class="hz-bloco" data-abrir="rec-mes"><div class="hz-tit">Recebido no mês</div>
+      <div class="hz-val bl-pos">${brl(mesAtual.recebido)}</div>
+      <div class="hz-lin"><span>Previsto</span><b>${brl(mesAtual.prevRec)}</b></div>
+      <div class="barra-pct"><i style="width:${Math.min(100, mesAtual.pctRec*100).toFixed(1)}%"></i></div>
+      <div class="hz-nota">${(mesAtual.pctRec*100).toFixed(0)}% do previsto já entrou</div>${seta(mesAtual.recebido, mesAnt.recebido)}</div>
+    <div class="hz-bloco" data-abrir="lanc-mes"><div class="hz-tit">Pago no mês</div>
+      <div class="hz-val" style="color:var(--accent-2)">${brl(mesAtual.pago)}</div>
+      <div class="hz-lin"><span>Previsto</span><b>${brl(mesAtual.prevPag)}</b></div>
+      <div class="barra-pct sai"><i style="width:${Math.min(100, mesAtual.pctPag*100).toFixed(1)}%"></i></div>
+      <div class="hz-nota">${(mesAtual.pctPag*100).toFixed(0)}% do previsto já saiu</div>${seta(mesAtual.pago, mesAnt.pago)}</div>
+    <div class="hz-bloco"><div class="hz-tit">Fluxo do mês</div>
+      <div class="hz-val ${mesAtual.liquidoReal < 0 ? 'bl-neg' : 'bl-pos'}">${brl(mesAtual.liquidoReal)}</div>
+      <div class="hz-lin"><span>Previsto para o mês</span><b>${brl(mesAtual.liquidoPrev)}</b></div>
+      <div class="hz-nota">realizado até hoje · ${mesLongo(mesAtual.mes)}</div>${seta(mesAtual.liquidoReal, mesAnt.liquidoReal)}</div>`;
+
+  const curva = MotorFinanceiroMP.curvaVencimentos();
+  const totalCurva = fromCents(curva.reduce((s,f) => s + toCents(f.valor), 0));
+  const vencido = fromCents(curva.slice(1).reduce((s,f) => s + toCents(f.valor), 0));
+  $('#balVenc').innerHTML = totalCurva ? curva.map(f => `
+    <div class="vc ${f.k !== 'aVencer' && f.valor ? 'atraso' : ''}" data-venc="${f.k}">
+      <div class="vc-nome"><b>${f.t}</b><span>${f.n} recebimento${f.n === 1 ? '' : 's'}</span></div>
+      <div class="rk-barra"><span class="trilho"><i style="width:${(f.parte*100).toFixed(1)}%"></i></span><b>${(f.parte*100).toFixed(1)}%</b></div>
+      <div class="rk-v">${brl(f.valor)}</div></div>`).join('')
+    + `<div class="rk-rodape"><span>Total em aberto: <b>${brl(totalCurva)}</b> · vencido: <b class="${vencido ? 'bl-neg' : ''}">${brl(vencido)}</b></span></div>`
+    : '<div class="empty">Nenhum recebimento em aberto.</div>';
+
+  const pz = MotorFinanceiroMP.prazos();
+  $('#balPrazos').innerHTML = `
+    <div class="hz-bloco"><div class="hz-tit">Prazo médio de recebimento</div>
+      <div class="hz-val">${pz.pmr === null ? '—' : pz.pmr + ' dias'}</div>
+      <div class="hz-nota">${pz.nRec} recebimento(s) com data de entrada registrada</div></div>
+    <div class="hz-bloco"><div class="hz-tit">Prazo médio de pagamento</div>
+      <div class="hz-val">${pz.pmp === null ? '—' : pz.pmp + ' dias'}</div>
+      <div class="hz-nota">${pz.nPag} pagamento(s) já quitados</div></div>
+    <div class="hz-bloco ${pz.ciclo > 0 ? 'ruim' : ''}"><div class="hz-tit">Ciclo financeiro</div>
+      <div class="hz-val ${pz.ciclo > 0 ? 'bl-neg' : 'bl-pos'}">${pz.ciclo === null ? '—' : (pz.ciclo > 0 ? '+' : '') + pz.ciclo + ' dias'}</div>
+      <div class="hz-nota">${pz.ciclo === null ? 'faltam datas para calcular'
+        : pz.ciclo > 0 ? 'paga antes de receber — período financiado com capital próprio'
+        : 'recebe antes de pagar — a operação se financia sozinha'}</div></div>`;
+
   $('#balHorizonte').innerHTML = [30,60,90].map(n => {
     const x = MotorFinanceiroMP.horizonte(n);
-    return `<div class="hz-bloco ${x.liquido < 0 ? 'ruim' : ''}">
+    return `<div class="hz-bloco ${x.liquido < 0 ? 'ruim' : ''}" data-hz="${n}">
       <div class="hz-tit">Próximos ${n} dias</div>
       <div class="hz-val ${x.liquido < 0 ? 'bl-neg' : 'bl-pos'}">${brl(x.liquido)}</div>
       <div class="hz-lin"><span>Recebimentos</span><b class="pl-e">${brl(x.receber)}</b></div>
@@ -4927,9 +5270,8 @@ function renderPainelPlanilha(){
     <div class="pl-bloco">
       <div class="pl-tit">Estoque de milhas</div>
       <div class="pl-lin"><span>Estoque de milhas disponível</span><b class="pl-e">${brl(e.livres)}</b></div>
-      <div class="pl-lin"><span>Milhas sob restrição</span><b class="pl-s">${brl(e.bloqueados)}</b></div>
-      <div class="pl-lin"><span>Valor considerado na posição</span><b>${brl(0)}</b></div>
-      <div class="pl-exp">Milhas sob restrição judicial não entram na posição disponível.</div>
+      <div class="pl-lin"><span>Milhas bloqueadas</span><b class="pl-s">${brl(e.bloqueados)}</b></div>
+      <div class="pl-exp">Apenas as milhas disponíveis entram na posição operacional líquida.</div>
     </div>
     <div class="pl-bloco total">
       <div class="pl-tit">Posição operacional líquida (estimada)</div>

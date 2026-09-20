@@ -2,7 +2,7 @@
    Estratégia: rede primeiro, cache como rede de segurança.
    O sistema é online (Firestore), então nunca servimos dado velho quando há conexão;
    o cache existe para a casca do app abrir offline e para a instalação funcionar. */
-const VERSAO = 'mp-2026-09-19-03';
+const VERSAO = 'mp-2026-09-20-01';
 const CASCA = ['./', './index.html', './instalar.html', './mobile.html', './manifest.webmanifest',
                './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 
