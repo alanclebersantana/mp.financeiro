@@ -343,6 +343,12 @@ html[data-tema="claro"] .fab{box-shadow:0 10px 26px rgba(193,86,26,.28)}
 /* ---------- tabela ---------- */
 .tablewrap{flex:1;min-height:0;overflow:auto;position:relative}
 #gridRec.detalhado{min-width:1180px}
+.valid-cel{display:flex;align-items:center;justify-content:center;gap:7px;height:100%}
+.valid{width:20px;height:20px;border-radius:6px;border:2px solid var(--line);background:var(--surface);
+  color:#fff;font-weight:900;font-size:13px;line-height:1;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+.valid:hover{border-color:var(--ok)}
+.valid.on{background:var(--ok);border-color:var(--ok)}
+.valid-info{font-size:10px;line-height:1.2;color:var(--ok);font-weight:700;text-align:left;white-space:nowrap}
 table.grid{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed;min-width:960px;font-size:13px}
 table.grid thead th{position:sticky;top:0;z-index:3;background:var(--bg-2);border-bottom:1px solid var(--line);padding:9px 8px;text-align:left;font-size:11.5px;font-weight:800;color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;user-select:none;letter-spacing:.1px}
 table.grid thead th.num{text-align:right}
@@ -1054,6 +1060,8 @@ try { document.documentElement.dataset.tema =
         <button class="btn sm" data-bulk="data">Alterar data de pagamento</button>
         <button class="btn sm" data-bulk="op">Alterar operação</button>
         <button class="btn sm primary" data-bulk="adiantar">Adiantamento de pagamento</button>
+        <button class="btn sm" data-bulk="validar">✓ Validar valores</button>
+        <button class="btn sm ghost" data-bulk="desvalidar">Desfazer validação</button>
         <button class="btn sm" data-bulk="colar">Colar da planilha</button>
         <button class="btn sm" data-bulk="dup">Duplicar</button>
         <button class="btn sm" data-bulk="del">Excluir</button>
@@ -1336,7 +1344,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "20/09/2026 10:26";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "22/09/2026 12:40";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -1345,16 +1353,17 @@ const TIPOS  = ['CPF','CNPJ','TELEFONE','EMAIL','ALEATÓRIA','BOLETO','INDEFINID
 const OPS_BASE = ['Smiles x Livelo x Cartões 22/07','Smiles x Livelo 28 e 29/07','Azul e Cartões MP 03/08','SMILES 10/08 - Cartões','Forms Julho - PG 17/09','SMILES CC 25-26/06','Intermedio de Milhas','Investimento','REINVESTIMENTO','FESTA EMPRESA'];
 const COLS = [
   {k:'dataLancamento', t:'Lançamento',  w:'6.5%',  type:'date',  al:'mid'},
-  {k:'codigo',         t:'Código',      w:'5.5%',  type:'text',  al:'mid'},
-  {k:'contribuinte',   t:'Contribuinte',w:'14.5%', type:'text'},
-  {k:'operacao',       t:'Operação',    w:'12.5%', type:'chip'},
-  {k:'acordo',         t:'Acordo / observação', w:'11.5%', type:'text'},
-  {k:'valor',          t:'Valor a pagar', w:'9.5%',type:'money', al:'num'},
+  {k:'codigo',         t:'Código',      w:'5%',    type:'text',  al:'mid'},
+  {k:'contribuinte',   t:'Contribuinte',w:'13%',   type:'text'},
+  {k:'operacao',       t:'Operação',    w:'10.5%', type:'chip'},
+  {k:'acordo',         t:'Acordo / observação', w:'9.5%', type:'text'},
+  {k:'valor',          t:'Valor a pagar', w:'9%',  type:'money', al:'num'},
+  {k:'validado',       t:'Valor validado com o contribuinte', w:'9%', type:'valid', al:'mid'},
   {k:'dataPagamento',  t:'Pagamento',   w:'7.5%',  type:'date',  al:'mid'},
   {k:'status',         t:'Status',      w:'8%',    type:'chip',  al:'mid'},
-  {k:'pix',            t:'Chave Pix',   w:'11.5%', type:'text'},
-  {k:'tipoChave',      t:'Tipo',        w:'7%',    type:'chip',  al:'mid'},
-  {k:'base',           t:'Origem',      w:'7%',    type:'text'},
+  {k:'pix',            t:'Chave Pix',   w:'10%',   type:'text'},
+  {k:'tipoChave',      t:'Tipo',        w:'6%',    type:'chip',  al:'mid'},
+  {k:'base',           t:'Origem',      w:'6%',    type:'text'},
 ];
 
 const FILTROS_PADRAO = {q:'', op:'', st:'Pendente', tp:'', d1:'', d2:'', v1:'', v2:''};
@@ -1514,6 +1523,9 @@ function normalize(o){
     pix: String(o.pix??'').trim(),
     tipoChave: String(o.tipoChave??'').trim().toUpperCase(),
     base: String(o.base??'').trim(),
+    validado: !!o.validado,
+    validadoEm: o.validado ? (o.validadoEm || 0) : 0,
+    validadoPor: o.validado ? String(o.validadoPor ?? '') : '',
     categoria: String(o.categoria??'').trim(),
     centroCusto: String(o.centroCusto??'').trim(),
     competencia: String(o.competencia??'').trim(),
@@ -1965,7 +1977,13 @@ function renderTable(){
       COLS.map(c => {
         const v = r[c.k], al = c.al ? ' ' + c.al : '';
         let inner;
-        if (c.type === 'money') inner = `<div class="cell num" data-id="${r.id}" data-k="${c.k}">${brl(v)}</div>`;
+        if (c.type === 'valid') inner = `<div class="valid-cel">
+            <button class="valid ${r.validado ? 'on' : ''}" data-valid="${r.id}"
+              title="${r.validado ? 'Conferido por ' + esc(r.validadoPor) + ' em ' + hora(r.validadoEm) + ' — clique para desfazer' : 'Marcar como conferido com o contribuinte'}"
+              aria-label="Valor validado com o contribuinte" aria-pressed="${r.validado}">${r.validado ? '✓' : ''}</button>
+            ${r.validado ? `<span class="valid-info">${fmtDate(new Date(r.validadoEm).toISOString().slice(0,10))}<br>${esc(String(r.validadoPor).split(' ')[0])}</span>` : ''}
+          </div>`;
+        else if (c.type === 'money') inner = `<div class="cell num" data-id="${r.id}" data-k="${c.k}">${brl(v)}</div>`;
         else if (c.type === 'date') inner = `<div class="cell${al}" data-id="${r.id}" data-k="${c.k}"><span class="txt">${fmtDate(v)}</span></div>`;
         else if (c.type === 'chip'){
           const cls = c.k === 'operacao' ? opColor(v) : c.k === 'status' ? 'st-'+v : 'k-'+(v||'INDEFINIDO');
@@ -2089,6 +2107,11 @@ function startEdit(cell){
       if (nv && k === 'operacao' && !S.ops.includes(val)) S.ops.push(val);
     }
     editing = null;
+    if (alvo === 'lanc' && k === 'valor' && row.validado && parseNum(val) !== row.valor){
+      if (!confirm(`Este valor já foi validado com o contribuinte por ${row.validadoPor}.\n\nAlterar o valor desfaz a validação. Continuar?`)){ renderAll(); return; }
+      await aplicar([{acao:'atualizar', id, campos:{valor: val, validado:false, validadoEm:0, validadoPor:''}}], 'manual', 'valor alterado · validação desfeita', false, alvo);
+      return;
+    }
     if (alvo === 'lanc' && k === 'pix' && val){
       const conhecida = chavesConhecidas().get(normalizarTextoBusca(row.contribuinte));
       if (conhecida && digits(conhecida.pix) !== digits(val) && conhecida.pix !== val){
@@ -2114,6 +2137,8 @@ function startEdit(cell){
 /* ---------- eventos da tabela ---------- */
 $('#tbody').addEventListener('click', e => {
   if (e.target.closest('a.src')) return;
+  const val = e.target.closest('[data-valid]');
+  if (val){ e.stopPropagation(); return validarLancamentos([val.dataset.valid]); }
   const hist = e.target.closest('[data-hist]');
   if (hist) return historicoDoLancamento(hist.dataset.hist);
   const del = e.target.closest('[data-del]');
@@ -2290,6 +2315,8 @@ $('#bulkbar').addEventListener('click', async e => {
   if (!rows.length) return;
   if (act === 'adiantar') return enviarParaAdiantamento();
   if (act === 'colar') return colarNaGrade(rows);
+  if (act === 'validar') return validarLancamentos(rows.map(r => r.id), true);
+  if (act === 'desvalidar') return validarLancamentos(rows.map(r => r.id), false);
   if (!podeEditar()) return toast('Seu acesso é somente leitura.');
   let ops = [];
   if (act === 'status'){ const v = prompt('Novo status ('+STATUS.join(', ')+'):','Pago'); if (!v || !STATUS.includes(v)) return;
@@ -2303,6 +2330,22 @@ $('#bulkbar').addEventListener('click', async e => {
     ops = rows.map(r => ({acao:'excluir', id:r.id})); S.sel.clear(); }
   await aplicar(ops, 'lote', `${act} em ${rows.length} lançamentos`);
 });
+
+/** marca ou desmarca a conferência do valor com o contribuinte */
+async function validarLancamentos(ids, forcar){
+  if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+  const alvos = S.rows.filter(r => ids.includes(r.id));
+  if (!alvos.length) return;
+  // um clique inverte; em lote, forçar decide se marca ou desmarca todos
+  const marcar = forcar !== undefined ? forcar : !alvos[0].validado;
+  const ops = alvos.filter(r => r.validado !== marcar).map(r => ({acao:'atualizar', id:r.id,
+    campos: marcar ? {validado:true, validadoEm:Date.now(), validadoPor:APP.nome || 'Local'}
+                   : {validado:false, validadoEm:0, validadoPor:''}}));
+  if (!ops.length) return toast(marcar ? 'Já estavam validados' : 'Nenhum estava validado');
+  await aplicar(ops, 'manual', marcar ? `valor validado com o contribuinte em ${ops.length} lançamento(s)`
+                                      : `validação desfeita em ${ops.length} lançamento(s)`);
+  if (ops.length > 1) toast(marcar ? `${ops.length} valores validados` : `${ops.length} validações desfeitas`);
+}
 
 /** tudo que a auditoria registrou sobre um lançamento específico */
 function historicoDoLancamento(id){
@@ -2327,7 +2370,7 @@ function historicoDoLancamento(id){
 /** cola um bloco copiado do Sheets sobre os lançamentos selecionados, coluna por coluna */
 function colarNaGrade(alvos){
   if (!podeEditar()) return toast('Seu acesso é somente leitura.');
-  const colunas = COLS.filter(c => c.k !== 'codigo');
+  const colunas = COLS.filter(c => c.k !== 'codigo' && c.type !== 'valid');   // validação não se cola, se confere
   const m = modal('Colar da planilha', `
     <p style="color:var(--muted);margin-top:0">${alvos.length} lançamento(s) selecionado(s), na ordem em que aparecem na grade.
       Cole as células copiadas do Sheets ou do Excel: a primeira coluna colada vai para o campo escolhido abaixo, e as seguintes para os campos à direita dele.</p>
@@ -2752,7 +2795,9 @@ $('#btnExport').addEventListener('click', () => {
       data = alvo.map(r => ({'Código':r.codigo,'Categoria':r.categoria,'Centro de custo':r.centroCusto,
         'Competência':r.competencia,'CNPJ':r.cnpj,'Forma de pagamento':r.formaPagamento,'Aprovador':r.aprovador,
         'Valor pago':r.valorPago,'Saldo remanescente':saldoAPagar(r),'Tributo':r.tributo,'Órgão':r.orgao,
-        'Multa':r.multa,'Juros':r.juros,'Data Lançamento':fmtDate(r.dataLancamento),'Contribuinte':r.contribuinte,'Operação':r.operacao,
+        'Multa':r.multa,'Juros':r.juros,
+        'Valor validado':r.validado ? 'Sim' : 'Não', 'Validado em':r.validado ? hora(r.validadoEm) : '', 'Validado por':r.validadoPor,
+        'Data Lançamento':fmtDate(r.dataLancamento),'Contribuinte':r.contribuinte,'Operação':r.operacao,
         'Acordo':r.acordo,'Valor a Pagar':r.valor,'Data de Pagamento':fmtDate(r.dataPagamento),'Status':r.status,
         'Pix':r.pix,'TIPO DE CHAVE':r.tipoChave,'Base':r.base}));
       name = `tesouraria-${stamp}.${t}`;
