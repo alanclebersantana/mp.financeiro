@@ -704,10 +704,13 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .vf{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end;
   background:var(--accent-dim);border:1px solid var(--accent);border-radius:var(--rs);padding:12px}
 .vf-bts{display:flex;gap:8px;align-items:center}
+.vf-edit{background:var(--info-dim);color:var(--info);border-radius:var(--rs);padding:8px 11px;margin-bottom:9px;font-size:12.5px;font-weight:700}
 .vf-prev{font-size:12px;color:var(--muted);margin:9px 0 14px;line-height:1.5}
 .selo-ok{display:inline-block;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:800;
   background:var(--ok-dim);color:var(--ok);margin-left:5px}
 .pl-tab small{font-size:10px;font-weight:800}
+.linha-cia{cursor:pointer}
+.linha-cia:hover td{background:var(--accent-dim)}
 .restricao{background:var(--bad-dim);border:1px solid var(--bad);border-radius:var(--rs);padding:12px;margin:14px 0}
 .rest-item{background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:11px 12px;margin-top:9px}
 .rest-cab{display:flex;align-items:center;gap:10px;margin-bottom:9px}
@@ -1365,7 +1368,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "24/09/2026 11:32";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "24/09/2026 11:51";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -1423,7 +1426,7 @@ const S = {
   rows: [], rec: [], adi: [], pagadores: [], ops: OPS_BASE.slice(), sel: new Set(), hist: [], log: [], users: [],
   sort: {k:'dataPagamento', dir:1}, sortRec: {k:'dataPrevista', dir:1}, sortAdi: {k:'dataAdiantada', dir:1},
   f: {...FILTROS_PADRAO}, fr: {q:'', pg:'', st:'Previsto', d1:'', d2:''},
-  fa: {q:'', st:'Aguardando', d1:'', d2:''}, recModo: 'simples', saldoInicial: null, estoque: null, limites: null, lotes: [], errolotes: '', loteSel: '', vendas: [], vendaAberta: '',
+  fa: {q:'', st:'Aguardando', d1:'', d2:''}, recModo: 'simples', saldoInicial: null, estoque: null, limites: null, lotes: [], errolotes: '', loteSel: '', vendas: [], vendaAberta: '', vendaEdit: '',
   cfg: {autoAplicar: true}, chat: [], alias: {}, avisado: false,
   view: 'bal'
 };
@@ -2264,19 +2267,30 @@ $('#balRisco').addEventListener('click', async e => {
 $('#balVendas').addEventListener('click', async e => {
   const cia = e.target.closest('[data-cia]');
   if (cia){
+    S.vendaEdit = '';
     S.vendaAberta = S.vendaAberta === cia.dataset.cia ? '' : cia.dataset.cia;
     renderVendas();
     if (S.vendaAberta){ ligarCalculoVenda(); const el = $('#vMilhas'); if (el) el.focus(); }
     return;
   }
-  if (e.target.closest('#vCancelar')){ S.vendaAberta = ''; return renderVendas(); }
+  if (e.target.closest('#vCancelar')){ S.vendaEdit = ''; S.vendaAberta = ''; return renderVendas(); }
+  const ed = e.target.closest('[data-editvenda]');
+  if (ed){
+    const v = S.vendas.find(x => x.id === ed.dataset.editvenda); if (!v) return;
+    S.vendaEdit = v.id; S.vendaAberta = v.companhia;
+    renderVendas(); ligarCalculoVenda();
+    const el = $('#vMilhas'); if (el) el.focus();
+    return;
+  }
   const del = e.target.closest('[data-delvenda]');
   if (del) return excluirVenda(del.dataset.delvenda);
   if (e.target.closest('#vSalvar')){
     const val = id => { const el = $('#'+id); return el ? el.value : ''; };
-    await salvarVenda({companhia:S.vendaAberta, milhas:val('vMilhas'), milheiro:val('vMilheiro'),
-      valor:val('vValor'), pagador:val('vPagador'), data:val('vData')});
-    S.vendaAberta = '';     // o formulário fecha depois de salvar
+    const dados = {companhia:S.vendaAberta, milhas:val('vMilhas'), milheiro:val('vMilheiro'),
+      valor:val('vValor'), pagador:val('vPagador'), data:val('vData')};
+    if (S.vendaEdit) await alterarVenda(S.vendaEdit, dados);
+    else await salvarVenda(dados);
+    S.vendaEdit = ''; S.vendaAberta = '';     // o formulário fecha depois de salvar
     renderVendas();
   }
 });
@@ -5567,6 +5581,41 @@ async function salvarVenda(dados){
   toast(`Venda gravada · ${brl(v.valor)} entrou como recebimento`);
 }
 
+/** altera uma venda já registrada: ajusta o estoque pela diferença e atualiza o recebimento */
+async function alterarVenda(id, dados){
+  const antes = S.vendas.find(v => v.id === id); if (!antes) return;
+  if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+  const v = normalizeVenda({...antes, ...dados, id, recId:antes.recId, porQuem: APP.nome || 'Local'});
+  if (!v.milhas || !v.valor) return toast('Informe as milhas e o valor.');
+
+  const dif = v.milhas - antes.milhas;
+  if (dif){
+    const itens = ((S.estoque && S.estoque.itens) || []).map(i => ({...i}));
+    const alvo = itens.find(i => !bloqueada(i) && i.companhia === v.companhia);
+    if (alvo){ alvo.saldo = (Number(alvo.saldo) || 0) - dif; await gravarEstoque(itens); }
+  }
+  if (v.recId && S.rec.some(r => r.id === v.recId)){
+    await aplicar([{acao:'atualizar', id:v.recId, campos:{valor:v.valor, valorRecebido:v.valor,
+      dataPrevista:v.data, dataRecebida:v.data, pagador:v.pagador || 'Venda de milhas',
+      descricao:`${v.milhas.toLocaleString('pt-BR')} milhas ${v.companhia} a ${brl(v.milheiro)} o milheiro`}}],
+      'manual', 'recebimento da venda ajustado', true, 'rec');
+  }
+  S.vendas = S.vendas.map(x => x.id === id ? v : x);
+  if (APP.modo === 'nuvem'){ try { await fdb.collection('vendas').doc(id).set(v); }
+    catch(e){ toast('Não consegui gravar: ' + (e.code || e.message)); } }
+  else Local.set('tesouraria:vendas', JSON.stringify(S.vendas));
+
+  const mudou = [];
+  if (dif) mudou.push(`milhas: ${antes.milhas.toLocaleString('pt-BR')} → ${v.milhas.toLocaleString('pt-BR')} (estoque ajustado em ${dif > 0 ? '−' : '+'}${Math.abs(dif).toLocaleString('pt-BR')})`);
+  if (toCents(antes.valor) !== toCents(v.valor)) mudou.push(`valor: ${brl(antes.valor)} → ${brl(v.valor)}`);
+  if (antes.data !== v.data) mudou.push(`data: ${fmtDate(antes.data)} → ${fmtDate(v.data)}`);
+  if (antes.pagador !== v.pagador) mudou.push(`pagador: ${antes.pagador || '—'} → ${v.pagador || '—'}`);
+  await Repo.registrar({ts:Date.now(), uid:APP.uid || 'local', nome:APP.nome || 'Local', origem:'manual',
+    label:'venda de milhas alterada', tela:'estoque', resumo:mudou.length ? mudou : ['sem mudanças'], total:1});
+  renderAll();
+  toast('Venda atualizada');
+}
+
 async function excluirVenda(id){
   const v = S.vendas.find(x => x.id === id); if (!v) return;
   if (!podeEditar()) return toast('Seu acesso é somente leitura.');
@@ -5603,42 +5652,66 @@ function renderVendas(){
       <span>${c.saldo ? c.saldo.toLocaleString('pt-BR') + ' milhas' : 'sem saldo'}</span>
     </button>`).join('') || '<span class="bl-info">Cadastre o estoque acima para registrar vendas.</span>';
 
+  const edit = S.vendaEdit ? S.vendas.find(v => v.id === S.vendaEdit) : null;
   $('#vendaForm').innerHTML = !cia ? '' : `
+    ${edit ? `<div class="vf-edit">Editando a venda de ${fmtDate(edit.data)} · ${edit.milhas.toLocaleString('pt-BR')} milhas · ${brl(edit.valor)}</div>` : ''}
     <div class="vf">
       <div class="field"><label>Companhia</label><input class="inp" value="${esc(cia.companhia)}" disabled></div>
-      <div class="field"><label>Milhas vendidas</label><input class="inp" id="vMilhas" inputmode="numeric" placeholder="15.000.000"></div>
-      <div class="field"><label>Milheiro</label><input class="inp" id="vMilheiro" inputmode="decimal" value="${cia.media ? cia.media.toFixed(2).replace('.',',') : ''}"></div>
-      <div class="field"><label>Valor da venda</label><input class="inp" id="vValor" inputmode="decimal" placeholder="0,00"></div>
-      <div class="field"><label>Pagador</label><input class="inp" id="vPagador" list="listaPagadores" placeholder="quem comprou"></div>
-      <div class="field"><label>Data</label><input class="inp" id="vData" type="date" value="${getTodaySP()}"></div>
-      <div class="vf-bts"><button class="btn primary" id="vSalvar">Salvar venda</button>
+      <div class="field"><label>Milhas vendidas</label><input class="inp" id="vMilhas" inputmode="numeric" placeholder="15.000.000" value="${edit ? edit.milhas.toLocaleString('pt-BR') : ''}"></div>
+      <div class="field"><label>Milheiro</label><input class="inp" id="vMilheiro" inputmode="decimal" value="${edit ? edit.milheiro.toFixed(2).replace('.',',') : (cia.media ? cia.media.toFixed(2).replace('.',',') : '')}"></div>
+      <div class="field"><label>Valor da venda</label><input class="inp" id="vValor" inputmode="decimal" placeholder="0,00" value="${edit ? edit.valor.toFixed(2).replace('.',',') : ''}"></div>
+      <div class="field"><label>Pagador</label><input class="inp" id="vPagador" list="listaPagadores" placeholder="quem comprou" value="${edit ? esc(edit.pagador) : ''}"></div>
+      <div class="field"><label>Data</label><input class="inp" id="vData" type="date" value="${edit ? edit.data : getTodaySP()}"></div>
+      <div class="vf-bts"><button class="btn primary" id="vSalvar">${edit ? 'Salvar alteração' : 'Salvar venda'}</button>
         <button class="btn ghost" id="vCancelar">Cancelar</button></div>
     </div>
     <datalist id="listaPagadores">${[...new Set(S.rec.map(r => r.pagador))].filter(Boolean).map(p => `<option>${esc(p)}</option>`).join('')}</datalist>
     <div class="vf-prev" id="vPrev">Preencha as milhas e o milheiro — o valor é calculado sozinho, e vice-versa.</div>`;
 
-  const lista = S.vendas.slice().sort((a,b) => String(b.data).localeCompare(String(a.data)) || b.em - a.em);
-  const somaMilhas = lista.reduce((s,v) => s + v.milhas, 0);
-  const somaValor = fromCents(lista.reduce((s,v) => s + toCents(v.valor), 0));
+  // fechado: só o resumo por companhia. Aberto: as vendas daquela companhia.
+  const todas = S.vendas.slice().sort((a,b) => String(b.data).localeCompare(String(a.data)) || b.em - a.em);
+  const lista = aberta ? todas.filter(v => v.companhia === aberta) : todas;
+  const somaMilhas = l => l.reduce((s,v) => s + v.milhas, 0);
+  const somaValor = l => fromCents(l.reduce((s,v) => s + toCents(v.valor), 0));
+
+  if (!aberta){
+    const porCia = {};
+    todas.forEach(v => { (porCia[v.companhia] = porCia[v.companhia] || []).push(v); });
+    const linhas = Object.entries(porCia).sort((a,b) => somaValor(b[1]) - somaValor(a[1]));
+    $('#vendaLista').innerHTML = linhas.length ? `
+      <table class="pl-tab">
+        <thead><tr><th>Companhia</th><th class="num">Milhas vendidas</th><th class="num">Valor das vendas</th><th class="num">Vendas</th></tr></thead>
+        <tbody>${linhas.map(([cia, vs]) => `
+          <tr class="linha-cia" data-cia="${esc(cia)}" title="Clique para ver as vendas da ${esc(cia)}">
+            <td><b class="${corCia(cia)}">${esc(cia)}</b></td>
+            <td class="num">${somaMilhas(vs).toLocaleString('pt-BR')}</td>
+            <td class="num forte">${brl(somaValor(vs))}</td>
+            <td class="num">${vs.length}</td></tr>`).join('')}</tbody>
+        <tfoot><tr><td>Total</td><td class="num">${somaMilhas(todas).toLocaleString('pt-BR')}</td>
+          <td class="num forte">${brl(somaValor(todas))}</td><td class="num">${todas.length}</td></tr></tfoot>
+      </table>` : '<div class="empty">Nenhuma venda registrada. Clique na companhia acima para lançar a primeira.</div>';
+    return;
+  }
+
   $('#vendaLista').innerHTML = lista.length ? `
     <table class="pl-tab">
-      <thead><tr><th>Data</th><th>Companhia</th><th class="num">Milhas</th><th class="num">Milheiro</th>
+      <thead><tr><th>Data</th><th class="num">Milhas</th><th class="num">Milheiro</th>
         <th class="num">Valor da venda</th><th>Pagador</th><th></th></tr></thead>
       <tbody>${lista.map(v => {
         const c = cias.find(x => x.companhia === v.companhia);
         const dif = c && c.media ? (toCents(v.milheiro) - toCents(c.media)) / toCents(c.media) : 0;
         return `<tr>
           <td>${fmtDate(v.data)}</td>
-          <td><b class="${corCia(v.companhia)}">${esc(v.companhia)}</b></td>
           <td class="num">${v.milhas.toLocaleString('pt-BR')}</td>
           <td class="num">${brl(v.milheiro)}${dif ? ` <small class="${dif > 0 ? 'bl-pos' : 'bl-neg'}">${dif > 0 ? '+' : ''}${(dif*100).toFixed(0)}%</small>` : ''}</td>
           <td class="num forte">${brl(v.valor)}</td>
           <td>${esc(v.pagador || 'Venda de milhas')}${v.recId && S.rec.some(r => r.id === v.recId) ? ' <span class="selo-ok">recebido</span>' : ''}</td>
-          <td><button class="lixo" data-delvenda="${v.id}" title="Apagar venda">✕</button></td></tr>`;
+          <td style="white-space:nowrap"><button class="lixo" data-editvenda="${v.id}" title="Editar venda">✎</button>
+            <button class="lixo" data-delvenda="${v.id}" title="Apagar venda">✕</button></td></tr>`;
       }).join('')}</tbody>
-      <tfoot><tr><td colspan="2">${lista.length} venda(s)</td><td class="num">${somaMilhas.toLocaleString('pt-BR')}</td>
-        <td></td><td class="num forte">${brl(somaValor)}</td><td colspan="2"></td></tr></tfoot>
-    </table>` : '<div class="empty">Nenhuma venda registrada. Escolha a companhia acima para lançar a primeira.</div>';
+      <tfoot><tr><td>${lista.length} venda(s) de ${esc(aberta)}</td><td class="num">${somaMilhas(lista).toLocaleString('pt-BR')}</td>
+        <td></td><td class="num forte">${brl(somaValor(lista))}</td><td colspan="2"></td></tr></tfoot>
+    </table>` : `<div class="empty">Nenhuma venda de ${esc(aberta)} ainda.</div>`;
 }
 
 /** liga os três campos: mexendo em dois, o terceiro se acerta */

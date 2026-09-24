@@ -110,6 +110,8 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
 .vform .duas{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .vform .prev{font-size:11.5px;color:var(--muted);margin:2px 0 9px;line-height:1.45}
 .vform .bts{display:grid;grid-template-columns:1fr auto;gap:8px}
+.vform .bt.estreito{width:52px;padding:0;font-size:17px;color:var(--muted)}
+.vform .edit-aviso{background:var(--info-dim);color:var(--info);border-radius:8px;padding:7px 10px;margin-bottom:9px;font-size:12px;font-weight:700}
 .chips-est{display:flex;gap:8px;margin-top:12px;padding-top:11px;border-top:1px solid rgba(255,255,255,.14)}
 .chips-est .chip{flex:1;background:rgba(255,255,255,.07);border-radius:9px;padding:8px 10px}
 .chips-est .r{font-size:10px;color:#93A9C6;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
@@ -435,7 +437,7 @@ const FIREBASE = {
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
 const ADMINS = ["alanclebersantana@gmail.com"];
-const VERSAO = "24/09/2026 11:32";
+const VERSAO = "24/09/2026 11:51";
 
 const STATUS = ['Pendente','Agendado','Pago','Reinvestido','Cancelado'];
 const STATUS_REC = ['Previsto','Recebido','Atrasado','Cancelado'];
@@ -444,7 +446,7 @@ const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','ag
 
 const S = {rows:[], rec:[], adi:[], log:[], estoque:{itens:[]}, saldo:{valor:0, mesRef:''},
   tela:'bal', mesSel:'', limite:{lanc:40, rec:40, adi:40},
-  sel:new Set(), selTipo:'', selModo:false, vendas:[], vendaAberta:'',
+  sel:new Set(), selTipo:'', selModo:false, vendas:[], vendaAberta:'', vendaEdit:'',
   f:{lanc:{q:'', st:'Pendente', op:'', d1:'', d2:'', v1:'', v2:''},
      rec:{q:'', st:'Previsto', pg:'', d1:'', d2:''},
      adi:{q:'', st:'Aguardando', d1:'', d2:''}}};
@@ -772,42 +774,74 @@ function ciasComEstoque(){
 function pintarVendas(){
   if (!$('#vCias')) return;
   const cias = ciasComEstoque();
-  const cia = cias.find(c => c.companhia === S.vendaAberta);
+  const cia = cias.find(c => c.companhia === S.vendaAberta)
+    || (S.vendaAberta && S.vendas.some(v => v.companhia === S.vendaAberta)
+        ? {companhia:S.vendaAberta, saldo:0, media:0, semEstoque:true} : null);
 
-  $('#vCias').innerHTML = cias.map(c => `
+  const comVenda = [...new Set(S.vendas.map(v => v.companhia))]
+    .filter(c => !cias.some(x => x.companhia === c)).map(c => ({companhia:c, saldo:0, media:0}));
+  $('#vCias').innerHTML = [...cias, ...comVenda].map(c => `
     <button data-cia="${esc(c.companhia)}" class="${c.companhia === S.vendaAberta ? 'on' : ''}">${esc(c.companhia)}
       <small>${c.saldo ? (c.saldo/1e6).toLocaleString('pt-BR',{maximumFractionDigits:1}) + ' mi' : 'sem saldo'}</small></button>`).join('')
     || '<span style="font-size:12.5px;color:var(--muted-2)">Cadastre o estoque no computador para vender.</span>';
 
-  $('#vForm').innerHTML = !cia ? '' : `
+  const edit = S.vendaEdit ? S.vendas.find(v => v.id === S.vendaEdit) : null;
+  $('#vForm').innerHTML = !cia ? '' : (cia.semEstoque && !edit)
+    ? `<div class="vform" style="background:var(--surface-2);border-color:var(--line)">
+         <div style="font-size:12.5px;color:var(--muted)">Sem estoque operacional cadastrado para ${esc(cia.companhia)} — cadastre no computador para lançar novas vendas.</div>
+         <div class="bts" style="margin-top:9px"><span></span><button class="bt leve" data-cancelarvenda="1">Fechar</button></div>
+       </div>`
+    : `
     <div class="vform">
+      ${edit ? `<div class="edit-aviso">Editando a venda de ${fmtData(edit.data)} · ${brl(edit.valor)}</div>` : ''}
       <div class="campo"><label for="vqMilhas">Milhas vendidas de ${esc(cia.companhia)}</label>
-        <input id="vqMilhas" inputmode="numeric" placeholder="15.000.000"></div>
+        <input id="vqMilhas" inputmode="numeric" placeholder="15.000.000" value="${edit ? edit.milhas.toLocaleString('pt-BR') : ''}"></div>
       <div class="duas">
         <div class="campo"><label for="vqMilheiro">Milheiro</label>
-          <input id="vqMilheiro" inputmode="decimal" value="${cia.media ? cia.media.toFixed(2).replace('.',',') : ''}"></div>
+          <input id="vqMilheiro" inputmode="decimal" value="${edit ? edit.milheiro.toFixed(2).replace('.',',') : (cia.media ? cia.media.toFixed(2).replace('.',',') : '')}"></div>
         <div class="campo"><label for="vqValor">Valor da venda</label>
-          <input id="vqValor" inputmode="decimal" placeholder="0,00"></div>
+          <input id="vqValor" inputmode="decimal" placeholder="0,00" value="${edit ? edit.valor.toFixed(2).replace('.',',') : ''}"></div>
       </div>
       <div class="duas">
-        <div class="campo"><label for="vqPagador">Pagador</label><input id="vqPagador" placeholder="quem comprou"></div>
-        <div class="campo"><label for="vqData">Data</label><input id="vqData" type="date" value="${hojeSP()}"></div>
+        <div class="campo"><label for="vqPagador">Pagador</label><input id="vqPagador" placeholder="quem comprou" value="${edit ? esc(edit.pagador) : ''}"></div>
+        <div class="campo"><label for="vqData">Data</label><input id="vqData" type="date" value="${edit ? edit.data : hojeSP()}"></div>
       </div>
       <div class="prev" id="vqPrev"></div>
-      <div class="bts"><button class="bt forte" data-salvarvenda="1">Salvar venda</button>
-        <button class="bt leve" data-cancelarvenda="1">Cancelar</button></div>
+      <div class="bts"><button class="bt forte" data-salvarvenda="1">${edit ? 'Salvar alteração' : 'Salvar venda'}</button>
+        <button class="bt leve estreito" data-cancelarvenda="1" aria-label="Cancelar" title="Cancelar">✕</button></div>
     </div>`;
 
-  const lista = S.vendas.slice().sort((a,b) => String(b.data).localeCompare(String(a.data)) || b.em - a.em);
+  // fechado: resumo por companhia. Aberto: as vendas daquela companhia.
+  const todas = S.vendas.slice().sort((a,b) => String(b.data).localeCompare(String(a.data)) || b.em - a.em);
+  const somaM = l => l.reduce((s,v) => s + v.milhas, 0);
+  const somaV = l => real(l.reduce((s,v) => s + cent(v.valor), 0));
+
+  if (!cia){
+    const porCia = {};
+    todas.forEach(v => { (porCia[v.companhia] = porCia[v.companhia] || []).push(v); });
+    const linhas = Object.entries(porCia).sort((a,b) => somaV(b[1]) - somaV(a[1]));
+    $('#vLista').innerHTML = linhas.length ? linhas.map(([c, vs]) => `
+      <button class="linha" data-cia="${esc(c)}" style="width:100%;text-align:left">
+        <div class="esq"><b>${esc(c)}</b><span>${somaM(vs).toLocaleString('pt-BR')} milhas · ${vs.length} venda(s)</span></div>
+        <div class="dir" style="color:var(--accent-2)">${brl(somaV(vs))}</div></button>`).join('')
+      + `<div class="linha"><div class="esq"><b>Total</b><span>${somaM(todas).toLocaleString('pt-BR')} milhas</span></div>
+         <div class="dir">${brl(somaV(todas))}</div></div>`
+      : '<div class="vazio">Nenhuma venda registrada. Toque na companhia para lançar a primeira.</div>';
+    return;
+  }
+
+  const lista = todas.filter(v => v.companhia === cia.companhia);
   $('#vLista').innerHTML = lista.length ? lista.map(v => `
     <div class="linha"><div class="esq">
-      <b>${esc(v.companhia)} · ${v.milhas.toLocaleString('pt-BR')}</b>
+      <b>${v.milhas.toLocaleString('pt-BR')} milhas</b>
       <span>${fmtData(v.data)} · ${brl(v.milheiro)} o milheiro${v.pagador ? ' · ' + esc(v.pagador) : ''}</span></div>
       <div class="dir" style="color:var(--accent-2)">${brl(v.valor)}
+        <button class="lixinho" data-editvenda="${v.id}" title="Editar">✎</button>
         <button class="lixinho" data-delvenda="${v.id}" title="Apagar">✕</button></div></div>`).join('')
-      + `<div class="linha"><div class="esq"><b>${lista.length} venda(s)</b></div>
-         <div class="dir">${brl(soma(lista))}</div></div>`
-    : '<div class="vazio">Nenhuma venda registrada.</div>';
+      + `<div class="linha"><div class="esq"><b>${lista.length} venda(s) de ${esc(cia.companhia)}</b>
+         <span>${somaM(lista).toLocaleString('pt-BR')} milhas</span></div>
+         <div class="dir">${brl(somaV(lista))}</div></div>`
+    : `<div class="vazio">Nenhuma venda de ${esc(cia.companhia)} ainda.</div>`;
 
   if (cia) ligarContaVenda(cia);
 }
@@ -865,6 +899,37 @@ async function salvarVendaCel(){
 
     S.vendaAberta = '';
     recado(`Venda gravada · ${brl(valor)} entrou como recebimento`);
+    pintar();
+  } catch(err){ recado('Não consegui gravar: ' + (err.code || err.message)); }
+}
+
+async function alterarVendaCel(id){
+  const antes = S.vendas.find(x => x.id === id); if (!antes) return;
+  if (!podeEditar()) return recado('Seu acesso é somente leitura');
+  const v = id2 => { const el = $('#'+id2); return el ? el.value.trim() : ''; };
+  const milhas = Math.round(parseNum(v('vqMilhas'))), milheiro = real(cent(parseNum(v('vqMilheiro'))));
+  const valor = real(cent(parseNum(v('vqValor')))) || real(Math.round(cent(milheiro) * milhas / 1000));
+  if (!milhas || !valor) return recado('Informe as milhas e o valor');
+  const data = v('vqData') || antes.data, pagador = v('vqPagador') || 'Venda de milhas';
+  const dif = milhas - antes.milhas;
+  try {
+    if (dif){
+      const itens = ((S.estoque && S.estoque.itens) || []).map(i => ({...i}));
+      const alvo = itens.find(i => !/BLOQUEAD/i.test(i.tipo || '') && i.companhia === antes.companhia);
+      if (alvo){ alvo.saldo = (Number(alvo.saldo) || 0) - dif;
+        await fdb.collection('config').doc('estoque').set({itens, em:Date.now(), porQuem:APP.nome}); }
+    }
+    if (antes.recId) await fdb.collection('recebimentos').doc(antes.recId).set({valor, valorRecebido:valor,
+      dataPrevista:data, dataRecebida:data, pagador, status:'Recebido',
+      descricao:`${milhas.toLocaleString('pt-BR')} milhas ${antes.companhia} a ${brl(milheiro)} o milheiro`,
+      porQuem:APP.nome, em:Date.now()}, {merge:true});
+    await fdb.collection('vendas').doc(id).set({...antes, milhas, milheiro, valor, data, pagador,
+      porQuem:APP.nome, em:Date.now()});
+    await fdb.collection('auditoria').add({ts:Date.now(), uid:APP.uid, nome:APP.nome, origem:'celular',
+      label:'venda de milhas alterada', tela:'estoque',
+      resumo:[`${antes.companhia}: ${antes.milhas.toLocaleString('pt-BR')} → ${milhas.toLocaleString('pt-BR')} milhas · ${brl(antes.valor)} → ${brl(valor)}`], total:1});
+    S.vendaEdit = ''; S.vendaAberta = '';
+    recado('Venda atualizada');
     pintar();
   } catch(err){ recado('Não consegui gravar: ' + (err.code || err.message)); }
 }
@@ -1301,11 +1366,18 @@ document.addEventListener('click', async e => {
 
   const cia = e.target.closest('[data-cia]');
   if (cia){
+    S.vendaEdit = '';
     S.vendaAberta = S.vendaAberta === cia.dataset.cia ? '' : cia.dataset.cia;
     return pintarVendas();
   }
-  if (e.target.closest('[data-cancelarvenda]')){ S.vendaAberta = ''; return pintarVendas(); }
-  if (e.target.closest('[data-salvarvenda]')) return salvarVendaCel();
+  if (e.target.closest('[data-cancelarvenda]')){ S.vendaEdit = ''; S.vendaAberta = ''; return pintarVendas(); }
+  const edv = e.target.closest('[data-editvenda]');
+  if (edv){
+    const v = S.vendas.find(x => x.id === edv.dataset.editvenda); if (!v) return;
+    S.vendaEdit = v.id; S.vendaAberta = v.companhia;
+    return pintarVendas();
+  }
+  if (e.target.closest('[data-salvarvenda]')) return S.vendaEdit ? alterarVendaCel(S.vendaEdit) : salvarVendaCel();
   const delv = e.target.closest('[data-delvenda]');
   if (delv) return apagarVendaCel(delv.dataset.delvenda);
 
