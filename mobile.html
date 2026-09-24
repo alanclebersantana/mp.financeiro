@@ -89,6 +89,31 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
 .destaque .val{font-size:30px;font-weight:800;letter-spacing:-.6px;margin-top:2px}
 .destaque .nota{font-size:11.5px;color:#93A9C6;margin-top:4px}
 .duplo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pos .val{font-size:28px}
+.pos .bloco{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.14)}
+.pos .tit{font-size:10.5px;font-weight:800;color:#7E93B2;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.pos .pl{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:4px 0;font-size:13.5px}
+.pos .pl span{color:#C2D0E3}
+.pos .pl b{white-space:nowrap;font-weight:700}
+.pos .pl.forte{border-top:1px solid rgba(255,255,255,.12);margin-top:5px;padding-top:8px}
+.pos .pl.forte b{font-size:15px}
+.pos .e{color:#7FE3B0} .pos .s{color:#FFB48A} .pos .bq{color:#FF9F97}
+.mcomp{display:flex;gap:7px;overflow-x:auto;padding-bottom:7px;margin-bottom:8px;scrollbar-width:none}
+.mcomp::-webkit-scrollbar{display:none}
+.mcomp button{flex:0 0 auto;padding:8px 14px;border-radius:999px;border:1px solid var(--line);
+  background:var(--surface-2);font-weight:800;font-size:13px;color:var(--text)}
+.mcomp button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.mcomp small{display:block;font-size:10px;font-weight:600;color:var(--muted-2)}
+.mcomp button.on small{color:rgba(255,255,255,.8)}
+.vform{background:var(--accent-dim);border:1px solid var(--accent);border-radius:var(--rs);padding:11px;margin-bottom:10px}
+.vform .campo{margin-bottom:8px}
+.vform .duas{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vform .prev{font-size:11.5px;color:var(--muted);margin:2px 0 9px;line-height:1.45}
+.vform .bts{display:grid;grid-template-columns:1fr auto;gap:8px}
+.chips-est{display:flex;gap:8px;margin-top:12px;padding-top:11px;border-top:1px solid rgba(255,255,255,.14)}
+.chips-est .chip{flex:1;background:rgba(255,255,255,.07);border-radius:9px;padding:8px 10px}
+.chips-est .r{font-size:10px;color:#93A9C6;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.chips-est .v{font-size:14.5px;font-weight:800;margin-top:2px;white-space:nowrap}
 .mini{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px}
 .mini .rot{font-size:11.5px;color:var(--muted-2);font-weight:700}
 .mini .val{font-size:19px;font-weight:800;margin-top:2px;letter-spacing:-.3px}
@@ -126,6 +151,8 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
   border-top:1px solid var(--line);font-size:13px;font-weight:700;color:var(--muted-2)}
 .data-total b{font-size:16px;font-weight:800;color:var(--ok)}
 .data-total b.sai{color:var(--accent-2)}
+.lixinho{margin-left:8px;color:var(--muted-2);font-size:13px;padding:2px 5px;border-radius:5px}
+.lixinho:active{background:var(--bad);color:#fff}
 .vazio{text-align:center;color:var(--muted-2);font-size:13.5px;padding:24px 10px}
 
 /* ---------- registros ---------- */
@@ -277,18 +304,29 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
 <main>
   <!-- BALANÇO -->
   <section class="tela on" id="tela-bal">
-    <div class="card destaque">
-      <div class="rot">Posição contratual líquida</div>
-      <div class="val" id="bSaude">—</div>
-      <div class="nota" id="bSaudeNota">recebíveis menos obrigações · não é saldo bancário</div>
-    </div>
-    <div class="duplo">
-      <div class="mini"><div class="rot">Recebimentos previstos</div><div class="val pos" id="bEnt">—</div></div>
-      <div class="mini"><div class="rot">Pagamentos previstos</div><div class="val sai" id="bSai">—</div></div>
+    <div class="card destaque pos">
+      <div class="rot">Posição operacional líquida (estimada)</div>
+      <div class="val" id="bPosicao">—</div>
+      <div class="nota">Recebíveis líquidos de obrigações mais estoque disponível. Não é saldo bancário.</div>
+      <div class="bloco">
+        <div class="tit">Posição contratual</div>
+        <div class="pl"><span>Recebimentos previstos</span><b class="e" id="bEnt">—</b></div>
+        <div class="pl"><span>Pagamentos previstos</span><b class="s" id="bSai">—</b></div>
+        <div class="pl forte"><span>Posição contratual líquida</span><b id="bSaude">—</b></div>
+      </div>
+      <div class="chips-est">
+        <div class="chip"><div class="r">Milhas disponíveis</div><div class="v e" id="bMilhasOk">—</div></div>
+        <div class="chip"><div class="r">Milhas bloqueadas</div><div class="v bq" id="bMilhasBq">—</div></div>
+      </div>
     </div>
     <div class="card"><h2>Hoje</h2><div id="bHoje"></div></div>
     <div class="card"><h2>Próximos dias</h2><div id="bDias"></div></div>
     <div class="card"><h2>Estoque de milhas</h2><div id="bEstoque"></div></div>
+    <div class="card"><h2>Milhas vendidas</h2>
+      <div class="mcomp" id="vCias"></div>
+      <div id="vForm"></div>
+      <div id="vLista"></div>
+    </div>
     <div class="card"><h2>A receber</h2><div id="bReceber"></div></div>
     <div class="card"><h2>A pagar — Milhas Plus</h2><div id="bPagar"></div></div>
   </section>
@@ -397,7 +435,7 @@ const FIREBASE = {
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
 const ADMINS = ["alanclebersantana@gmail.com"];
-const VERSAO = "24/09/2026 09:31";
+const VERSAO = "24/09/2026 11:32";
 
 const STATUS = ['Pendente','Agendado','Pago','Reinvestido','Cancelado'];
 const STATUS_REC = ['Previsto','Recebido','Atrasado','Cancelado'];
@@ -406,7 +444,7 @@ const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','ag
 
 const S = {rows:[], rec:[], adi:[], log:[], estoque:{itens:[]}, saldo:{valor:0, mesRef:''},
   tela:'bal', mesSel:'', limite:{lanc:40, rec:40, adi:40},
-  sel:new Set(), selTipo:'', selModo:false,
+  sel:new Set(), selTipo:'', selModo:false, vendas:[], vendaAberta:'',
   f:{lanc:{q:'', st:'Pendente', op:'', d1:'', d2:'', v1:'', v2:''},
      rec:{q:'', st:'Previsto', pg:'', d1:'', d2:''},
      adi:{q:'', st:'Aguardando', d1:'', d2:''}}};
@@ -501,6 +539,7 @@ function escutar(){
   liga('lancamentos', d => S.rows = d.map(normLanc));
   liga('recebimentos', d => S.rec = d.map(normRec));
   liga('adiantamentos', d => S.adi = d.map(normAdi));
+  liga('vendas', d => S.vendas = d.map(normVenda));
   liga('auditoria', d => S.log = d, 'ts');
   solto.push(fdb.collection('config').doc('estoque').onSnapshot(d => { S.estoque = d.exists ? d.data() : {itens:[]}; pintar(); }, () => {}));
   solto.push(fdb.collection('config').doc('saldo').onSnapshot(d => { S.saldo = d.exists ? d.data() : {valor:0, mesRef:''}; pintar(); }, () => {}));
@@ -710,12 +749,150 @@ function alternarSelecao(tipo){
   pintarLista(tipo);
 }
 
+/* ---------- milhas vendidas ---------- */
+function normVenda(o){
+  const milhas = Math.round(parseNum(o.milhas)), milheiro = real(cent(o.milheiro));
+  return {id:o.id, companhia:String(o.companhia ?? '').trim().toUpperCase(), milhas, milheiro,
+    valor: o.valor ? real(cent(o.valor)) : real(Math.round(cent(milheiro) * milhas / 1000)),
+    data: parseDate(o.data) || hojeSP(), pagador:String(o.pagador ?? '').trim(),
+    recId:String(o.recId ?? ''), porQuem:String(o.porQuem ?? ''), em:o.em || 0};
+}
+function ciasComEstoque(){
+  const itens = ((S.estoque && S.estoque.itens) || []).filter(i => !/BLOQUEAD/i.test(i.tipo || ''));
+  const mapa = new Map();
+  itens.forEach(i => {
+    const x = mapa.get(i.companhia) || {companhia:i.companhia, saldo:0, media:0, id:i.id};
+    x.saldo += Number(i.saldo) || 0;
+    if (!x.media) x.media = Number(i.media) || 0;
+    mapa.set(i.companhia, x);
+  });
+  return [...mapa.values()];
+}
+
+function pintarVendas(){
+  if (!$('#vCias')) return;
+  const cias = ciasComEstoque();
+  const cia = cias.find(c => c.companhia === S.vendaAberta);
+
+  $('#vCias').innerHTML = cias.map(c => `
+    <button data-cia="${esc(c.companhia)}" class="${c.companhia === S.vendaAberta ? 'on' : ''}">${esc(c.companhia)}
+      <small>${c.saldo ? (c.saldo/1e6).toLocaleString('pt-BR',{maximumFractionDigits:1}) + ' mi' : 'sem saldo'}</small></button>`).join('')
+    || '<span style="font-size:12.5px;color:var(--muted-2)">Cadastre o estoque no computador para vender.</span>';
+
+  $('#vForm').innerHTML = !cia ? '' : `
+    <div class="vform">
+      <div class="campo"><label for="vqMilhas">Milhas vendidas de ${esc(cia.companhia)}</label>
+        <input id="vqMilhas" inputmode="numeric" placeholder="15.000.000"></div>
+      <div class="duas">
+        <div class="campo"><label for="vqMilheiro">Milheiro</label>
+          <input id="vqMilheiro" inputmode="decimal" value="${cia.media ? cia.media.toFixed(2).replace('.',',') : ''}"></div>
+        <div class="campo"><label for="vqValor">Valor da venda</label>
+          <input id="vqValor" inputmode="decimal" placeholder="0,00"></div>
+      </div>
+      <div class="duas">
+        <div class="campo"><label for="vqPagador">Pagador</label><input id="vqPagador" placeholder="quem comprou"></div>
+        <div class="campo"><label for="vqData">Data</label><input id="vqData" type="date" value="${hojeSP()}"></div>
+      </div>
+      <div class="prev" id="vqPrev"></div>
+      <div class="bts"><button class="bt forte" data-salvarvenda="1">Salvar venda</button>
+        <button class="bt leve" data-cancelarvenda="1">Cancelar</button></div>
+    </div>`;
+
+  const lista = S.vendas.slice().sort((a,b) => String(b.data).localeCompare(String(a.data)) || b.em - a.em);
+  $('#vLista').innerHTML = lista.length ? lista.map(v => `
+    <div class="linha"><div class="esq">
+      <b>${esc(v.companhia)} · ${v.milhas.toLocaleString('pt-BR')}</b>
+      <span>${fmtData(v.data)} · ${brl(v.milheiro)} o milheiro${v.pagador ? ' · ' + esc(v.pagador) : ''}</span></div>
+      <div class="dir" style="color:var(--accent-2)">${brl(v.valor)}
+        <button class="lixinho" data-delvenda="${v.id}" title="Apagar">✕</button></div></div>`).join('')
+      + `<div class="linha"><div class="esq"><b>${lista.length} venda(s)</b></div>
+         <div class="dir">${brl(soma(lista))}</div></div>`
+    : '<div class="vazio">Nenhuma venda registrada.</div>';
+
+  if (cia) ligarContaVenda(cia);
+}
+
+function ligarContaVenda(cia){
+  const m = $('#vqMilhas'), k = $('#vqMilheiro'), val = $('#vqValor'), prev = $('#vqPrev');
+  if (!m) return;
+  const num = el => parseNum(el.value);
+  const pinta = () => {
+    const milhas = Math.round(num(m)), milheiro = num(k), valor = num(val);
+    const sobra = (cia.saldo || 0) - milhas;
+    prev.innerHTML = !milhas ? 'Preencha as milhas e o milheiro — o valor sai sozinho, e vice-versa.'
+      : `${brl(valor)} · estoque cai para <b>${sobra.toLocaleString('pt-BR')}</b> milhas · entra como recebimento em ${fmtData($('#vqData').value)}`;
+  };
+  const calcValor = () => { const milhas = Math.round(num(m)), milheiro = num(k);
+    if (milhas && milheiro) val.value = real(Math.round(cent(milheiro) * milhas / 1000)).toFixed(2).replace('.',','); pinta(); };
+  const calcMilheiro = () => { const milhas = Math.round(num(m)), valor = num(val);
+    if (milhas && valor) k.value = real(Math.round(cent(valor) * 1000 / milhas)).toFixed(2).replace('.',','); pinta(); };
+  m.addEventListener('input', () => { num(k) ? calcValor() : calcMilheiro(); });
+  k.addEventListener('input', calcValor);
+  val.addEventListener('input', calcMilheiro);
+  $('#vqData').addEventListener('input', pinta);
+  pinta();
+}
+
+async function salvarVendaCel(){
+  if (!podeEditar()) return recado('Seu acesso é somente leitura');
+  const v = id => { const el = $('#'+id); return el ? el.value.trim() : ''; };
+  const cias = ciasComEstoque(), cia = cias.find(c => c.companhia === S.vendaAberta);
+  if (!cia) return;
+  const milhas = Math.round(parseNum(v('vqMilhas'))), milheiro = real(cent(parseNum(v('vqMilheiro'))));
+  const valor = real(cent(parseNum(v('vqValor')))) || real(Math.round(cent(milheiro) * milhas / 1000));
+  if (!milhas) return recado('Informe as milhas');
+  if (!valor) return recado('Informe o valor da venda');
+  const data = v('vqData') || hojeSP(), pagador = v('vqPagador') || 'Venda de milhas';
+
+  try {
+    const recRef = fdb.collection('recebimentos').doc();
+    await recRef.set({pagador, descricao:`${milhas.toLocaleString('pt-BR')} milhas ${cia.companhia} a ${brl(milheiro)} o milheiro`,
+      valor, dataPrevista:data, dataRecebida:data, valorRecebido:valor, status:'Recebido',
+      base:'venda de milhas', porQuem:APP.nome, em:Date.now()});
+
+    const itens = ((S.estoque && S.estoque.itens) || []).map(i => ({...i}));
+    const alvo = itens.find(i => !/BLOQUEAD/i.test(i.tipo || '') && i.companhia === cia.companhia);
+    if (alvo) alvo.saldo = (Number(alvo.saldo) || 0) - milhas;
+    await fdb.collection('config').doc('estoque').set({itens, em:Date.now(), porQuem:APP.nome});
+
+    await fdb.collection('vendas').add({companhia:cia.companhia, milhas, milheiro, valor, data, pagador,
+      recId:recRef.id, porQuem:APP.nome, em:Date.now()});
+
+    await fdb.collection('auditoria').add({ts:Date.now(), uid:APP.uid, nome:APP.nome, origem:'celular',
+      label:'venda de milhas', tela:'estoque',
+      resumo:[`${cia.companhia}: ${milhas.toLocaleString('pt-BR')} milhas a ${brl(milheiro)} = ${brl(valor)} em ${fmtData(data)}`,
+              `recebimento criado para ${pagador}`], total:1});
+
+    S.vendaAberta = '';
+    recado(`Venda gravada · ${brl(valor)} entrou como recebimento`);
+    pintar();
+  } catch(err){ recado('Não consegui gravar: ' + (err.code || err.message)); }
+}
+
+async function apagarVendaCel(id){
+  const v = S.vendas.find(x => x.id === id); if (!v) return;
+  if (!podeEditar()) return recado('Seu acesso é somente leitura');
+  if (!confirm(`Apagar a venda de ${v.milhas.toLocaleString('pt-BR')} milhas ${v.companhia}?\n\nAs milhas voltam ao estoque e o recebimento de ${brl(v.valor)} é removido.`)) return;
+  try {
+    const itens = ((S.estoque && S.estoque.itens) || []).map(i => ({...i}));
+    const alvo = itens.find(i => !/BLOQUEAD/i.test(i.tipo || '') && i.companhia === v.companhia);
+    if (alvo){ alvo.saldo = (Number(alvo.saldo) || 0) + v.milhas;
+      await fdb.collection('config').doc('estoque').set({itens, em:Date.now(), porQuem:APP.nome}); }
+    if (v.recId) await fdb.collection('recebimentos').doc(v.recId).delete();
+    await fdb.collection('vendas').doc(v.id).delete();
+    await fdb.collection('auditoria').add({ts:Date.now(), uid:APP.uid, nome:APP.nome, origem:'celular',
+      label:'venda de milhas apagada', tela:'estoque',
+      resumo:[`${v.companhia}: ${v.milhas.toLocaleString('pt-BR')} milhas devolvidas · recebimento de ${brl(v.valor)} removido`], total:1});
+    recado('Venda apagada e milhas devolvidas');
+  } catch(err){ recado('Não consegui apagar: ' + (err.code || err.message)); }
+}
+
 /* =========================================================
    TELAS
    ========================================================= */
 function pintar(){
   const t = S.tela;
-  if (t === 'bal') pintarBalanco();
+  if (t === 'bal'){ pintarBalanco(); pintarVendas(); }
   if (t === 'mes') pintarMes();
   if (t === 'lanc') pintarLista('lanc');
   if (t === 'rec') pintarLista('rec');
@@ -726,10 +903,12 @@ function pintar(){
 function pintarBalanco(){
   const saude = Calc.saude(), est = Calc.estoque(), h = hojeSP();
   $('#bSaude').textContent = brl(saude);
-  $('#bSaude').style.color = saude < 0 ? '#FF9F97' : '#fff';
-  $('#bSaudeNota').textContent = `${curto(Calc.entradasFuturas())} a receber − ${curto(Calc.saidasFuturas())} a pagar · não é saldo bancário`;
-  $('#bEnt').textContent = curto(Calc.entradasFuturas());
-  $('#bSai').textContent = curto(Calc.saidasFuturas());
+  $('#bPosicao').textContent = brl(real(cent(saude) + cent(est.livres)));
+  $('#bPosicao').style.color = (cent(saude) + cent(est.livres)) < 0 ? '#FF9F97' : '#fff';
+  $('#bMilhasOk').textContent = brl(est.livres);
+  $('#bMilhasBq').textContent = brl(est.bloqueados);
+  $('#bEnt').textContent = brl(Calc.entradasFuturas());
+  $('#bSai').textContent = brl(Calc.saidasFuturas());
 
   const entraHoje = Calc.aReceberEm(h), saiHoje = Calc.aPagarEm(h), atras = Calc.atrasados();
   $('#bHoje').innerHTML =
@@ -1119,6 +1298,16 @@ document.addEventListener('click', async e => {
     acao.disabled = true;
     return emLote(tarefa);
   }
+
+  const cia = e.target.closest('[data-cia]');
+  if (cia){
+    S.vendaAberta = S.vendaAberta === cia.dataset.cia ? '' : cia.dataset.cia;
+    return pintarVendas();
+  }
+  if (e.target.closest('[data-cancelarvenda]')){ S.vendaAberta = ''; return pintarVendas(); }
+  if (e.target.closest('[data-salvarvenda]')) return salvarVendaCel();
+  const delv = e.target.closest('[data-delvenda]');
+  if (delv) return apagarVendaCel(delv.dataset.delvenda);
 
   const abrir = e.target.closest('[data-abrir]');
   if (abrir){

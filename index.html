@@ -693,6 +693,21 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .pl-tab .forte{font-weight:800}
 .pl-tab tfoot td{border-top:1px solid var(--line);border-bottom:none;font-weight:800;background:var(--surface-2)}
 .pl-tab tbody tr:hover td{background:var(--hover)}
+.cias{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.pilcia{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);
+  background:var(--surface-2);font-size:13.5px}
+.pilcia:hover{border-color:var(--accent)}
+.pilcia.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.pilcia b{font-weight:800}
+.pilcia span{font-size:11.5px;color:var(--muted-2)}
+.pilcia.on b,.pilcia.on span{color:#fff}
+.vf{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end;
+  background:var(--accent-dim);border:1px solid var(--accent);border-radius:var(--rs);padding:12px}
+.vf-bts{display:flex;gap:8px;align-items:center}
+.vf-prev{font-size:12px;color:var(--muted);margin:9px 0 14px;line-height:1.5}
+.selo-ok{display:inline-block;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:800;
+  background:var(--ok-dim);color:var(--ok);margin-left:5px}
+.pl-tab small{font-size:10px;font-weight:800}
 .restricao{background:var(--bad-dim);border:1px solid var(--bad);border-radius:var(--rs);padding:12px;margin:14px 0}
 .rest-item{background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:11px 12px;margin-top:9px}
 .rest-cab{display:flex;align-items:center;gap:10px;margin-bottom:9px}
@@ -1104,6 +1119,12 @@ try { document.documentElement.dataset.tema =
       <div class="panel"><h3>Posições</h3><div id="balPosicoes" class="hz"></div>
         <div class="pl-exp">Recebíveis líquidos de obrigações mais estoque de milhas disponível. Não representa saldo bancário.</div></div>
       <div class="panel"><h3>Estoque de milhas</h3><div id="balEstoque"></div></div>
+      <div class="panel" id="balVendas"><h3>Milhas vendidas</h3>
+        <div class="cias" id="vendaCias"></div>
+        <div id="vendaForm"></div>
+        <div id="vendaLista"></div>
+        <div class="pl-exp">Cada venda abate as milhas do estoque da companhia e entra como recebimento na data informada. Apagar a venda devolve as milhas e remove o recebimento.</div>
+      </div>
 
 
 
@@ -1344,7 +1365,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "22/09/2026 12:40";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "24/09/2026 11:32";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -1402,7 +1423,7 @@ const S = {
   rows: [], rec: [], adi: [], pagadores: [], ops: OPS_BASE.slice(), sel: new Set(), hist: [], log: [], users: [],
   sort: {k:'dataPagamento', dir:1}, sortRec: {k:'dataPrevista', dir:1}, sortAdi: {k:'dataAdiantada', dir:1},
   f: {...FILTROS_PADRAO}, fr: {q:'', pg:'', st:'Previsto', d1:'', d2:''},
-  fa: {q:'', st:'Aguardando', d1:'', d2:''}, recModo: 'simples', saldoInicial: null, estoque: null, limites: null, lotes: [], errolotes: '', loteSel: '',
+  fa: {q:'', st:'Aguardando', d1:'', d2:''}, recModo: 'simples', saldoInicial: null, estoque: null, limites: null, lotes: [], errolotes: '', loteSel: '', vendas: [], vendaAberta: '',
   cfg: {autoAplicar: true}, chat: [], alias: {}, avisado: false,
   view: 'bal'
 };
@@ -1645,7 +1666,7 @@ const Local = {
   get(k){ try { const v = localStorage.getItem(k); if (v != null) return v; } catch(e){} return MEM[k] ?? null; },
   set(k,v){ MEM[k] = v; try { localStorage.setItem(k,v); } catch(e){} }
 };
-let fdb = null, fauth = null, unsubRows = null, unsubRec = null, unsubSaldo = null, unsubEstoque = null, unsubLim = null, unsubLotes = null, unsubAdi = null, unsubLog = null, unsubUsers = null;
+let fdb = null, fauth = null, unsubRows = null, unsubRec = null, unsubSaldo = null, unsubEstoque = null, unsubLim = null, unsubLotes = null, unsubVendas = null, unsubAdi = null, unsubLog = null, unsubUsers = null;
 
 const Repo = {
   async escutar(){
@@ -1675,6 +1696,10 @@ const Repo = {
         S.adi = snap.docs.map(d => normalizeAdi({id:d.id, ...d.data()})); BK.carregado.adi = true;
         if (typeof invalidarCacheIA === 'function') invalidarCacheIA();
         renderAll();
+      }, () => {});
+      unsubVendas && unsubVendas();
+      unsubVendas = fdb.collection('vendas').onSnapshot(s => {
+        S.vendas = s.docs.map(d => normalizeVenda({id:d.id, ...d.data()})); renderAll();
       }, () => {});
       unsubLotes && unsubLotes();
       unsubLotes = fdb.collection('lotes').orderBy('ts','desc').limit(200).onSnapshot(s => {
@@ -1710,6 +1735,8 @@ const Repo = {
       catch(e){ S.estoque = {...ESTOQUE_PADRAO}; }
       try { S.limites = JSON.parse(Local.get('tesouraria:limites') || 'null') || {itens:{}}; }
       catch(e){ S.limites = {itens:{}}; }
+      try { S.vendas = (JSON.parse(Local.get('tesouraria:vendas') || '[]') || []).map(normalizeVenda); }
+      catch(e){ S.vendas = []; }
       const rawAdi = Local.get('tesouraria:adi');
       S.adi = rawAdi ? JSON.parse(rawAdi).map(normalizeAdi) : [];
       S.log = JSON.parse(Local.get('tesouraria:log') || '[]');
@@ -2028,7 +2055,7 @@ function fillSelects(){
 }
 function renderAll(){
   [['filtros',fillSelects], ['painel',renderDash], ['lançamentos',renderTable], ['recebimentos',renderRec],
-   ['adiantamentos',renderAdi], ['lotes',renderLotes], ['balanço',renderBalanco]].forEach(([nome, fn]) => {
+   ['adiantamentos',renderAdi], ['lotes',renderLotes], ['vendas',renderVendas], ['balanço',renderBalanco]].forEach(([nome, fn]) => {
     try { fn(); } catch(e){ mostrarErro(`ao montar ${nome}`, e); }
   });
   if (S.view === 'mensal' || S.view === 'bal') Mensal.render();
@@ -2233,6 +2260,25 @@ $('#balRisco').addEventListener('click', async e => {
     label:'limites de exposição por pagador', tela:'limites',
     resumo:Object.entries(itens).map(([k,v]) => `${k}: ${brl(v)}`).slice(0,8), total:Object.keys(itens).length});
   renderAll(); toast('Limites salvos');
+});
+$('#balVendas').addEventListener('click', async e => {
+  const cia = e.target.closest('[data-cia]');
+  if (cia){
+    S.vendaAberta = S.vendaAberta === cia.dataset.cia ? '' : cia.dataset.cia;
+    renderVendas();
+    if (S.vendaAberta){ ligarCalculoVenda(); const el = $('#vMilhas'); if (el) el.focus(); }
+    return;
+  }
+  if (e.target.closest('#vCancelar')){ S.vendaAberta = ''; return renderVendas(); }
+  const del = e.target.closest('[data-delvenda]');
+  if (del) return excluirVenda(del.dataset.delvenda);
+  if (e.target.closest('#vSalvar')){
+    const val = id => { const el = $('#'+id); return el ? el.value : ''; };
+    await salvarVenda({companhia:S.vendaAberta, milhas:val('vMilhas'), milheiro:val('vMilheiro'),
+      valor:val('vValor'), pagador:val('vPagador'), data:val('vData')});
+    S.vendaAberta = '';     // o formulário fecha depois de salvar
+    renderVendas();
+  }
 });
 $('#balEstoque').addEventListener('click', async e => {
   if (e.target.closest('#salvarEstoque')){
@@ -5451,6 +5497,174 @@ function renderPainelPlanilha(){
         <button class="btn sm primary" id="salvarEstoque">Salvar estoque</button>
         <span class="bl-info">${estoqueBase().em ? 'atualizado por ' + esc(estoqueBase().porQuem) + ' em ' + hora(estoqueBase().em) : 'ainda não informado'}</span>
       </div>`;
+}
+
+
+/* =========================================================
+   MILHAS VENDIDAS
+   Cada venda abate as milhas do estoque da companhia e vira um recebimento.
+   ========================================================= */
+function normalizeVenda(o){
+  const milhas = Math.round(parseNum(o.milhas));
+  const milheiro = Math.round(parseNum(o.milheiro)*100)/100;
+  return {id:o.id || uid(), companhia:String(o.companhia ?? '').trim().toUpperCase(),
+    milhas, milheiro,
+    valor: o.valor !== undefined && o.valor !== '' ? Math.round(parseNum(o.valor)*100)/100
+         : fromCents(Math.round(toCents(milheiro) * milhas / 1000)),
+    data: parseDate(o.data) || getTodaySP(),
+    pagador: String(o.pagador ?? '').trim(),
+    recId: String(o.recId ?? ''),
+    porQuem: String(o.porQuem ?? ''), em: o.em || Date.now()};
+}
+/** as companhias que têm estoque operacional, com o saldo atual */
+function companhiasComEstoque(){
+  const itens = ((S.estoque && S.estoque.itens) || []).filter(i => !bloqueada(i));
+  const mapa = new Map();
+  itens.forEach(i => {
+    const atual = mapa.get(i.companhia) || {companhia:i.companhia, saldo:0, media:0, itemId:i.id};
+    atual.saldo += Number(i.saldo) || 0;
+    if (!atual.media) atual.media = Number(i.media) || 0;
+    mapa.set(i.companhia, atual);
+  });
+  return [...mapa.values()];
+}
+const vendasDaCia = c => S.vendas.filter(v => v.companhia === String(c).toUpperCase());
+
+async function salvarVenda(dados){
+  if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+  const v = normalizeVenda({...dados, porQuem: APP.nome || 'Local'});
+  if (!v.companhia) return toast('Escolha a companhia.');
+  if (!v.milhas) return toast('Informe a quantidade de milhas.');
+  if (!v.valor) return toast('Informe o valor da venda.');
+
+  const itens = ((S.estoque && S.estoque.itens) || []).map(i => ({...i}));
+  const alvo = itens.find(i => !bloqueada(i) && i.companhia === v.companhia);
+  if (!alvo) return toast(`Não há estoque operacional cadastrado para ${v.companhia}.`);
+  if ((Number(alvo.saldo) || 0) < v.milhas &&
+      !confirm(`O estoque da ${v.companhia} tem ${(Number(alvo.saldo)||0).toLocaleString('pt-BR')} milhas, menos que as ${v.milhas.toLocaleString('pt-BR')} desta venda.\n\nGravar assim mesmo? O saldo ficará negativo.`)) return;
+
+  // o recebimento nasce junto, já recebido, com o id que guardamos na venda
+  v.recId = uid();
+  await aplicar([{acao:'criar', dados:{id:v.recId, pagador:v.pagador || 'Venda de milhas',
+    descricao:`${v.milhas.toLocaleString('pt-BR')} milhas ${v.companhia} a ${brl(v.milheiro)} o milheiro`,
+    valor:v.valor, dataPrevista:v.data, dataRecebida:v.data, valorRecebido:v.valor,
+    status:'Recebido', base:'venda de milhas'}}], 'manual', `venda de milhas ${v.companhia}`, true, 'rec');
+
+  alvo.saldo = (Number(alvo.saldo) || 0) - v.milhas;
+  await gravarEstoque(itens);
+
+  S.vendas = [v, ...S.vendas];
+  if (APP.modo === 'nuvem'){ try { await fdb.collection('vendas').doc(v.id).set(v); }
+    catch(e){ toast('Venda registrada, mas não consegui guardar: ' + (e.code || e.message)); } }
+  else Local.set('tesouraria:vendas', JSON.stringify(S.vendas));
+
+  await Repo.registrar({ts:Date.now(), uid:APP.uid || 'local', nome:APP.nome || 'Local', origem:'manual',
+    label:'venda de milhas', tela:'estoque',
+    resumo:[`${v.companhia}: ${v.milhas.toLocaleString('pt-BR')} milhas a ${brl(v.milheiro)} = ${brl(v.valor)} em ${fmtDate(v.data)}`,
+            `estoque ${v.companhia}: ${(Number(alvo.saldo) + v.milhas).toLocaleString('pt-BR')} → ${Number(alvo.saldo).toLocaleString('pt-BR')}`,
+            `recebimento criado para ${v.pagador || 'Venda de milhas'}`], total:1});
+  renderAll();
+  toast(`Venda gravada · ${brl(v.valor)} entrou como recebimento`);
+}
+
+async function excluirVenda(id){
+  const v = S.vendas.find(x => x.id === id); if (!v) return;
+  if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+  if (!confirm(`Apagar a venda de ${v.milhas.toLocaleString('pt-BR')} milhas ${v.companhia}?\n\nAs milhas voltam ao estoque e o recebimento de ${brl(v.valor)} é removido.`)) return;
+
+  const itens = ((S.estoque && S.estoque.itens) || []).map(i => ({...i}));
+  const alvo = itens.find(i => !bloqueada(i) && i.companhia === v.companhia);
+  if (alvo){ alvo.saldo = (Number(alvo.saldo) || 0) + v.milhas; await gravarEstoque(itens); }
+
+  if (v.recId && S.rec.some(r => r.id === v.recId))
+    await aplicar([{acao:'excluir', id:v.recId}], 'manual', 'recebimento da venda removido', true, 'rec');
+
+  S.vendas = S.vendas.filter(x => x.id !== id);
+  if (APP.modo === 'nuvem'){ try { await fdb.collection('vendas').doc(id).delete(); } catch(e){} }
+  else Local.set('tesouraria:vendas', JSON.stringify(S.vendas));
+
+  await Repo.registrar({ts:Date.now(), uid:APP.uid || 'local', nome:APP.nome || 'Local', origem:'manual',
+    label:'venda de milhas apagada', tela:'estoque',
+    resumo:[`${v.companhia}: ${v.milhas.toLocaleString('pt-BR')} milhas devolvidas ao estoque · recebimento de ${brl(v.valor)} removido`], total:1});
+  renderAll();
+  toast('Venda apagada e milhas devolvidas');
+}
+
+function renderVendas(){
+  if (!$('#balVendas')) return;
+  const cias = companhiasComEstoque();
+  const aberta = S.vendaAberta;
+  const cia = cias.find(c => c.companhia === aberta);
+  const corCia = c => 'comp-' + String(c).replace(/[^A-Za-z]/g,'').toUpperCase();
+
+  $('#vendaCias').innerHTML = cias.map(c => `
+    <button class="pilcia ${c.companhia === aberta ? 'on' : ''}" data-cia="${esc(c.companhia)}">
+      <b class="${corCia(c.companhia)}">${esc(c.companhia)}</b>
+      <span>${c.saldo ? c.saldo.toLocaleString('pt-BR') + ' milhas' : 'sem saldo'}</span>
+    </button>`).join('') || '<span class="bl-info">Cadastre o estoque acima para registrar vendas.</span>';
+
+  $('#vendaForm').innerHTML = !cia ? '' : `
+    <div class="vf">
+      <div class="field"><label>Companhia</label><input class="inp" value="${esc(cia.companhia)}" disabled></div>
+      <div class="field"><label>Milhas vendidas</label><input class="inp" id="vMilhas" inputmode="numeric" placeholder="15.000.000"></div>
+      <div class="field"><label>Milheiro</label><input class="inp" id="vMilheiro" inputmode="decimal" value="${cia.media ? cia.media.toFixed(2).replace('.',',') : ''}"></div>
+      <div class="field"><label>Valor da venda</label><input class="inp" id="vValor" inputmode="decimal" placeholder="0,00"></div>
+      <div class="field"><label>Pagador</label><input class="inp" id="vPagador" list="listaPagadores" placeholder="quem comprou"></div>
+      <div class="field"><label>Data</label><input class="inp" id="vData" type="date" value="${getTodaySP()}"></div>
+      <div class="vf-bts"><button class="btn primary" id="vSalvar">Salvar venda</button>
+        <button class="btn ghost" id="vCancelar">Cancelar</button></div>
+    </div>
+    <datalist id="listaPagadores">${[...new Set(S.rec.map(r => r.pagador))].filter(Boolean).map(p => `<option>${esc(p)}</option>`).join('')}</datalist>
+    <div class="vf-prev" id="vPrev">Preencha as milhas e o milheiro — o valor é calculado sozinho, e vice-versa.</div>`;
+
+  const lista = S.vendas.slice().sort((a,b) => String(b.data).localeCompare(String(a.data)) || b.em - a.em);
+  const somaMilhas = lista.reduce((s,v) => s + v.milhas, 0);
+  const somaValor = fromCents(lista.reduce((s,v) => s + toCents(v.valor), 0));
+  $('#vendaLista').innerHTML = lista.length ? `
+    <table class="pl-tab">
+      <thead><tr><th>Data</th><th>Companhia</th><th class="num">Milhas</th><th class="num">Milheiro</th>
+        <th class="num">Valor da venda</th><th>Pagador</th><th></th></tr></thead>
+      <tbody>${lista.map(v => {
+        const c = cias.find(x => x.companhia === v.companhia);
+        const dif = c && c.media ? (toCents(v.milheiro) - toCents(c.media)) / toCents(c.media) : 0;
+        return `<tr>
+          <td>${fmtDate(v.data)}</td>
+          <td><b class="${corCia(v.companhia)}">${esc(v.companhia)}</b></td>
+          <td class="num">${v.milhas.toLocaleString('pt-BR')}</td>
+          <td class="num">${brl(v.milheiro)}${dif ? ` <small class="${dif > 0 ? 'bl-pos' : 'bl-neg'}">${dif > 0 ? '+' : ''}${(dif*100).toFixed(0)}%</small>` : ''}</td>
+          <td class="num forte">${brl(v.valor)}</td>
+          <td>${esc(v.pagador || 'Venda de milhas')}${v.recId && S.rec.some(r => r.id === v.recId) ? ' <span class="selo-ok">recebido</span>' : ''}</td>
+          <td><button class="lixo" data-delvenda="${v.id}" title="Apagar venda">✕</button></td></tr>`;
+      }).join('')}</tbody>
+      <tfoot><tr><td colspan="2">${lista.length} venda(s)</td><td class="num">${somaMilhas.toLocaleString('pt-BR')}</td>
+        <td></td><td class="num forte">${brl(somaValor)}</td><td colspan="2"></td></tr></tfoot>
+    </table>` : '<div class="empty">Nenhuma venda registrada. Escolha a companhia acima para lançar a primeira.</div>';
+}
+
+/** liga os três campos: mexendo em dois, o terceiro se acerta */
+function ligarCalculoVenda(){
+  const m = $('#vMilhas'), k = $('#vMilheiro'), val = $('#vValor'), prev = $('#vPrev');
+  if (!m) return;
+  const cia = companhiasComEstoque().find(c => c.companhia === S.vendaAberta) || {saldo:0, media:0};
+  const num = el => parseNum(el.value);
+  const pinta = () => {
+    const milhas = Math.round(num(m)), milheiro = num(k), valor = num(val);
+    const sobra = (cia.saldo || 0) - milhas;
+    prev.innerHTML = !milhas ? 'Preencha as milhas e o milheiro — o valor é calculado sozinho, e vice-versa.'
+      : `${milhas.toLocaleString('pt-BR')} milhas a <b>${brl(milheiro)}</b> o milheiro = <b>${brl(valor)}</b> · `
+        + `estoque ${esc(S.vendaAberta)} cai para <b class="${sobra < 0 ? 'bl-neg' : ''}">${sobra.toLocaleString('pt-BR')}</b> milhas · `
+        + `entra como recebimento em ${fmtDate($('#vData').value)}`
+        + (cia.media && milheiro ? ` · ${milheiro >= cia.media ? '<b class="bl-pos">' : '<b class="bl-neg">'}${((toCents(milheiro)-toCents(cia.media))/toCents(cia.media)*100).toFixed(0)}%</b> sobre o médio do estoque` : '');
+  };
+  const doValor = () => { const milhas = Math.round(num(m)), milheiro = num(k);
+    if (milhas && milheiro) val.value = fromCents(Math.round(toCents(milheiro) * milhas / 1000)).toFixed(2).replace('.',','); pinta(); };
+  const doMilheiro = () => { const milhas = Math.round(num(m)), valor = num(val);
+    if (milhas && valor) k.value = (fromCents(Math.round(toCents(valor) * 1000 / milhas))).toFixed(2).replace('.',','); pinta(); };
+  m.addEventListener('input', () => { num(k) ? doValor() : doMilheiro(); });
+  k.addEventListener('input', doValor);
+  val.addEventListener('input', doMilheiro);
+  $('#vData').addEventListener('input', pinta);
+  pinta();
 }
 
 /* =========================================================
