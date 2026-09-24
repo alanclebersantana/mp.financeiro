@@ -397,7 +397,7 @@ const FIREBASE = {
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
 const ADMINS = ["alanclebersantana@gmail.com"];
-const VERSAO = "24/09/2026 09:24";
+const VERSAO = "24/09/2026 09:31";
 
 const STATUS = ['Pendente','Agendado','Pago','Reinvestido','Cancelado'];
 const STATUS_REC = ['Previsto','Recebido','Atrasado','Cancelado'];
@@ -532,12 +532,12 @@ const Calc = {
   entradasFuturas(){ return soma(S.rec.filter(ABERTO_REC)); },
   saidasFuturas(){ return soma(S.rows.filter(ABERTO)); },
   saude(){ return real(cent(this.entradasFuturas()) - cent(this.saidasFuturas())); },
-  aReceberEm(d){ return soma(S.rec.filter(r => dataRec(r) === d && r.status !== 'Cancelado'), valorRec); },
+  aReceberEm(d){ return soma(S.rec.filter(r => ABERTO_REC(r) && r.dataPrevista === d)); },
   aPagarEm(d){ return soma(S.rows.filter(r => r.dataPagamento === d && ABERTO(r))); },
   dias(n){
     const h = hojeSP();
     const chaves = [...new Set([...S.rows.filter(ABERTO).map(r => r.dataPagamento),
-                                ...S.rec.filter(r => r.status !== 'Cancelado').map(dataRec)])]
+                                ...S.rec.filter(ABERTO_REC).map(r => r.dataPrevista)])]
       .filter(d => d && d >= h).sort().slice(0, n || 7);
     return chaves.map(d => ({data:d, receber:this.aReceberEm(d), pagar:this.aPagarEm(d),
       saldo: real(cent(this.aReceberEm(d)) - cent(this.aPagarEm(d)))}));
