@@ -1368,7 +1368,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "24/09/2026 11:51";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "24/09/2026 16:48";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -5446,7 +5446,8 @@ function renderPainelPlanilha(){
     <div class="pl-bloco total">
       <div class="pl-tit">Posição operacional líquida (estimada)</div>
       <div class="pl-big ${e.disponivel < 0 ? 'bl-neg' : ''}">${brl(e.disponivel)}</div>
-      <div class="pl-nota">Recebíveis líquidos de obrigações (${brl(lucro)}) + estoque de milhas disponível (${brl(e.livres)}).<br>Não representa saldo bancário.</div>
+      <div class="pl-nota">Recebíveis líquidos de obrigações (${brl(lucro)}) + estoque de milhas disponível (${brl(e.livres)}).<br>
+        <b>Patrimônio total: ${brl(addMoney(e.disponivel, e.bloqueados))}</b> — com as milhas bloqueadas somadas.</div>
     </div>`;
 
   const pv = Balanco.pivoReceber();

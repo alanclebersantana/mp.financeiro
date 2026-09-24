@@ -309,7 +309,7 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
     <div class="card destaque pos">
       <div class="rot">Posição operacional líquida (estimada)</div>
       <div class="val" id="bPosicao">—</div>
-      <div class="nota">Recebíveis líquidos de obrigações mais estoque disponível. Não é saldo bancário.</div>
+      <div class="nota">Recebíveis líquidos de obrigações mais estoque disponível.<br><b id="bPatrimonio"></b></div>
       <div class="bloco">
         <div class="tit">Posição contratual</div>
         <div class="pl"><span>Recebimentos previstos</span><b class="e" id="bEnt">—</b></div>
@@ -437,7 +437,7 @@ const FIREBASE = {
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
 const ADMINS = ["alanclebersantana@gmail.com"];
-const VERSAO = "24/09/2026 11:51";
+const VERSAO = "24/09/2026 16:48";
 
 const STATUS = ['Pendente','Agendado','Pago','Reinvestido','Cancelado'];
 const STATUS_REC = ['Previsto','Recebido','Atrasado','Cancelado'];
@@ -972,6 +972,7 @@ function pintarBalanco(){
   $('#bPosicao').style.color = (cent(saude) + cent(est.livres)) < 0 ? '#FF9F97' : '#fff';
   $('#bMilhasOk').textContent = brl(est.livres);
   $('#bMilhasBq').textContent = brl(est.bloqueados);
+  $('#bPatrimonio').textContent = `Patrimônio total: ${brl(real(cent(saude) + cent(est.livres) + cent(est.bloqueados)))}`;
   $('#bEnt').textContent = brl(Calc.entradasFuturas());
   $('#bSai').textContent = brl(Calc.saidasFuturas());
 
