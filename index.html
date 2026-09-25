@@ -686,6 +686,46 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .pl-tab .forte{font-weight:800}
 .pl-tab tfoot td{border-top:1px solid var(--line);border-bottom:none;font-weight:800;background:var(--surface-2)}
 .pl-tab tbody tr:hover td{background:var(--hover)}
+.cia-card{border:1px solid var(--line);border-radius:var(--r);margin-bottom:16px;overflow:hidden;background:var(--surface);box-shadow:0 1px 3px rgba(22,36,56,.06)}
+/* A — tarja na lateral · B — borda inteira na cor · C — cabeçalho tingido */
+.var-a .cia-card{border-left-width:4px;border-left-style:solid}
+.var-a .cia-card.comp-AZUL{border-left-color:#2F80ED}
+.var-a .cia-card.comp-GOL{border-left-color:#F2801A}
+.var-a .cia-card.comp-TAM,.var-a .cia-card.comp-LATAM{border-left-color:#D93A2F}
+.var-b .cia-card.comp-AZUL{border-color:rgba(47,128,237,.55)}
+.var-b .cia-card.comp-GOL{border-color:rgba(242,128,26,.55)}
+.var-b .cia-card.comp-TAM,.var-b .cia-card.comp-LATAM{border-color:rgba(217,58,47,.55)}
+.var-c .cia-card.comp-AZUL .cia-cab{background:rgba(47,128,237,.10)}
+.var-c .cia-card.comp-GOL .cia-cab{background:rgba(242,128,26,.10)}
+.var-c .cia-card.comp-TAM .cia-cab,.var-c .cia-card.comp-LATAM .cia-cab{background:rgba(217,58,47,.10)}
+.cia-tot{display:grid;grid-template-columns:repeat(3,minmax(118px,1fr));gap:8px;margin-left:auto}
+.cia-tot > span{text-align:center;background:var(--surface);border:1px solid var(--line-soft);border-radius:8px;padding:6px 10px}
+.cia-tot i{display:block;margin-bottom:2px}
+/* bloqueadas: um cartão por companhia */
+.restricao{padding:14px}
+.rest-item{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--muted-2);
+  border-radius:var(--r);padding:13px 14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(22,36,56,.06)}
+.rest-item:last-of-type{margin-bottom:0}
+.rest-cab{border-bottom:1px solid var(--line);padding-bottom:9px;margin-bottom:11px}
+.rest-item.rc-AZUL{border-left-color:#2F80ED}
+.rest-item.rc-GOL{border-left-color:#F2801A}
+.rest-item.rc-TAM,.rest-item.rc-LATAM{border-left-color:#D93A2F}
+.cia-card .cia-cab{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:11px 15px;
+  background:var(--surface-2);border-bottom:1px solid var(--line)}
+.cia-nome{font-size:16px;font-weight:800;letter-spacing:.3px;margin-right:auto}
+.cia-tot{text-align:right;font-variant-numeric:tabular-nums}
+.cia-tot i{display:block;font-size:10px;font-style:normal;font-weight:800;color:var(--muted-2);text-transform:uppercase;letter-spacing:.3px}
+.cia-tot b{font-size:14px;font-weight:800}
+.cia-corpo{padding:13px 15px 15px}
+.cia-corpo .pl-tab.estoque{margin-bottom:0}
+.cia-corpo .pl-tab.estoque thead tr{background:transparent}
+.cia-corpo .pl-tab.estoque thead th{color:var(--muted-2);font-size:10px}
+.vendas-cia{margin:14px 0 0;padding:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--rs)}
+.vendas-cab{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.vendas-cab b{font-size:12.5px}
+.vendas-cab .resumo{flex:1;font-size:12px;color:var(--muted-2)}
+.vendas-tab{margin-top:10px;background:var(--surface);border-radius:var(--rs)}
+.vendas-tab th{padding:5px 8px}
 .cias{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .pilcia{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);
   background:var(--surface-2);font-size:13.5px}
@@ -1156,13 +1196,8 @@ try { document.documentElement.dataset.tema =
 
     <!-- ESTOQUE DE MILHAS -->
     <section class="view hide" id="view-est">
-      <div class="panel"><h3>Estoque de milhas</h3><div id="balEstoque"></div></div>
-      <div class="panel" id="balVendas"><h3>Milhas vendidas</h3>
-        <div class="cias" id="vendaCias"></div>
-        <div id="vendaForm"></div>
-        <div id="vendaLista"></div>
-        <div class="pl-exp">Cada venda abate as milhas do estoque da companhia e entra como recebimento na data informada. Apagar a venda devolve as milhas e remove o recebimento.</div>
-      </div>
+      <div class="panel"><h3>Estoque de milhas</h3><div id="balEstoque" class="var-a"></div></div>
+
     </section>
 
     <!-- RECEBIMENTOS -->
@@ -1358,7 +1393,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "25/09/2026 09:55";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "25/09/2026 10:38";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -2254,21 +2289,21 @@ $('#balRisco').addEventListener('click', async e => {
     resumo:Object.entries(itens).map(([k,v]) => `${k}: ${brl(v)}`).slice(0,8), total:Object.keys(itens).length});
   renderAll(); toast('Limites salvos');
 });
-$('#balVendas').addEventListener('click', async e => {
+$('#view-est').addEventListener('click', async e => {
   const cia = e.target.closest('[data-cia]');
   if (cia){
     S.vendaEdit = '';
     S.vendaAberta = S.vendaAberta === cia.dataset.cia ? '' : cia.dataset.cia;
-    renderVendas();
+    renderPainelPlanilha();
     if (S.vendaAberta){ ligarCalculoVenda(); const el = $('#vMilhas'); if (el) el.focus(); }
     return;
   }
-  if (e.target.closest('#vCancelar')){ S.vendaEdit = ''; S.vendaAberta = ''; return renderVendas(); }
+  if (e.target.closest('#vCancelar')){ S.vendaEdit = ''; S.vendaAberta = ''; return renderPainelPlanilha(); }
   const ed = e.target.closest('[data-editvenda]');
   if (ed){
     const v = S.vendas.find(x => x.id === ed.dataset.editvenda); if (!v) return;
     S.vendaEdit = v.id; S.vendaAberta = v.companhia;
-    renderVendas(); ligarCalculoVenda();
+    renderPainelPlanilha(); ligarCalculoVenda();
     const el = $('#vMilhas'); if (el) el.focus();
     return;
   }
@@ -2281,7 +2316,7 @@ $('#balVendas').addEventListener('click', async e => {
     if (S.vendaEdit) await alterarVenda(S.vendaEdit, dados);
     else await salvarVenda(dados);
     S.vendaEdit = ''; S.vendaAberta = '';     // o formulário fecha depois de salvar
-    renderVendas();
+    renderPainelPlanilha();
   }
 });
 $('#balEstoque').addEventListener('click', async e => {
@@ -5471,10 +5506,26 @@ function renderPainelPlanilha(){
   const restritos = e.itens.filter(bloqueada);
   const porCompanhia = {};
   operacionais.forEach(i => { (porCompanhia[i.companhia] = porCompanhia[i.companhia] || []).push(i); });
-  $('#balEstoque').innerHTML = Object.entries(porCompanhia).map(([comp, itens]) => `
+  $('#balEstoque').innerHTML = Object.entries(porCompanhia).map(([comp, itens]) => {
+    const totalCia = fromCents(itens.reduce((s,i) => s + toCents(totalItem(i)), 0));
+    const vendasCia = S.vendas.filter(v => v.companhia === comp);
+    const vendidoCia = fromCents(vendasCia.reduce((s,i) => s + toCents(i.valor), 0));
+    const bloqCia = fromCents(restritos.filter(i => i.companhia === comp).reduce((s,i) => s + toCents(totalItem(i)), 0));
+    const cls = 'comp-' + String(comp).replace(/[^A-Za-z]/g,'').toUpperCase();
+    return `
+    <div class="cia-card ${cls}">
+      <div class="cia-cab">
+        <span class="cia-nome ${cls}">${esc(comp)}</span>
+        <span class="cia-tot">
+          <span><i>Disponível</i><b class="bl-pos">${brl(totalCia)}</b></span>
+          <span><i>Bloqueado</i><b class="${bloqCia ? 'bl-neg' : ''}">${bloqCia ? brl(bloqCia) : '—'}</b></span>
+          <span><i>Vendido</i><b style="color:${vendidoCia ? 'var(--accent-2)' : 'var(--muted-2)'}">${vendidoCia ? brl(vendidoCia) : '—'}</b></span>
+        </span>
+      </div>
+      <div class="cia-corpo">
     <table class="pl-tab estoque">
       <colgroup><col style="width:26%"><col style="width:21%"><col style="width:21%"><col style="width:14%"><col style="width:14%"><col style="width:4%"></colgroup>
-      <thead><tr><th class="comp comp-${esc(String(comp).replace(/[^A-Za-z]/g,'').toUpperCase())}">${esc(comp)}</th><th class="num">Saldo</th><th class="num">Média milha venda</th>
+      <thead><tr><th>Estoque operacional</th><th class="num">Saldo</th><th class="num">Média milha venda</th>
         <th class="num">Total</th><th>Data da atualização</th><th></th></tr></thead>
       <tbody>${itens.map(i => `<tr data-est="${i.id}" class="${bloqueada(i) ? 'bloq' : ''}">
         <td>${esc(i.tipo)}</td>
@@ -5483,10 +5534,14 @@ function renderPainelPlanilha(){
         <td class="num forte">${brl(totalItem(i))}</td>
         <td><input class="inp mini" data-campo="data" type="date" value="${i.data || ''}"></td>
         <td><button class="lixo" data-remest="${i.id}" title="Remover linha">✕</button></td></tr>`).join('')}</tbody>
-    </table>`).join('')
+    </table>
+    ${blocoVendas(comp)}
+      </div>
+    </div>`;
+  }).join('')
     + (restritos.length ? `<div class="restricao">
         <div class="pl-tit" style="color:var(--bad)">Ativos sob restrição — não compõem o estoque disponível</div>
-        ${restritos.map(i => `<div class="rest-item" data-est="${i.id}">
+        ${restritos.map(i => `<div class="rest-item rc-${esc(String(i.companhia).replace(/[^A-Za-z]/g,'').toUpperCase())}" data-est="${i.id}">
           <div class="rest-cab"><b class="comp comp-${esc(String(i.companhia).replace(/[^A-Za-z]/g,'').toUpperCase())}">${esc(i.companhia)}</b>
             <span>${esc(i.tipo)}</span><button class="lixo" data-remest="${i.id}" title="Remover">✕</button></div>
           <div class="rest-grade">
@@ -5631,80 +5686,54 @@ async function excluirVenda(id){
   toast('Venda apagada e milhas devolvidas');
 }
 
-function renderVendas(){
-  if (!$('#balVendas')) return;
-  const cias = companhiasComEstoque();
-  const aberta = S.vendaAberta;
-  const cia = cias.find(c => c.companhia === aberta);
-  const corCia = c => 'comp-' + String(c).replace(/[^A-Za-z]/g,'').toUpperCase();
+/** o bloco de vendas de uma companhia, desenhado dentro do card de estoque */
+function blocoVendas(comp){
+  const cia = companhiasComEstoque().find(c => c.companhia === comp) || {saldo:0, media:0, companhia:comp};
+  const vendas = S.vendas.filter(v => v.companhia === comp)
+    .sort((a,b) => String(b.data).localeCompare(String(a.data)) || b.em - a.em);
+  const milhas = vendas.reduce((s,v) => s + v.milhas, 0);
+  const valor = fromCents(vendas.reduce((s,v) => s + toCents(v.valor), 0));
+  const aberto = S.vendaAberta === comp;
+  const edit = aberto && S.vendaEdit ? vendas.find(v => v.id === S.vendaEdit) : null;
 
-  $('#vendaCias').innerHTML = cias.map(c => `
-    <button class="pilcia ${c.companhia === aberta ? 'on' : ''}" data-cia="${esc(c.companhia)}">
-      <b class="${corCia(c.companhia)}">${esc(c.companhia)}</b>
-      <span>${c.saldo ? c.saldo.toLocaleString('pt-BR') + ' milhas' : 'sem saldo'}</span>
-    </button>`).join('') || '<span class="bl-info">Cadastre o estoque acima para registrar vendas.</span>';
-
-  const edit = S.vendaEdit ? S.vendas.find(v => v.id === S.vendaEdit) : null;
-  $('#vendaForm').innerHTML = !cia ? '' : `
-    ${edit ? `<div class="vf-edit">Editando a venda de ${fmtDate(edit.data)} · ${edit.milhas.toLocaleString('pt-BR')} milhas · ${brl(edit.valor)}</div>` : ''}
-    <div class="vf">
-      <div class="field"><label>Companhia</label><input class="inp" value="${esc(cia.companhia)}" disabled></div>
-      <div class="field"><label>Milhas vendidas</label><input class="inp" id="vMilhas" inputmode="numeric" placeholder="15.000.000" value="${edit ? edit.milhas.toLocaleString('pt-BR') : ''}"></div>
-      <div class="field"><label>Milheiro</label><input class="inp" id="vMilheiro" inputmode="decimal" value="${edit ? edit.milheiro.toFixed(2).replace('.',',') : (cia.media ? cia.media.toFixed(2).replace('.',',') : '')}"></div>
-      <div class="field"><label>Valor da venda</label><input class="inp" id="vValor" inputmode="decimal" placeholder="0,00" value="${edit ? edit.valor.toFixed(2).replace('.',',') : ''}"></div>
-      <div class="field"><label>Pagador</label><input class="inp" id="vPagador" list="listaPagadores" placeholder="quem comprou" value="${edit ? esc(edit.pagador) : ''}"></div>
-      <div class="field"><label>Data</label><input class="inp" id="vData" type="date" value="${edit ? edit.data : getTodaySP()}"></div>
-      <div class="vf-bts"><button class="btn primary" id="vSalvar">${edit ? 'Salvar alteração' : 'Salvar venda'}</button>
-        <button class="btn ghost" id="vCancelar">Cancelar</button></div>
+  return `<div class="vendas-cia" data-vcia="${esc(comp)}">
+    <div class="vendas-cab">
+      <b>Milhas vendidas ${esc(comp)}</b>
+      <span class="resumo">${vendas.length
+        ? `${milhas.toLocaleString('pt-BR')} milhas · ${brl(valor)} · ${vendas.length} venda${vendas.length === 1 ? '' : 's'}`
+        : 'nenhuma venda registrada'}</span>
+      <button class="btn sm ${aberto ? 'ghost' : 'primary'}" data-cia="${esc(comp)}">${aberto ? 'Cancelar' : 'Registrar venda'}</button>
     </div>
-    <datalist id="listaPagadores">${[...new Set(S.rec.map(r => r.pagador))].filter(Boolean).map(p => `<option>${esc(p)}</option>`).join('')}</datalist>
-    <div class="vf-prev" id="vPrev">Preencha as milhas e o milheiro — o valor é calculado sozinho, e vice-versa.</div>`;
-
-  // fechado: só o resumo por companhia. Aberto: as vendas daquela companhia.
-  const todas = S.vendas.slice().sort((a,b) => String(b.data).localeCompare(String(a.data)) || b.em - a.em);
-  const lista = aberta ? todas.filter(v => v.companhia === aberta) : todas;
-  const somaMilhas = l => l.reduce((s,v) => s + v.milhas, 0);
-  const somaValor = l => fromCents(l.reduce((s,v) => s + toCents(v.valor), 0));
-
-  if (!aberta){
-    const porCia = {};
-    todas.forEach(v => { (porCia[v.companhia] = porCia[v.companhia] || []).push(v); });
-    const linhas = Object.entries(porCia).sort((a,b) => somaValor(b[1]) - somaValor(a[1]));
-    $('#vendaLista').innerHTML = linhas.length ? `
-      <table class="pl-tab">
-        <thead><tr><th>Companhia</th><th class="num">Milhas vendidas</th><th class="num">Valor das vendas</th><th class="num">Vendas</th></tr></thead>
-        <tbody>${linhas.map(([cia, vs]) => `
-          <tr class="linha-cia" data-cia="${esc(cia)}" title="Clique para ver as vendas da ${esc(cia)}">
-            <td><b class="${corCia(cia)}">${esc(cia)}</b></td>
-            <td class="num">${somaMilhas(vs).toLocaleString('pt-BR')}</td>
-            <td class="num forte">${brl(somaValor(vs))}</td>
-            <td class="num">${vs.length}</td></tr>`).join('')}</tbody>
-        <tfoot><tr><td>Total</td><td class="num">${somaMilhas(todas).toLocaleString('pt-BR')}</td>
-          <td class="num forte">${brl(somaValor(todas))}</td><td class="num">${todas.length}</td></tr></tfoot>
-      </table>` : '<div class="empty">Nenhuma venda registrada. Clique na companhia acima para lançar a primeira.</div>';
-    return;
-  }
-
-  $('#vendaLista').innerHTML = lista.length ? `
-    <table class="pl-tab">
-      <thead><tr><th>Data</th><th class="num">Milhas</th><th class="num">Milheiro</th>
-        <th class="num">Valor da venda</th><th>Pagador</th><th></th></tr></thead>
-      <tbody>${lista.map(v => {
-        const c = cias.find(x => x.companhia === v.companhia);
-        const dif = c && c.media ? (toCents(v.milheiro) - toCents(c.media)) / toCents(c.media) : 0;
-        return `<tr>
-          <td>${fmtDate(v.data)}</td>
-          <td class="num">${v.milhas.toLocaleString('pt-BR')}</td>
-          <td class="num">${brl(v.milheiro)}${dif ? ` <small class="${dif > 0 ? 'bl-pos' : 'bl-neg'}">${dif > 0 ? '+' : ''}${(dif*100).toFixed(0)}%</small>` : ''}</td>
-          <td class="num forte">${brl(v.valor)}</td>
-          <td>${esc(v.pagador || 'Venda de milhas')}${v.recId && S.rec.some(r => r.id === v.recId) ? ' <span class="selo-ok">recebido</span>' : ''}</td>
-          <td style="white-space:nowrap"><button class="lixo" data-editvenda="${v.id}" title="Editar venda">✎</button>
-            <button class="lixo" data-delvenda="${v.id}" title="Apagar venda">✕</button></td></tr>`;
-      }).join('')}</tbody>
-      <tfoot><tr><td>${lista.length} venda(s) de ${esc(aberta)}</td><td class="num">${somaMilhas(lista).toLocaleString('pt-BR')}</td>
-        <td></td><td class="num forte">${brl(somaValor(lista))}</td><td colspan="2"></td></tr></tfoot>
-    </table>` : `<div class="empty">Nenhuma venda de ${esc(aberta)} ainda.</div>`;
+    ${aberto ? `
+      ${edit ? `<div class="vf-edit">Editando a venda de ${fmtDate(edit.data)} · ${brl(edit.valor)}</div>` : ''}
+      <div class="vf">
+        <div class="field"><label>Milhas vendidas</label><input class="inp" id="vMilhas" inputmode="numeric" placeholder="15.000.000" value="${edit ? edit.milhas.toLocaleString('pt-BR') : ''}"></div>
+        <div class="field"><label>Milheiro</label><input class="inp" id="vMilheiro" inputmode="decimal" value="${edit ? edit.milheiro.toFixed(2).replace('.',',') : (cia.media ? cia.media.toFixed(2).replace('.',',') : '')}"></div>
+        <div class="field"><label>Valor da venda</label><input class="inp" id="vValor" inputmode="decimal" placeholder="0,00" value="${edit ? edit.valor.toFixed(2).replace('.',',') : ''}"></div>
+        <div class="field"><label>Pagador</label><input class="inp" id="vPagador" list="listaPagadores" placeholder="quem comprou" value="${edit ? esc(edit.pagador) : ''}"></div>
+        <div class="field"><label>Data</label><input class="inp" id="vData" type="date" value="${edit ? edit.data : getTodaySP()}"></div>
+        <div class="vf-bts"><button class="btn primary" id="vSalvar">${edit ? 'Salvar alteração' : 'Salvar venda'}</button></div>
+      </div>
+      <datalist id="listaPagadores">${[...new Set(S.rec.map(r => r.pagador))].filter(Boolean).map(x => `<option>${esc(x)}</option>`).join('')}</datalist>
+      <div class="vf-prev" id="vPrev"></div>` : ''}
+    ${vendas.length ? `
+      <table class="pl-tab vendas-tab">
+        <thead><tr><th>Data</th><th class="num">Milhas</th><th class="num">Milheiro</th><th class="num">Valor da venda</th><th>Pagador</th><th></th></tr></thead>
+        <tbody>${vendas.map(v => {
+          const dif = cia.media ? (toCents(v.milheiro) - toCents(cia.media)) / toCents(cia.media) : 0;
+          return `<tr class="${v.id === S.vendaEdit ? 'emedicao' : ''}">
+            <td>${fmtDate(v.data)}</td>
+            <td class="num">${v.milhas.toLocaleString('pt-BR')}</td>
+            <td class="num">${brl(v.milheiro)}${dif ? ` <small class="${dif > 0 ? 'bl-pos' : 'bl-neg'}">${dif > 0 ? '+' : ''}${(dif*100).toFixed(0)}%</small>` : ''}</td>
+            <td class="num forte">${brl(v.valor)}</td>
+            <td>${esc(v.pagador || 'Venda de milhas')}${v.recId && S.rec.some(r => r.id === v.recId) ? ' <span class="selo-ok">recebido</span>' : ''}</td>
+            <td style="white-space:nowrap"><button class="lixo" data-editvenda="${v.id}" title="Editar">✎</button>
+              <button class="lixo" data-delvenda="${v.id}" title="Apagar">✕</button></td></tr>`;
+        }).join('')}</tbody>
+      </table>` : ''}
+  </div>`;
 }
+function renderVendas(){ /* desenhado dentro do estoque */ }
 
 /** liga os três campos: mexendo em dois, o terceiro se acerta */
 function ligarCalculoVenda(){
