@@ -132,6 +132,11 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
 .dia .data{font-size:14.5px;font-weight:800}
 .dia .qtd{font-size:11.5px;color:var(--muted-2)}
 .dia .col{min-width:0}
+.dia .barras{grid-column:1/-1;display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.dia .barras i{display:block;height:8px;border-radius:5px;min-width:3px}
+.dia .barras .be{background:var(--ok)}
+.dia .barras .bs{background:var(--accent)}
+.dia.neg{background:var(--bad-dim);border-radius:10px;padding-left:9px;padding-right:9px}
 .dia .col{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:3px 0}
 .dia .col span{font-size:11px;font-weight:700;color:var(--muted-2);text-transform:uppercase;letter-spacing:.2px}
 .dia .col b{font-size:15px;font-weight:800;white-space:nowrap;text-align:right}
@@ -155,6 +160,9 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
 .data-total b.sai{color:var(--accent-2)}
 .lixinho{margin-left:8px;color:var(--muted-2);font-size:13px;padding:2px 5px;border-radius:5px}
 .lixinho:active{background:var(--bad);color:#fff}
+.vermais{width:100%;margin-top:10px;padding:12px;border-radius:12px;border:1px dashed var(--line);
+  background:var(--surface-2);color:var(--muted);font-weight:700;font-size:13.5px}
+.vermais:active{background:var(--surface-3)}
 .vazio{text-align:center;color:var(--muted-2);font-size:13.5px;padding:24px 10px}
 
 /* ---------- registros ---------- */
@@ -437,7 +445,7 @@ const FIREBASE = {
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
 const ADMINS = ["alanclebersantana@gmail.com"];
-const VERSAO = "24/09/2026 16:48";
+const VERSAO = "25/09/2026 08:33";
 
 const STATUS = ['Pendente','Agendado','Pago','Reinvestido','Cancelado'];
 const STATUS_REC = ['Previsto','Recebido','Atrasado','Cancelado'];
@@ -446,7 +454,7 @@ const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','ag
 
 const S = {rows:[], rec:[], adi:[], log:[], estoque:{itens:[]}, saldo:{valor:0, mesRef:''},
   tela:'bal', mesSel:'', limite:{lanc:40, rec:40, adi:40},
-  sel:new Set(), selTipo:'', selModo:false, vendas:[], vendaAberta:'', vendaEdit:'',
+  sel:new Set(), selTipo:'', selModo:false, vendas:[], vendaAberta:'', vendaEdit:'', limiteDias:7,
   f:{lanc:{q:'', st:'Pendente', op:'', d1:'', d2:'', v1:'', v2:''},
      rec:{q:'', st:'Previsto', pg:'', d1:'', d2:''},
      adi:{q:'', st:'Aguardando', d1:'', d2:''}}};
@@ -986,9 +994,13 @@ function pintarBalanco(){
         <div class="l1"><span class="nome" style="color:var(--bad)">${atras.length} pagamento(s) vencido(s)</span><span class="valor">${curto(soma(atras))}</span></div>
         <div class="l2"><span class="meta">toque para ver a lista</span></div></button>` : ''}`;
 
-  const dias = Calc.dias(7);
+  const dias = Calc.dias(S.limiteDias);
+  const todosOsDias = Calc.dias(999);
   $('#bDias').innerHTML = dias.length ? dias.map(d => linhaDia(d.data, d.receber, d.pagar,
       S.rows.filter(r => r.dataPagamento === d.data && ABERTO(r)).length)).join('')
+      + (todosOsDias.length > dias.length
+          ? `<button class="vermais" data-maisdias="1">Ver mais ${Math.min(15, todosOsDias.length - dias.length)} dias · ${todosOsDias.length - dias.length} restantes</button>`
+          : (S.limiteDias > 7 ? '<button class="vermais" data-menosdias="1">Mostrar só os próximos 7 dias</button>' : ''))
     : '<div class="vazio">Sem movimento previsto.</div>';
 
   const rec = Calc.aReceberPorData();
@@ -1042,9 +1054,10 @@ function pintarMes(){
   dado.sai.forEach(r => { const d = r.dataPagamento; const x = (porDia[d] = porDia[d] || {e:0,s:0,n:0}); x.s += cent(r.valor); x.n++; });
   const dias = Object.keys(porDia).sort();
   let acum = cent(Calc.acumuladoAte(S.mesSel));
+  const maior = Math.max(1, ...dias.map(d => Math.max(porDia[d].e, porDia[d].s)));
   $('#mDias').innerHTML = dias.length
     ? dias.map(d => { acum += porDia[d].e - porDia[d].s;
-        return linhaDia(d, real(porDia[d].e), real(porDia[d].s), porDia[d].n, real(acum)); }).join('')
+        return linhaDia(d, real(porDia[d].e), real(porDia[d].s), porDia[d].n, real(acum), maior); }).join('')
     : '<div class="vazio">Sem movimento no mês.</div>';
 
   $('#mTop').innerHTML = dado.sai.slice().sort((a,b) => b.valor - a.valor).slice(0,8).map(r => `
@@ -1056,8 +1069,12 @@ function pintarMes(){
 }
 
 /** um dia do caixa: entra, sai e saldo em colunas próprias, sem texto cortado */
-function linhaDia(data, entra, sai, qtdSaidas, acumulado){
+function linhaDia(data, entra, sai, qtdSaidas, acumulado, maior){
   const saldo = real(cent(entra) - cent(sai));
+  const barra = !maior ? '' : `<div class="barras">
+      <i class="be" style="width:${Math.max(entra ? 2 : 0, cent(entra)/maior*100).toFixed(1)}%"></i>
+      <i class="bs" style="width:${Math.max(sai ? 2 : 0, cent(sai)/maior*100).toFixed(1)}%"></i>
+    </div>`;
   return `<div class="dia">
     <div class="cab"><span class="data">${fmtData(data)}</span>
       <span class="qtd">${qtdSaidas ? qtdSaidas + ' pagamento' + (qtdSaidas === 1 ? '' : 's') : ''}</span></div>
@@ -1065,6 +1082,7 @@ function linhaDia(data, entra, sai, qtdSaidas, acumulado){
     <div class="col s"><span>Pagamentos</span><b>${sai ? brl(sai) : '—'}</b></div>
     <div class="col saldo"><span>${acumulado === undefined ? 'Saldo' : 'Fluxo'}</span><b class="${saldo < 0 ? 'neg' : 'pos'}">${brl(saldo)}</b></div>
     ${acumulado === undefined ? '' : `<div class="col saldo acum"><span>Acumulado</span><b class="${acumulado < 0 ? 'neg' : ''}">${brl(acumulado)}</b></div>`}
+    ${barra}
   </div>`;
 }
 
@@ -1392,6 +1410,9 @@ document.addEventListener('click', async e => {
     return abrirRegistro(t, id);
   }
 
+  if (e.target.closest('[data-maisdias]')){ S.limiteDias += 15; return pintarBalanco(); }
+  if (e.target.closest('[data-menosdias]')){ S.limiteDias = 7; window.scrollTo(0,0); return pintarBalanco(); }
+
   const mais = e.target.closest('[data-mais]');
   if (mais){ S.limite[mais.dataset.mais] += 40; return pintarLista(mais.dataset.mais); }
 
@@ -1488,7 +1509,7 @@ document.addEventListener('click', async e => {
   }
 
   if (e.target.closest('[data-tema2]')){ trocarTema(); return; }
-  if (e.target.closest('[data-abrirpc]')){ location.href = 'index.html'; return; }
+  if (e.target.closest('[data-abrirpc]')){ location.href = 'index.html?pc=1'; return; }
   if (e.target.closest('[data-instalar]')){ location.href = 'instalar.html'; return; }
   if (e.target.closest('[data-recarregar]')){ location.reload(); return; }
   if (e.target.closest('[data-sair]')){ fauth.signOut().then(() => location.reload()); return; }
