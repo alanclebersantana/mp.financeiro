@@ -970,6 +970,7 @@ try { document.documentElement.dataset.tema =
       <button data-view="lanc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M3 12h18M3 19h18"/></svg>Pagamentos</button>
       <button data-view="rec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Recebimentos</button>
       <button data-view="adi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg>Lotes e adiantamentos</button>
+      <button data-view="est"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5l9 4.5 9-4.5M12 12v9"/></svg>Estoque de milhas</button>
       <button data-view="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>Auditoria</button>
       <button data-view="users" id="navUsers" class="hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 11.2a3 3 0 1 0-1.6-5.5M18 20a5.6 5.6 0 0 0-2.2-4.4"/></svg>Usuários</button>
       <button data-view="bkp" id="navBkp" class="hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.7-6.4L3 8"/><path d="M3 3v5h5"/><path d="M12 7.5V12l3 2"/></svg>Backups</button>
@@ -1114,13 +1115,7 @@ try { document.documentElement.dataset.tema =
       </div>
       <div class="panel"><h3>Posições</h3><div id="balPosicoes" class="hz"></div>
         <div class="pl-exp">Recebíveis líquidos de obrigações mais estoque de milhas disponível. Não representa saldo bancário.</div></div>
-      <div class="panel"><h3>Estoque de milhas</h3><div id="balEstoque"></div></div>
-      <div class="panel" id="balVendas"><h3>Milhas vendidas</h3>
-        <div class="cias" id="vendaCias"></div>
-        <div id="vendaForm"></div>
-        <div id="vendaLista"></div>
-        <div class="pl-exp">Cada venda abate as milhas do estoque da companhia e entra como recebimento na data informada. Apagar a venda devolve as milhas e remove o recebimento.</div>
-      </div>
+
 
 
 
@@ -1156,6 +1151,17 @@ try { document.documentElement.dataset.tema =
           <button class="btn primary" id="balSalvar">Salvar saldo</button>
           <span class="bl-nota">Tudo que foi pago ou recebido depois desse mês entra na conta do caixa de hoje, e a projeção parte desse valor.</span>
         </div>
+      </div>
+    </section>
+
+    <!-- ESTOQUE DE MILHAS -->
+    <section class="view hide" id="view-est">
+      <div class="panel"><h3>Estoque de milhas</h3><div id="balEstoque"></div></div>
+      <div class="panel" id="balVendas"><h3>Milhas vendidas</h3>
+        <div class="cias" id="vendaCias"></div>
+        <div id="vendaForm"></div>
+        <div id="vendaLista"></div>
+        <div class="pl-exp">Cada venda abate as milhas do estoque da companhia e entra como recebimento na data informada. Apagar a venda devolve as milhas e remove o recebimento.</div>
       </div>
     </section>
 
@@ -1352,7 +1358,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "25/09/2026 08:33";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "25/09/2026 09:55";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -2458,13 +2464,14 @@ function go(v){
   S.view = v;
   $$('#nav button[data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === v));
   // o Painel deixou de ser uma tela própria: ele é a segunda metade do Controle mensal
-  ['bal','mensal','lanc','rec','adi','log','users','bkp'].forEach(x => $('#view-'+x).classList.toggle('hide', x !== v));
+  ['bal','mensal','lanc','rec','adi','est','log','users','bkp'].forEach(x => $('#view-'+x).classList.toggle('hide', x !== v));
   const t = {dash:['Controle mensal','Entradas e saídas do mês, com o painel consolidado'],
              mensal:['Fluxo de caixa','Movimento do mês e projeção diária — valores previstos, não realizados'],
              lanc:['Pagamentos','Contas a pagar — edite na grade, filtre e trabalhe em lote'],
              adi:['Lotes e adiantamentos','Lotes gerados e fila de pagamentos antecipados'],
              bal:['Visão geral','Posição contratual, estoque e projeção — não representa saldo bancário'],
              rec:['Recebimentos','Contas a receber — previsões e entradas confirmadas, por pagador'],
+             est:['Estoque de milhas','Saldo por companhia, ativos sob restrição e vendas'],
              log:['Auditoria','Quem alterou o quê, e quando'],
              users:['Usuários','Controle de acesso da equipe'],
              bkp:['Backups','Cópias automáticas a cada 20 minutos — compare e recupere']}[v];
@@ -5204,7 +5211,7 @@ const Balanco = {
 };
 
 function renderBalanco(){
-  if (S.view !== 'bal') return;
+  if (S.view !== 'bal' && S.view !== 'est') return;   // o estoque mora em outra tela, mas usa os mesmos cálculos
   if (!$('#balCaixa')) return;
   renderPainelPlanilha();
   const s = saldoBase(), caixa = Balanco.caixaHoje(), ab = Balanco.aberto();

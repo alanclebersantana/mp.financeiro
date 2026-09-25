@@ -331,12 +331,7 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
     </div>
     <div class="card"><h2>Hoje</h2><div id="bHoje"></div></div>
     <div class="card"><h2>Próximos dias</h2><div id="bDias"></div></div>
-    <div class="card"><h2>Estoque de milhas</h2><div id="bEstoque"></div></div>
-    <div class="card"><h2>Milhas vendidas</h2>
-      <div class="mcomp" id="vCias"></div>
-      <div id="vForm"></div>
-      <div id="vLista"></div>
-    </div>
+
     <div class="card"><h2>A receber</h2><div id="bReceber"></div></div>
     <div class="card"><h2>A pagar — Milhas Plus</h2><div id="bPagar"></div></div>
   </section>
@@ -405,6 +400,16 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
     <div id="listaAdi"></div>
   </section>
 
+  <!-- ESTOQUE DE MILHAS -->
+  <section class="tela" id="tela-est">
+    <div class="card"><h2>Estoque de milhas</h2><div id="bEstoque"></div></div>
+    <div class="card"><h2>Milhas vendidas</h2>
+      <div class="mcomp" id="vCias"></div>
+      <div id="vForm"></div>
+      <div id="vLista"></div>
+    </div>
+  </section>
+
   <!-- AUDITORIA -->
   <section class="tela" id="tela-log">
     <div class="card"><h2>Últimas alterações</h2><div id="listaLog"></div></div>
@@ -416,7 +421,7 @@ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));min-height:60vh}
   <button data-tela="mes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg><span>Fluxo</span></button>
   <button data-tela="lanc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span>Pagar</span></button>
   <button data-tela="rec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg><span>Receber</span></button>
-  <button data-tela="adi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg><span>Lotes</span></button>
+  <button data-tela="est"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5l9 4.5 9-4.5M12 12v9"/></svg><span>Estoque</span></button>
   <button id="btMais"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg><span>Mais</span></button>
 </nav>
 
@@ -445,7 +450,7 @@ const FIREBASE = {
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
 const ADMINS = ["alanclebersantana@gmail.com"];
-const VERSAO = "25/09/2026 08:33";
+const VERSAO = "25/09/2026 09:55";
 
 const STATUS = ['Pendente','Agendado','Pago','Reinvestido','Cancelado'];
 const STATUS_REC = ['Previsto','Recebido','Atrasado','Cancelado'];
@@ -965,7 +970,8 @@ async function apagarVendaCel(id){
    ========================================================= */
 function pintar(){
   const t = S.tela;
-  if (t === 'bal'){ pintarBalanco(); pintarVendas(); }
+  if (t === 'bal') pintarBalanco();
+  if (t === 'est'){ pintarBalanco(); pintarVendas(); }   // usa os mesmos cálculos do balanço
   if (t === 'mes') pintarMes();
   if (t === 'lanc') pintarLista('lanc');
   if (t === 'rec') pintarLista('rec');
@@ -1178,8 +1184,8 @@ function irPara(tela){
   S.tela = tela;
   $$('.tela').forEach(s => s.classList.toggle('on', s.id === 'tela-' + tela));
   $$('#barra button[data-tela]').forEach(b => b.classList.toggle('on', b.dataset.tela === tela));
-  $('#btMais').classList.toggle('on', !['bal','mes','lanc','rec','adi'].includes(tela));
-  $('#tTitulo').textContent = {bal:'Visão geral', mes:'Fluxo de caixa', lanc:'Pagamentos',
+  $('#btMais').classList.toggle('on', !['bal','mes','lanc','rec','est'].includes(tela));
+  $('#tTitulo').textContent = {bal:'Visão geral', mes:'Fluxo de caixa', lanc:'Pagamentos', est:'Estoque de milhas',
     rec:'Recebimentos', adi:'Lotes e adiantamentos', log:'Auditoria'}[tela] || 'MP Financeiro';
   window.scrollTo(0,0);
   pintar();
@@ -1223,6 +1229,7 @@ $('#btNovo').addEventListener('click', abrirNovo);
 function abrirMais(){
   abrirFolha(`<h3>Mais</h3><div class="sub">versão ${VERSAO} · ${esc(APP.nome || '')} (${esc(APP.papel)})</div>
     <div class="opcoes">
+      <button data-ir="adi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg>Lotes e adiantamentos</button>
       <button data-ir="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>Auditoria</button>
       <button data-tema2="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>Trocar tema</button>
       <button data-abrirpc="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8"/></svg>Versão completa</button>
