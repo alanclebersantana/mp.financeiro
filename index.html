@@ -125,6 +125,7 @@ select.inp{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xm
 /* ---------- chips ---------- */
 .chip{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap;border:1px solid transparent;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .chip i{width:6px;height:6px;border-radius:50%;background:currentColor;flex:0 0 auto}
+.c-opcustom{border-width:1px;border-style:solid}
 .c-op0{background:rgba(91,143,201,.14);color:#8FB6E0;border-color:rgba(91,143,201,.3)}
 .c-op1{background:rgba(62,158,110,.14);color:#63BE93;border-color:rgba(62,158,110,.3)}
 .c-op2{background:rgba(193,86,26,.14);color:#E5843D;border-color:rgba(193,86,26,.3)}
@@ -334,6 +335,19 @@ html[data-tema="claro"] .fab{box-shadow:0 10px 26px rgba(193,86,26,.28)}
 .visao{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:2px;height:34px}
 .visao button{padding:0 14px;border-radius:999px;font-size:12.5px;font-weight:700;color:var(--muted)}
 .visao button.on{background:var(--accent);color:#fff}
+.linkzinho{background:none;border:none;color:var(--accent-2);font:inherit;font-size:11px;font-weight:800;
+  text-decoration:underline;cursor:pointer;margin-left:6px;padding:0}
+.op-lista{max-height:380px;overflow:auto;margin-top:4px}
+.op-linha{display:grid;grid-template-columns:34px 1fr 120px auto;gap:10px;align-items:center;
+  padding:8px 6px;border-bottom:1px solid var(--line-soft)}
+.op-bolinha{width:26px;height:26px;border-radius:8px;border:1px solid var(--line);padding:0;cursor:pointer}
+.op-nome{width:100%;height:34px;padding:0 10px;border:1px solid transparent;border-radius:8px;
+  background:transparent;font:inherit;font-size:13.5px;color:var(--text)}
+.op-nome:hover{border-color:var(--line)}
+.op-nome:focus{border-color:var(--accent);background:var(--surface)}
+.op-qtd{font-size:12px;color:var(--muted-2);text-align:right}
+.op-nova{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;
+  background:var(--accent-dim);border:1px solid var(--accent);border-radius:var(--rs);padding:10px;margin-bottom:12px}
 .chips-active{display:flex;gap:6px;flex-wrap:wrap;padding:0 20px 10px;background:var(--bg-2);border-bottom:1px solid var(--line)}
 .chips-active:empty{display:none}
 .fchip{display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:3px 6px 3px 10px;font-size:12px;color:var(--muted)}
@@ -717,9 +731,9 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .cia-tot i{display:block;font-size:10px;font-style:normal;font-weight:800;color:var(--muted-2);text-transform:uppercase;letter-spacing:.3px}
 .cia-tot b{font-size:14px;font-weight:800}
 .cia-corpo{padding:13px 15px 15px}
-.cia-corpo .pl-tab.{margin-bottom:0}
-.cia-corpo .pl-tab. thead tr{background:transparent}
-.cia-corpo .pl-tab. thead th{color:var(--muted-2);font-size:10px}
+.cia-corpo .pl-tab.estoque{margin-bottom:0}
+.cia-corpo .pl-tab.estoque thead tr{background:transparent}
+.cia-corpo .pl-tab.estoque thead th{color:var(--muted-2);font-size:10px}
 .vendas-cia{margin:14px 0 0;padding:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--rs)}
 .vendas-cab{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px}
 .vendas-cab b{font-size:12.5px}
@@ -752,18 +766,18 @@ td.cbx input{accent-color:var(--accent);width:14px;height:14px}
 .rest-grade label{display:block;font-size:11px;font-weight:700;color:var(--muted-2)}
 .rest-grade .inp.mini{margin-top:3px;text-align:left;height:32px}
 .rest-resumo{margin-top:10px;font-size:12px;color:var(--muted)}
-.pl-tab.{margin-bottom:12px;table-layout:fixed}
-.pl-tab. thead tr{background:var(--surface-3)}
-.pl-tab. thead th{padding:8px;border-bottom:1px solid var(--line)}
-.pl-tab. thead th:first-child{border-radius:var(--rs) 0 0 var(--rs)}
-.pl-tab. thead th:last-child{border-radius:0 var(--rs) var(--rs) 0}
-.pl-tab. .comp{font-size:14.5px;font-weight:800;letter-spacing:.2px;text-transform:none}
+.pl-tab.estoque{margin-bottom:12px;table-layout:fixed}
+.pl-tab.estoque thead tr{background:var(--surface-3)}
+.pl-tab.estoque thead th{padding:8px;border-bottom:1px solid var(--line)}
+.pl-tab.estoque thead th:first-child{border-radius:var(--rs) 0 0 var(--rs)}
+.pl-tab.estoque thead th:last-child{border-radius:0 var(--rs) var(--rs) 0}
+.pl-tab.estoque .comp{font-size:14.5px;font-weight:800;letter-spacing:.2px;text-transform:none}
 .comp-AZUL{color:#2F80ED} .comp-GOL{color:#F2801A} .comp-TAM{color:#D93A2F} .comp-LATAM{color:#D93A2F}
 html[data-tema="claro"] .comp-AZUL{color:#15539F} html[data-tema="claro"] .comp-GOL{color:#B85008}
 html[data-tema="claro"] .comp-TAM{color:#A31F18} html[data-tema="claro"] .comp-LATAM{color:#A31F18}
-.pl-tab. td{vertical-align:middle;height:42px}
-.pl-tab. td:first-child{font-size:12.5px}
-.pl-tab. tr.bloq td:first-child{color:var(--bad);font-weight:700}
+.pl-tab.estoque td{vertical-align:middle;height:42px}
+.pl-tab.estoque td:first-child{font-size:12.5px}
+.pl-tab.estoque tr.bloq td:first-child{color:var(--bad);font-weight:700}
 .pl-tab .inp.mini{height:28px;padding:0 8px;font-size:12.5px;text-align:right;width:100%;min-width:90px}
 .pl-tab .inp.mini[type=date]{text-align:left}
 .lixo{color:var(--muted-2);padding:2px 6px;border-radius:4px}
@@ -1010,7 +1024,7 @@ try { document.documentElement.dataset.tema =
       <button data-view="lanc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M3 12h18M3 19h18"/></svg>Pagamentos</button>
       <button data-view="rec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Recebimentos</button>
       <button data-view="adi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg>Lotes e adiantamentos</button>
-      <button data-view="est"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5l9 4.5 9-4.5M12 12v9"/></svg> Estoque de milhas</button>
+      <button data-view="est"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5l9 4.5 9-4.5M12 12v9"/></svg>Controle de estoque</button>
       <button data-view="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>Auditoria</button>
       <button data-view="users" id="navUsers" class="hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 11.2a3 3 0 1 0-1.6-5.5M18 20a5.6 5.6 0 0 0-2.2-4.4"/></svg>Usuários</button>
       <button data-view="bkp" id="navBkp" class="hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.7-6.4L3 8"/><path d="M3 3v5h5"/><path d="M12 7.5V12l3 2"/></svg>Backups</button>
@@ -1096,7 +1110,9 @@ try { document.documentElement.dataset.tema =
             <input class="inp" id="fQ" placeholder="código, nome, chave pix, acordo…">
           </span>
         </div>
-        <div class="field"><label for="fOp">Operação</label><select class="inp" id="fOp"></select></div>
+        <div class="field"><label for="fOp">Operação
+            <button class="linkzinho" id="btnOps" title="Criar, renomear e colorir operações">gerenciar</button></label>
+          <select class="inp" id="fOp"></select></div>
         <div class="field"><label for="fSt">Status</label><select class="inp" id="fSt"></select></div>
         <div class="field"><label for="fTp">Tipo de chave</label><select class="inp" id="fTp"></select></div>
         <div class="field"><label for="fD1">Pgto de</label><input class="inp" id="fD1" type="date"></div>
@@ -1196,7 +1212,7 @@ try { document.documentElement.dataset.tema =
 
     <!-- ESTOQUE DE MILHAS -->
     <section class="view hide" id="view-est">
-      <div class="panel"><h3>Controle de Estoque de Milhas</h3><div id="balEstoque" class="var-a"></div></div>
+      <div class="panel"><h3>Controle de estoque</h3><div id="balEstoque" class="var-a"></div></div>
 
     </section>
 
@@ -1393,7 +1409,7 @@ const FIREBASE = {
   messagingSenderId: "586707241027",
   appId: "1:586707241027:web:7f5abed5a39e4596f9ecf6"
 };
-const VERSAO = "25/09/2026 10:38";   // carimbo desta build — aparece no rodapé do menu
+const VERSAO = "26/09/2026 08:55";   // carimbo desta build — aparece no rodapé do menu
 const PROXY_ASSISTENTE = "https://script.google.com/macros/s/AKfycbx1V4jCCe2CAh7hTEnaKCaY6K7lZV1BSs-ySDRFdGMCLPQMnCLwGEkN_20K2rFlG10L/exec";
 const ADMINS = ["alanclebersantana@gmail.com"]; // e-mails que entram como administrador
 
@@ -1451,7 +1467,7 @@ const S = {
   rows: [], rec: [], adi: [], pagadores: [], ops: OPS_BASE.slice(), sel: new Set(), hist: [], log: [], users: [],
   sort: {k:'dataPagamento', dir:1}, sortRec: {k:'dataPrevista', dir:1}, sortAdi: {k:'dataAdiantada', dir:1},
   f: {...FILTROS_PADRAO}, fr: {q:'', pg:'', st:'Previsto', d1:'', d2:''},
-  fa: {q:'', st:'Aguardando', d1:'', d2:''}, recModo: 'simples', saldoInicial: null, estoque: null, limites: null, lotes: [], errolotes: '', loteSel: '', vendas: [], vendaAberta: '', vendaEdit: '',
+  fa: {q:'', st:'Aguardando', d1:'', d2:''}, recModo: 'simples', saldoInicial: null, estoque: null, limites: null, lotes: [], errolotes: '', loteSel: '', vendas: [], vendaAberta: '', operacoes: {cores:{}, extras:[]}, vendaEdit: '',
   cfg: {autoAplicar: true}, chat: [], alias: {}, avisado: false,
   view: 'bal'
 };
@@ -1666,7 +1682,18 @@ const TELAS = {lanc:'Pagamentos', rec:'Recebimentos', adi:'Lotes e adiantamentos
   users:'Usuários', import:'Importar', backup:'Backups'};
 const nomeDaTela = k => TELAS[k] || '';
 
-const opColor = op => 'c-op' + (Math.abs([...String(op)].reduce((a,c)=>a+c.charCodeAt(0),0)) % 8);
+/** cor da operação: a escolhida pelo usuário, ou uma fixa derivada do nome */
+const PALETA_OP = ['#5B8FC9','#3E9E6E','#C1561A','#9A6EC4','#C9A227','#2E9DA8','#B0483C','#6A7C93',
+                   '#D4569B','#4B7F52','#8C6239','#3F5BA9'];
+const opColorAuto = op => 'c-op' + (Math.abs([...String(op)].reduce((a,c)=>a+c.charCodeAt(0),0)) % 8);
+const corDaOperacao = op => ((S.operacoes && S.operacoes.cores) || {})[String(op || '').trim()] || '';
+const opColor = op => corDaOperacao(op) ? 'c-opcustom' : opColorAuto(op);
+/** o atributo de estilo quando a cor é personalizada */
+function estiloOp(op){
+  const cor = corDaOperacao(op);
+  if (!cor) return '';
+  return ` style="background:${cor}22;color:${cor};border-color:${cor}55"`;
+}
 const podeEditar = () => APP.papel === 'admin' || APP.papel === 'operador';
 /** mostra a falha na tela em vez de deixar a página em branco */
 let ultimoErro = '';
@@ -1694,7 +1721,7 @@ const Local = {
   get(k){ try { const v = localStorage.getItem(k); if (v != null) return v; } catch(e){} return MEM[k] ?? null; },
   set(k,v){ MEM[k] = v; try { localStorage.setItem(k,v); } catch(e){} }
 };
-let fdb = null, fauth = null, unsubRows = null, unsubRec = null, unsubSaldo = null, unsubEstoque = null, unsubLim = null, unsubLotes = null, unsubVendas = null, unsubAdi = null, unsubLog = null, unsubUsers = null;
+let fdb = null, fauth = null, unsubRows = null, unsubRec = null, unsubSaldo = null, unsubEstoque = null, unsubLim = null, unsubLotes = null, unsubOps = null, unsubVendas = null, unsubAdi = null, unsubLog = null, unsubUsers = null;
 
 const Repo = {
   async escutar(){
@@ -1734,6 +1761,12 @@ const Repo = {
         S.lotes = s.docs.map(d => normalizeLote({id:d.id, ...d.data()}));
         renderAll();
       }, err => { S.errolotes = err.code; renderAll(); });
+      unsubOps && unsubOps();
+      unsubOps = fdb.collection('config').doc('operacoes').onSnapshot(d => {
+        const dd = d.exists ? d.data() : {};
+        S.operacoes = {cores: dd.cores || {}, extras: dd.extras || []};
+        renderAll();
+      }, () => {});
       unsubLim && unsubLim();
       unsubLim = fdb.collection('config').doc('limites').onSnapshot(d => { S.limites = d.exists ? d.data() : {itens:{}}; renderAll(); }, () => {});
       unsubEstoque && unsubEstoque();
@@ -1763,6 +1796,8 @@ const Repo = {
       catch(e){ S.estoque = {...ESTOQUE_PADRAO}; }
       try { S.limites = JSON.parse(Local.get('tesouraria:limites') || 'null') || {itens:{}}; }
       catch(e){ S.limites = {itens:{}}; }
+      try { S.operacoes = JSON.parse(Local.get('tesouraria:operacoes') || 'null') || {cores:{}, extras:[]}; }
+      catch(e){ S.operacoes = {cores:{}, extras:[]}; }
       try { S.vendas = (JSON.parse(Local.get('tesouraria:vendas') || '[]') || []).map(normalizeVenda); }
       catch(e){ S.vendas = []; }
       const rawAdi = Local.get('tesouraria:adi');
@@ -2042,8 +2077,9 @@ function renderTable(){
         else if (c.type === 'date') inner = `<div class="cell${al}" data-id="${r.id}" data-k="${c.k}"><span class="txt">${fmtDate(v)}</span></div>`;
         else if (c.type === 'chip'){
           const cls = c.k === 'operacao' ? opColor(v) : c.k === 'status' ? 'st-'+v : 'k-'+(v||'INDEFINIDO');
+          const estilo = c.k === 'operacao' ? estiloOp(v) : '';
           inner = v
-            ? `<div class="cell pick cor${al}" data-id="${r.id}" data-k="${c.k}"><span class="tag ${cls}" title="${esc(v)}">${esc(v)}</span></div>`
+            ? `<div class="cell pick cor${al}" data-id="${r.id}" data-k="${c.k}"><span class="tag ${cls}"${estilo} title="${esc(v)}">${esc(v)}</span></div>`
             : `<div class="cell pick cor vazio${al}" data-id="${r.id}" data-k="${c.k}"><span style="color:var(--muted-2)">—</span></div>`;
         } else if (c.k === 'base' && ehLink(v)){
           inner = `<div class="cell" data-id="${r.id}" data-k="${c.k}"><a class="src" href="${esc(v)}" target="_blank" rel="noopener noreferrer" title="Abrir ${esc(v)}">${esc(nomeOrigem(v))}<span class="seta">↗</span></a></div>`;
@@ -2077,7 +2113,7 @@ function fillSelects(){
     el.innerHTML = `<option value="">${ph}</option>` + arr.map(o=>`<option>${esc(o)}</option>`).join('');
     el.value = arr.includes(val) ? val : '';
   };
-  set($('#fOp'), [...new Set([...S.ops, ...S.rows.map(r=>r.operacao)])].filter(Boolean).sort(), 'Todas', S.f.op);
+  set($('#fOp'), [...new Set([...S.ops, ...(S.operacoes.extras || []), ...S.rows.map(r=>r.operacao)])].filter(Boolean).sort(), 'Todas', S.f.op);
   set($('#fSt'), STATUS, 'Todos', S.f.st);
   set($('#fTp'), TIPOS, 'Todos', S.f.tp);
 }
@@ -2494,6 +2530,113 @@ function colarNaGrade(alvos){
   });
 }
 
+/* =========================================================
+   OPERAÇÕES — criar, renomear e escolher a cor
+   ========================================================= */
+function operacoesUsadas(){
+  const conta = {};
+  S.rows.forEach(r => { const o = String(r.operacao || '').trim(); if (o) conta[o] = (conta[o] || 0) + 1; });
+  (S.operacoes.extras || []).forEach(o => { if (!conta[o]) conta[o] = 0; });
+  return Object.entries(conta).sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+}
+async function gravarOperacoes(dados, rotulo, resumo){
+  S.operacoes = {cores: dados.cores || {}, extras: dados.extras || []};
+  if (APP.modo === 'nuvem'){
+    try { await fdb.collection('config').doc('operacoes').set({...S.operacoes, em:Date.now(), porQuem:APP.nome}); }
+    catch(e){ return toast('Não consegui gravar: ' + (e.code || e.message)); }
+  } else Local.set('tesouraria:operacoes', JSON.stringify(S.operacoes));
+  if (rotulo) await Repo.registrar({ts:Date.now(), uid:APP.uid || 'local', nome:APP.nome || 'Local',
+    origem:'manual', label:rotulo, tela:'lanc', resumo:resumo || [], total:1});
+  renderAll();
+}
+/** renomear troca a operação em todos os lançamentos que a usam */
+async function renomearOperacao(de, para){
+  de = String(de).trim(); para = String(para).trim();
+  if (!para || de === para) return;
+  const alvos = S.rows.filter(r => String(r.operacao || '').trim() === de);
+  const cores = {...S.operacoes.cores};
+  if (cores[de]){ cores[para] = cores[de]; delete cores[de]; }
+  const extras = (S.operacoes.extras || []).map(x => x === de ? para : x);
+  await gravarOperacoes({cores, extras}, null);
+  if (alvos.length)
+    await aplicar(alvos.map(r => ({acao:'atualizar', id:r.id, campos:{operacao:para}})),
+      'manual', `operação renomeada: ${de} → ${para}`);
+  else
+    await Repo.registrar({ts:Date.now(), uid:APP.uid || 'local', nome:APP.nome || 'Local', origem:'manual',
+      label:'operação renomeada', tela:'lanc', resumo:[`${de} → ${para}`], total:1});
+  toast(alvos.length ? `${alvos.length} lançamento(s) atualizados` : 'Operação renomeada');
+}
+
+function abrirOperacoes(){
+  if (!podeEditar()) return toast('Seu acesso é somente leitura.');
+  const desenhar = m => {
+    const lista = operacoesUsadas();
+    m.querySelector('#opLista').innerHTML = lista.length ? lista.map(([nome, n]) => `
+      <div class="op-linha" data-op="${esc(nome)}">
+        <input type="color" class="op-bolinha" data-cor="${esc(nome)}"
+          value="${corDaOperacao(nome) || corSugerida(nome)}" title="Cor da operação">
+        <input class="op-nome" data-nome="${esc(nome)}" value="${esc(nome)}">
+        <span class="op-qtd">${n} lançamento${n === 1 ? '' : 's'}</span>
+        <button class="lixo" data-delop="${esc(nome)}" title="${n ? 'Tem lançamentos — não dá para excluir' : 'Excluir operação'}" ${n ? 'disabled' : ''}>✕</button>
+      </div>`).join('')
+      : '<div class="empty">Nenhuma operação ainda. Crie a primeira acima.</div>';
+  };
+  const m = modal('Operações', `
+    <p style="color:var(--muted);margin-top:0">Crie operações novas, renomeie as que existem e escolha a cor de cada uma.
+      Renomear troca o nome em todos os lançamentos que a usam.</p>
+    <div class="op-nova">
+      <input type="color" class="op-bolinha" id="opNovaCor" value="${PALETA_OP[0]}">
+      <input class="inp" id="opNovoNome" placeholder="nome da operação nova">
+      <button class="btn primary" id="opCriar">Criar</button>
+    </div>
+    <div class="op-lista" id="opLista"></div>`,
+    `<button class="btn" data-close>Fechar</button>`);
+  desenhar(m);
+
+  m.addEventListener('click', async e => {
+    if (e.target.id === 'opCriar'){
+      const nome = m.querySelector('#opNovoNome').value.trim();
+      if (!nome) return toast('Dê um nome à operação.');
+      if (operacoesUsadas().some(([x]) => x.toLowerCase() === nome.toLowerCase())) return toast('Essa operação já existe.');
+      await gravarOperacoes({cores:{...S.operacoes.cores, [nome]: m.querySelector('#opNovaCor').value},
+        extras:[...(S.operacoes.extras || []), nome]}, 'operação criada', [nome]);
+      m.querySelector('#opNovoNome').value = '';
+      desenhar(m); toast(`Operação "${nome}" criada`);
+      return;
+    }
+    const del = e.target.closest('[data-delop]');
+    if (del && !del.disabled){
+      const nome = del.dataset.delop;
+      if (!confirm(`Excluir a operação "${nome}"? Nenhum lançamento usa ela.`)) return;
+      const cores = {...S.operacoes.cores}; delete cores[nome];
+      await gravarOperacoes({cores, extras:(S.operacoes.extras || []).filter(x => x !== nome)},
+        'operação excluída', [nome]);
+      desenhar(m); toast('Operação excluída');
+    }
+  });
+  m.addEventListener('change', async e => {
+    const cor = e.target.closest('[data-cor]');
+    if (cor){
+      await gravarOperacoes({cores:{...S.operacoes.cores, [cor.dataset.cor]: cor.value}, extras:S.operacoes.extras},
+        'cor de operação alterada', [`${cor.dataset.cor} → ${cor.value}`]);
+      return;
+    }
+    const nome = e.target.closest('[data-nome]');
+    if (nome && nome.value.trim() !== nome.dataset.nome){
+      const de = nome.dataset.nome, para = nome.value.trim();
+      if (!para){ nome.value = de; return; }
+      if (!confirm(`Renomear "${de}" para "${para}" em todos os lançamentos?`)){ nome.value = de; return; }
+      await renomearOperacao(de, para);
+      desenhar(m);
+    }
+  });
+}
+/** uma cor da paleta, estável para o nome, quando ainda não escolheram */
+function corSugerida(op){
+  const i = Math.abs([...String(op)].reduce((a,c) => a + c.charCodeAt(0), 0)) % PALETA_OP.length;
+  return PALETA_OP[i];
+}
+
 /* ---------- navegação ---------- */
 function go(v){
   S.view = v;
@@ -2506,7 +2649,7 @@ function go(v){
              adi:['Lotes e adiantamentos','Lotes gerados e fila de pagamentos antecipados'],
              bal:['Visão geral','Posição contratual, estoque e projeção — não representa saldo bancário'],
              rec:['Recebimentos','Contas a receber — previsões e entradas confirmadas, por pagador'],
-             est:['Estoque de milhas','Saldo por companhia, ativos sob restrição e vendas'],
+             est:['Controle de estoque','Saldo por companhia, milhas bloqueadas e vendas'],
              log:['Auditoria','Quem alterou o quê, e quando'],
              users:['Usuários','Controle de acesso da equipe'],
              bkp:['Backups','Cópias automáticas a cada 20 minutos — compare e recupere']}[v];
@@ -2565,7 +2708,7 @@ function modal(title, bodyHTML, footHTML){
 $('#btnNew').addEventListener('click', () => {
   if (S.view === 'rec') return novoRecebimento();
   if (!podeEditar()) return toast('Seu acesso é somente leitura.');
-  const opts = [...new Set([...S.ops, ...S.rows.map(r=>r.operacao)])].filter(Boolean);
+  const opts = [...new Set([...S.ops, ...(S.operacoes.extras || []), ...S.rows.map(r=>r.operacao)])].filter(Boolean);
   const m = modal('Novo lançamento', `
     <div class="formgrid">
       <div class="field full sugbox"><label>Contribuinte / beneficiário</label>
@@ -2852,6 +2995,7 @@ function showMap(aoa, m, fname){
 }
 
 /* ---------- exportação ---------- */
+$('#btnOps').addEventListener('click', abrirOperacoes);
 $('#btnExport').addEventListener('click', () => {
   if (S.view === 'rec') return exportarRecebimentos();
   const rows = filtered();
@@ -5002,7 +5146,8 @@ function renderAdi(){
         if (c.type === 'date')  return `<td data-rot="${esc(c.t)}"><div class="cell${al}" data-ent="adi" data-id="${r.id}" data-k="${c.k}"><span class="txt">${fmtDate(v)}</span></div></td>`;
         if (c.type === 'chip'){
           const cls = c.k === 'operacao' ? opColor(v) : 'ad-' + v;
-          return `<td data-rot="${esc(c.t)}">${v ? `<div class="cell pick cor${al}" data-ent="adi" data-id="${r.id}" data-k="${c.k}"><span class="tag ${cls}" title="${esc(v)}">${esc(v)}</span></div>`
+          const estilo = c.k === 'operacao' ? estiloOp(v) : '';
+          return `<td data-rot="${esc(c.t)}">${v ? `<div class="cell pick cor${al}" data-ent="adi" data-id="${r.id}" data-k="${c.k}"><span class="tag ${cls}"${estilo} title="${esc(v)}">${esc(v)}</span></div>`
                           : `<div class="cell pick cor vazio${al}" data-ent="adi" data-id="${r.id}" data-k="${c.k}"><span style="color:var(--muted-2)">—</span></div>`}</td>`;
         }
         const aviso = c.k === 'pix' && problema ? `<span class="warnmark" title="${esc(detectKey(r.pix).msg || 'sem chave válida')}">⚠</span>` : '';
